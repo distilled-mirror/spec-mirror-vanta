@@ -5380,7 +5380,7 @@
               "type": "string"
             },
             "type": "array",
-            "description": "Deprecated control-linkage field retained for response compatibility. It\nmay contain control IDs supplied directly to the request, but it is not a\ncomplete or guaranteed-current list of controls linked to the request. To\nlist information requests linked to a particular control, use\n`GET /audits/{auditId}/controls/{controlId}/information-requests`.",
+            "description": "Deprecated control-linkage field retained for response compatibility. It\nmay contain control IDs supplied directly to the request, but it is not a\ncomplete or guaranteed-current list of controls linked to the request. To\nlist information requests linked to a particular control, use the\n`GET /audits/{auditId}/controls/{controlId}/information-requests` endpoint.\nA request may be absent from that endpoint when its link appears only in\nthis deprecated field.",
             "deprecated": true
           },
           "approvalStatus": {
@@ -5589,7 +5589,8 @@
               "type": "string"
             },
             "type": "array",
-            "description": "The framework codes this request addresses.\nAn empty array if no framework codes are associated."
+            "description": "Framework codes are assigned only at creation; on update this field is a\nsilent no-op — a value sent here is accepted for backwards compatibility\nbut ignored, leaving the request's framework codes unchanged.",
+            "deprecated": true
           },
           "description": {
             "type": "string",
@@ -5625,7 +5626,15 @@
               "type": "string"
             },
             "type": "array",
-            "description": "Control IDs to link directly to this request, beyond those automatically\nmapped from framework codes. Replaces the existing set: pass the complete\ndesired list, an empty array to clear all direct control links, or omit to\nleave them unchanged. Each must be the `id` of an existing control in the\ncustomer's organization (the identifier returned by the controls endpoints).\nThe request is rejected if any ID does not match a control."
+            "description": "This legacy field is accepted for backwards compatibility but ignored.\nUse `linkedControlIds` to replace the complete set of linked controls.",
+            "deprecated": true
+          },
+          "linkedControlIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The complete desired set of control IDs linked to this request. Send the\nfull list to replace the set, an empty array to clear it, or omit the\nproperty to leave links unchanged. Each ID must identify an existing control\nin the customer's organization and is returned by the audit controls\nendpoint. The request is rejected if any ID does not match a control."
           }
         },
         "type": "object",

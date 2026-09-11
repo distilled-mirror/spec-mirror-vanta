@@ -13606,6 +13606,38 @@
         "type": "object",
         "additionalProperties": false
       },
+      "AddControlDocumentsMappingResult": {
+        "properties": {
+          "mappedCount": {
+            "type": "number",
+            "format": "double",
+            "description": "The number of mappings this request created. Documents that were already\nmapped to the control are not counted, so re-submitting the same list\nreturns 0."
+          }
+        },
+        "required": [
+          "mappedCount"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddControlDocumentsMappingInput": {
+        "properties": {
+          "documentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The IDs of the documents to map to the control. Documents already mapped to\nthe control are ignored and are not counted in `mappedCount`.",
+            "minItems": 1,
+            "maxItems": 300
+          }
+        },
+        "required": [
+          "documentIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "AddControlTestMappingInput": {
         "properties": {
           "testId": {
@@ -13615,6 +13647,38 @@
         },
         "required": [
           "testId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddControlTestsMappingResult": {
+        "properties": {
+          "mappedCount": {
+            "type": "number",
+            "format": "double",
+            "description": "The number of mappings this request created. Tests that were already\nmapped to the control are not counted, so re-submitting the same list\nreturns 0."
+          }
+        },
+        "required": [
+          "mappedCount"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddControlTestsMappingInput": {
+        "properties": {
+          "testIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The IDs of the tests to map to the control. Tests already mapped to the\ncontrol are ignored and are not counted in `mappedCount`.",
+            "minItems": 1,
+            "maxItems": 300
+          }
+        },
+        "required": [
+          "testIds"
         ],
         "type": "object",
         "additionalProperties": false
@@ -23702,6 +23766,96 @@
                   "startDate"
                 ],
                 "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/personnel-notification-settings": {
+      "get": {
+        "operationId": "GetSettings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonnelNotificationSettings"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "enabled": true,
+                      "employeeDigestFrequency": "WEEKLY",
+                      "enabledChannels": [
+                        "EMAIL",
+                        "SLACK"
+                      ],
+                      "nextReminderAt": "2026-08-17T09:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns the organization's personnel reminder and employee-digest settings.",
+        "summary": "Get personnel notification settings",
+        "tags": [
+          "Personnel Notification Settings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": []
+      },
+      "patch": {
+        "operationId": "UpdateSettings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonnelNotificationSettings"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "enabled": true,
+                      "employeeDigestFrequency": "WEEKLY",
+                      "enabledChannels": [
+                        "EMAIL",
+                        "SLACK"
+                      ],
+                      "nextReminderAt": "2026-08-17T09:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Partially updates the organization's personnel reminder and employee-digest settings.\nOmitted fields remain unchanged.",
+        "summary": "Update personnel notification settings",
+        "tags": [
+          "Personnel Notification Settings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePersonnelNotificationSettingsInput"
               }
             }
           }
