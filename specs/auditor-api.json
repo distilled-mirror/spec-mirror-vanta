@@ -2813,7 +2813,7 @@
         "type": "object",
         "additionalProperties": false
       },
-      "Control": {
+      "AuditorApiControl": {
         "properties": {
           "id": {
             "type": "string",
@@ -5380,8 +5380,15 @@
               "type": "string"
             },
             "type": "array",
-            "description": "Deprecated control-linkage field retained for response compatibility. It\nmay contain control IDs supplied directly to the request, but it is not a\ncomplete or guaranteed-current list of controls linked to the request. To\nlist information requests linked to a particular control, use the\n`GET /audits/{auditId}/controls/{controlId}/information-requests` endpoint.\nA request may be absent from that endpoint when its link appears only in\nthis deprecated field.",
+            "description": "Deprecated control-linkage field retained for response compatibility. It\nmay contain control IDs supplied directly to the request, but it is not a\ncomplete or guaranteed-current list of controls linked to the request. Use\n`linkedControlIds` for the complete current list.",
             "deprecated": true
+          },
+          "linkedControlIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The complete current set of control IDs linked to this request, including\ncontrols linked through framework codes and controls added directly. Each\nID is returned by the audit controls endpoint."
           },
           "approvalStatus": {
             "$ref": "#/components/schemas/InformationRequestApprovalStatus",
@@ -5401,7 +5408,7 @@
               "type": "string"
             },
             "type": "array",
-            "description": "Always empty on read. To find requests for a control, use\n`GET /audits/{auditId}/controls/{controlId}/information-requests`.\nFor request assignment, use `segmentIds`.",
+            "description": "Always empty on read. Use `linkedControlIds` for control linkage and\n`segmentIds` for request assignment.",
             "deprecated": true
           },
           "segmentIds": {
@@ -5471,6 +5478,7 @@
           "id",
           "uniqueId",
           "additionalControlIds",
+          "linkedControlIds",
           "approvalStatus",
           "cadence",
           "frameworkCodes",
@@ -9013,7 +9021,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Control"
+                  "$ref": "#/components/schemas/AuditorApiControl"
                 },
                 "examples": {
                   "Example 1": {
@@ -9031,13 +9039,8 @@
                         "emailAddress": "example-person@email.com",
                         "displayName": "Example Owner"
                       },
-                      "role": "CONTROLLER",
-                      "customFields": [
-                        {
-                          "label": "Additional context",
-                          "value": "This control is critical for GDPR compliance"
-                        }
-                      ],
+                      "role": null,
+                      "customFields": [],
                       "creationDate": null,
                       "modificationDate": null
                     }
@@ -9458,6 +9461,9 @@
                             "id": "6890e473dce1da5d8406f5e7",
                             "uniqueId": "1466132",
                             "additionalControlIds": [],
+                            "linkedControlIds": [
+                              "c1a2b3c4d5e6f7a8b9c0d1e2"
+                            ],
                             "approvalStatus": "NEEDS_EVIDENCE",
                             "cadence": "ANNUALLY",
                             "frameworkCodes": [],
@@ -10190,6 +10196,9 @@
                             "id": "6890e473dce1da5d8406f5e7",
                             "uniqueId": "1466132",
                             "additionalControlIds": [],
+                            "linkedControlIds": [
+                              "c1a2b3c4d5e6f7a8b9c0d1e2"
+                            ],
                             "approvalStatus": "NEEDS_EVIDENCE",
                             "cadence": "ANNUALLY",
                             "frameworkCodes": [],
@@ -10303,6 +10312,9 @@
                       "id": "6890e473dce1da5d8406f5e7",
                       "uniqueId": "1466132",
                       "additionalControlIds": [],
+                      "linkedControlIds": [
+                        "c1a2b3c4d5e6f7a8b9c0d1e2"
+                      ],
                       "approvalStatus": "NEEDS_EVIDENCE",
                       "cadence": "ANNUALLY",
                       "frameworkCodes": [],
@@ -10379,6 +10391,9 @@
                       "id": "6890e473dce1da5d8406f5e7",
                       "uniqueId": "1466132",
                       "additionalControlIds": [],
+                      "linkedControlIds": [
+                        "c1a2b3c4d5e6f7a8b9c0d1e2"
+                      ],
                       "approvalStatus": "NEEDS_EVIDENCE",
                       "cadence": "ANNUALLY",
                       "frameworkCodes": [],
@@ -10451,6 +10466,9 @@
                       "id": "6890e473dce1da5d8406f5e7",
                       "uniqueId": "1466132",
                       "additionalControlIds": [],
+                      "linkedControlIds": [
+                        "c1a2b3c4d5e6f7a8b9c0d1e2"
+                      ],
                       "approvalStatus": "NEEDS_EVIDENCE",
                       "cadence": "ANNUALLY",
                       "frameworkCodes": [],
@@ -10571,6 +10589,9 @@
                       "id": "6890e473dce1da5d8406f5e7",
                       "uniqueId": "1466132",
                       "additionalControlIds": [],
+                      "linkedControlIds": [
+                        "c1a2b3c4d5e6f7a8b9c0d1e2"
+                      ],
                       "approvalStatus": "NEEDS_EVIDENCE",
                       "cadence": "ANNUALLY",
                       "frameworkCodes": [],
@@ -11413,6 +11434,9 @@
                       "id": "6890e473dce1da5d8406f5e7",
                       "uniqueId": "1466132",
                       "additionalControlIds": [],
+                      "linkedControlIds": [
+                        "c1a2b3c4d5e6f7a8b9c0d1e2"
+                      ],
                       "approvalStatus": "NEEDS_EVIDENCE",
                       "cadence": "ANNUALLY",
                       "frameworkCodes": [],

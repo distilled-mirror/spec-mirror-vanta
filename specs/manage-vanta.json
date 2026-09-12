@@ -4693,6 +4693,7 @@
             "enum": [
               "aiact",
               "aiuc1",
+              "aiuc1_26q3",
               "aue8",
               "awsFTR",
               "bsic5",
@@ -4771,6 +4772,7 @@
             "enum": [
               "aiact",
               "aiuc1",
+              "aiuc1_26q3",
               "aue8",
               "awsFTR",
               "bsic5",
@@ -10596,6 +10598,11 @@
             "format": "date-time",
             "nullable": true,
             "description": "When the control was last modified. Returns null for Vanta library controls."
+          },
+          "implementationDetails": {
+            "type": "string",
+            "nullable": true,
+            "description": "How the control is implemented."
           }
         },
         "required": [
@@ -13344,6 +13351,11 @@
             "nullable": true,
             "description": "When the control was last modified. Returns null for Vanta library controls."
           },
+          "implementationDetails": {
+            "type": "string",
+            "nullable": true,
+            "description": "How the control is implemented."
+          },
           "numDocumentsPassing": {
             "type": "number",
             "format": "double",
@@ -13535,6 +13547,11 @@
             "format": "date-time",
             "nullable": true,
             "description": "When the control was last modified. Returns null for Vanta library controls."
+          },
+          "implementationDetails": {
+            "type": "string",
+            "nullable": true,
+            "description": "How the control is implemented."
           },
           "frameworks": {
             "items": {
@@ -14201,7 +14218,8 @@
                         }
                       ],
                       "creationDate": null,
-                      "modificationDate": null
+                      "modificationDate": null,
+                      "implementationDetails": "Encryption is enforced for data at rest and in transit."
                     }
                   }
                 }
@@ -14268,7 +14286,8 @@
                               }
                             ],
                             "creationDate": null,
-                            "modificationDate": null
+                            "modificationDate": null,
+                            "implementationDetails": "Encryption is enforced for data at rest and in transit."
                           }
                         ],
                         "pageInfo": {
@@ -14363,7 +14382,8 @@
                         }
                       ],
                       "creationDate": null,
-                      "modificationDate": null
+                      "modificationDate": null,
+                      "implementationDetails": "Encryption is enforced for data at rest and in transit."
                     }
                   }
                 }
@@ -14632,7 +14652,8 @@
                         }
                       ],
                       "creationDate": null,
-                      "modificationDate": null
+                      "modificationDate": null,
+                      "implementationDetails": "Encryption is enforced for data at rest and in transit."
                     }
                   }
                 }
@@ -14739,7 +14760,8 @@
                         }
                       ],
                       "creationDate": null,
-                      "modificationDate": null
+                      "modificationDate": null,
+                      "implementationDetails": "Encryption is enforced for data at rest and in transit."
                     }
                   }
                 }
@@ -14817,7 +14839,8 @@
                           }
                         ],
                         "creationDate": null,
-                        "modificationDate": null
+                        "modificationDate": null,
+                        "implementationDetails": "Encryption is enforced for data at rest and in transit."
                       },
                       "document": {
                         "id": "1",
@@ -14917,7 +14940,8 @@
                           }
                         ],
                         "creationDate": null,
-                        "modificationDate": null
+                        "modificationDate": null,
+                        "implementationDetails": "Encryption is enforced for data at rest and in transit."
                       },
                       "test": {
                         "id": "aws-account-access-removed-on-termination",
@@ -15140,7 +15164,8 @@
                         }
                       ],
                       "creationDate": null,
-                      "modificationDate": null
+                      "modificationDate": null,
+                      "implementationDetails": "Encryption is enforced for data at rest and in transit."
                     }
                   }
                 }
@@ -17535,7 +17560,8 @@
                               }
                             ],
                             "creationDate": null,
-                            "modificationDate": null
+                            "modificationDate": null,
+                            "implementationDetails": "Encryption is enforced for data at rest and in transit."
                           }
                         ],
                         "pageInfo": {
@@ -18518,7 +18544,8 @@
                               }
                             ],
                             "creationDate": null,
-                            "modificationDate": null
+                            "modificationDate": null,
+                            "implementationDetails": "Encryption is enforced for data at rest and in transit."
                           }
                         ],
                         "pageInfo": {
