@@ -6676,7 +6676,7 @@
         "type": "string"
       },
       "InformationRequestActivityLog": {
-        "description": "Activity log entry tracking changes and actions on an information request.\n\nThe activity log provides a complete audit trail of all operations performed\non an information request, including status changes, evidence uploads, edits,\nand evidence sharing. This enables tracking compliance activities and understanding\nthe request's history.",
+        "description": "Activity log entry tracking changes and actions on an information request.\n\nThe activity log provides an audit trail of operations performed on an\ninformation request, including status changes, evidence uploads, edits,\nand evidence sharing. This enables tracking compliance activities and understanding\nthe request's history. Which entries are visible depends on the endpoint returning\nthem; see the endpoint's own description.",
         "properties": {
           "id": {
             "type": "string",
@@ -6684,7 +6684,7 @@
           },
           "activityType": {
             "$ref": "#/components/schemas/InformationRequestActivityType",
-            "description": "Type of activity that occurred on the information request.\nDetermines which additional fields are populated."
+            "description": "Type of activity that occurred on the information request.\nDetermines which additional fields are populated.\n`AUDIT_INFORMATION_REQUEST_EVIDENCE_FILL` is never returned — automated\nevidence fill activity is withheld — so no entry carries that value even\nthough the enum still lists it. Do not write a case for it."
           },
           "timestamp": {
             "type": "string",
@@ -6734,7 +6734,8 @@
               }
             ],
             "nullable": true,
-            "description": "Result of an automated evidence fill.\nOnly populated for evidence fill activities. Null for all other activity types."
+            "description": "Result of an automated evidence fill. Always null: only evidence fill activities\ncould populate it, and those are never returned, so nothing can set it. Do not\nbranch on it.",
+            "deprecated": true
           },
           "sourceInformationRequestId": {
             "type": "string",
@@ -8464,7 +8465,7 @@
             }
           }
         },
-        "description": "Returns a paginated list of audits scoped to the audit firm.\n\nTo identify IRL (Information Request List) audits, check for the presence of the\n`auditorRequestListMetadata` field. This field is only present for IRL-based audits\nand will be `undefined` for standard audits.\n\nEach audit includes `segments`, the audit's scope. A live audit returns\nevery in-scope program and system segment; more than one segment does not\nby itself imply more than one framework. Soft-deleted audits return an\nempty list. The top-level `framework` field is deprecated; use `segments`\nfor in-scope frameworks.\n\nRate limit: 250 requests / minute.",
+        "description": "Returns a paginated list of audits scoped to the audit firm.\n\nTo identify IRL (Information Request List) audits, check for the presence of the\n`auditorRequestListMetadata` field. This field is only present for IRL-based audits\nand will be `undefined` for standard audits.\n\nEach audit includes `segments`, the audit's scope. A live audit returns\nevery in-scope program and system segment; more than one segment does not\nby itself imply more than one framework. The top-level `framework` field is\ndeprecated; use `segments` for in-scope frameworks.\n\nThis list may include soft-deleted audits so clients can reconcile\ndeletions. Check `deletionDate`; a deleted audit has an empty `segments`\nlist.\n\nRate limit: 250 requests / minute.",
         "summary": "List audits",
         "tags": [
           "Audits"
@@ -8492,7 +8493,7 @@
             }
           },
           {
-            "description": "Includes all audits that have changed since changedSinceDate.",
+            "description": "Includes all audits that have changed since changedSinceDate, including\nsoft-deleted audits whose deletionDate is on or after that timestamp.",
             "in": "query",
             "name": "changedSinceDate",
             "required": false,
@@ -8658,7 +8659,7 @@
             }
           }
         },
-        "description": "Returns a single audit by ID, scoped to the audit firm.\n\nTo identify IRL (Information Request List) audits, check for the presence of the\n`auditorRequestListMetadata` field. This field is only present for IRL-based audits\nand will be `undefined` for standard audits.\n\nThe response includes `segments`, the audit's scope. A live audit returns\nevery in-scope program and system segment; more than one segment does not\nby itself imply more than one framework. Soft-deleted audits return an\nempty list. The top-level `framework` field is deprecated; use `segments`\nfor in-scope frameworks.\n\nRate limit: 250 requests / minute.",
+        "description": "Returns a single audit by ID, scoped to the audit firm.\n\nTo identify IRL (Information Request List) audits, check for the presence of the\n`auditorRequestListMetadata` field. This field is only present for IRL-based audits\nand will be `undefined` for standard audits.\n\nThe response includes `segments`, the audit's scope. It returns every\nin-scope program and system segment; more than one segment does not by\nitself imply more than one framework. The top-level `framework` field is\ndeprecated; use `segments` for in-scope frameworks.\n\nThis endpoint returns 404 for a soft-deleted audit.\n\nRate limit: 250 requests / minute.",
         "summary": "Get audit by ID",
         "tags": [
           "Audits"
@@ -10702,7 +10703,7 @@
             }
           }
         },
-        "description": "Retrieves a paginated list of activity logs for an information request, providing\na complete audit trail of all changes and actions.\n\nThis endpoint supports delta synchronization via the `changedSinceDate` parameter,\nallowing efficient polling for changes without retrieving the entire dataset.\n\nPagination usage:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage` to see if more data exists\n3. If true, use `results.pageInfo.endCursor` as `pageCursor` in next request\n4. Repeat until `hasNextPage` is false\n\nDelta sync usage:\n1. Store the timestamp of your last sync\n2. Pass that timestamp as `changedSinceDate`\n3. Only activity created since that timestamp is returned\n4. Process updates to track all changes to the information request\n5. Update your last sync timestamp to the current time\n\nRate limit: 50 requests / minute.",
+        "description": "Retrieves a paginated list of activity logs for an information request, providing\nan audit trail of the changes and actions taken on it.\n\nActivity recording Vanta's automated preparation of a request is never returned by\nthis endpoint, so `fillOutcome` is always null here. Some internal status transitions\nare also withheld, and those are removed after a page is selected, so a page can\ncontain fewer entries than `pageSize` — or none at all — while more pages remain.\nFollow `results.pageInfo.hasNextPage` rather than treating a short or empty page as\nthe end of the list.\n\nThis endpoint supports delta synchronization via the `changedSinceDate` parameter,\nallowing efficient polling for changes without retrieving the entire dataset.\n\nPagination usage:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage` to see if more data exists\n3. If true, use `results.pageInfo.endCursor` as `pageCursor` in next request\n4. Repeat until `hasNextPage` is false\n\nDelta sync usage:\n1. Store the timestamp of your last sync\n2. Pass that timestamp as `changedSinceDate`\n3. Only activity created since that timestamp is returned\n4. Process updates to track all changes to the information request\n5. Update your last sync timestamp to the current time\n\nRate limit: 50 requests / minute.",
         "summary": "List information request activity",
         "tags": [
           "Audits"

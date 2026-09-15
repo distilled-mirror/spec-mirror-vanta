@@ -83,7 +83,8 @@
                                 },
                                 "fromUrl": {
                                   "type": "string",
-                                  "description": "The API endpoint URL associated with this vulnerability occurrence."
+                                  "description": "The API endpoint URL associated with this vulnerability occurrence.",
+                                  "nullable": true
                                 },
                                 "queryParams": {
                                   "items": {
@@ -103,7 +104,8 @@
                                     ]
                                   },
                                   "type": "array",
-                                  "description": "The API params associated with this vulnerability."
+                                  "description": "The API params associated with this vulnerability.",
+                                  "nullable": true
                                 },
                                 "headers": {
                                   "items": {
@@ -123,11 +125,13 @@
                                     ]
                                   },
                                   "type": "array",
-                                  "description": "The API headers associated with this vulnerability."
+                                  "description": "The API headers associated with this vulnerability.",
+                                  "nullable": true
                                 },
                                 "body": {
                                   "type": "string",
-                                  "description": "The body of the request passed to the API, with sensitive information redacted."
+                                  "description": "The body of the request passed to the API, with sensitive information redacted.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -164,16 +168,19 @@
                           },
                           "cveId": {
                             "type": "string",
-                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Vector": {
                             "type": "string",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Score": {
                             "type": "number",
                             "format": "float",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -245,7 +252,8 @@
                               },
                               "fromUrl": {
                                 "type": "string",
-                                "description": "The API endpoint URL associated with this vulnerability occurrence."
+                                "description": "The API endpoint URL associated with this vulnerability occurrence.",
+                                "nullable": true
                               },
                               "queryParams": {
                                 "items": {
@@ -265,7 +273,8 @@
                                   ]
                                 },
                                 "type": "array",
-                                "description": "The API params associated with this vulnerability."
+                                "description": "The API params associated with this vulnerability.",
+                                "nullable": true
                               },
                               "headers": {
                                 "items": {
@@ -285,11 +294,13 @@
                                   ]
                                 },
                                 "type": "array",
-                                "description": "The API headers associated with this vulnerability."
+                                "description": "The API headers associated with this vulnerability.",
+                                "nullable": true
                               },
                               "body": {
                                 "type": "string",
-                                "description": "The body of the request passed to the API, with sensitive information redacted."
+                                "description": "The body of the request passed to the API, with sensitive information redacted.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -326,16 +337,19 @@
                         },
                         "cveId": {
                           "type": "string",
-                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Vector": {
                           "type": "string",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Score": {
                           "type": "number",
                           "format": "float",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -441,7 +455,8 @@
                           "completionDate": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "If complete, the date of completion of the background check."
+                            "description": "If complete, the date of completion of the background check.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -519,7 +534,8 @@
                         "completionDate": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "If complete, the date of completion of the background check."
+                          "description": "If complete, the date of completion of the background check.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -853,7 +869,8 @@
                                 "lastOpenedTimestamp": {
                                   "type": "string",
                                   "format": "date-time",
-                                  "description": "The last time the application was opened."
+                                  "description": "The last time the application was opened.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -912,7 +929,8 @@
                                 },
                                 "isBootVolume": {
                                   "type": "boolean",
-                                  "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives."
+                                  "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -972,7 +990,8 @@
                                 "lastLoginTimestamp": {
                                   "type": "string",
                                   "format": "date-time",
-                                  "description": "The last time the user logged in to the device, if available."
+                                  "description": "The last time the user logged in to the device, if available.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -1015,7 +1034,8 @@
                           },
                           "owner": {
                             "type": "string",
-                            "description": "The email address of the owner of the system, if it's known."
+                            "description": "The email address of the owner of the system, if it's known.",
+                            "nullable": true
                           },
                           "passwordPolicy": {
                             "properties": {
@@ -1027,16 +1047,19 @@
                             },
                             "required": [
                               "minimumLengthRequirement"
-                            ]
+                            ],
+                            "nullable": true
                           },
                           "lastEnrolledTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment."
+                            "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment.",
+                            "nullable": true
                           },
                           "isXProtectEnabled": {
                             "type": "boolean",
-                            "description": "Is XProtect enabled on the system."
+                            "description": "Is XProtect enabled on the system.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -1139,7 +1162,8 @@
                               "lastOpenedTimestamp": {
                                 "type": "string",
                                 "format": "date-time",
-                                "description": "The last time the application was opened."
+                                "description": "The last time the application was opened.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -1198,7 +1222,8 @@
                               },
                               "isBootVolume": {
                                 "type": "boolean",
-                                "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives."
+                                "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -1258,7 +1283,8 @@
                               "lastLoginTimestamp": {
                                 "type": "string",
                                 "format": "date-time",
-                                "description": "The last time the user logged in to the device, if available."
+                                "description": "The last time the user logged in to the device, if available.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -1301,7 +1327,8 @@
                         },
                         "owner": {
                           "type": "string",
-                          "description": "The email address of the owner of the system, if it's known."
+                          "description": "The email address of the owner of the system, if it's known.",
+                          "nullable": true
                         },
                         "passwordPolicy": {
                           "properties": {
@@ -1313,16 +1340,19 @@
                           },
                           "required": [
                             "minimumLengthRequirement"
-                          ]
+                          ],
+                          "nullable": true
                         },
                         "lastEnrolledTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment."
+                          "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment.",
+                          "nullable": true
                         },
                         "isXProtectEnabled": {
                           "type": "boolean",
-                          "description": "Is XProtect enabled on the system."
+                          "description": "Is XProtect enabled on the system.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -1445,20 +1475,24 @@
                           },
                           "isReachable": {
                             "type": "boolean",
-                            "description": "Whether there is a code path to the vulnerable code in this package. This field is optional."
+                            "description": "Whether there is a code path to the vulnerable code in this package. This field is optional.",
+                            "nullable": true
                           },
                           "cveId": {
                             "type": "string",
-                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Vector": {
                             "type": "string",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Score": {
                             "type": "number",
                             "format": "float",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -1552,20 +1586,24 @@
                         },
                         "isReachable": {
                           "type": "boolean",
-                          "description": "Whether there is a code path to the vulnerable code in this package. This field is optional."
+                          "description": "Whether there is a code path to the vulnerable code in this package. This field is optional.",
+                          "nullable": true
                         },
                         "cveId": {
                           "type": "string",
-                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Vector": {
                           "type": "string",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Score": {
                           "type": "number",
                           "format": "float",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -1676,17 +1714,20 @@
                           "updatedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "When the secret was last updated."
+                            "description": "When the secret was last updated.",
+                            "nullable": true
                           },
                           "lastAccessedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "When the secret was last accessed."
+                            "description": "When the secret was last accessed.",
+                            "nullable": true
                           },
                           "expiresTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "When the secret is set to expire, if relevant."
+                            "description": "When the secret is set to expire, if relevant.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -1771,17 +1812,20 @@
                         "updatedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "When the secret was last updated."
+                          "description": "When the secret was last updated.",
+                          "nullable": true
                         },
                         "lastAccessedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "When the secret was last accessed."
+                          "description": "When the secret was last accessed.",
+                          "nullable": true
                         },
                         "expiresTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "When the secret is set to expire, if relevant."
+                          "description": "When the secret is set to expire, if relevant.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -1920,12 +1964,14 @@
                           "closedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "When the task was closed, if the task was closed. Required if `taskState` is `CLOSED`, otherwise must be absent."
+                            "description": "When the task was closed, if the task was closed. Required if `taskState` is `CLOSED`, otherwise must be absent.",
+                            "nullable": true
                           },
                           "updatedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "When the task was last updated."
+                            "description": "When the task was last updated.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -2043,12 +2089,14 @@
                         "closedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "When the task was closed, if the task was closed. Required if `taskState` is `CLOSED`, otherwise must be absent."
+                          "description": "When the task was closed, if the task was closed. Required if `taskState` is `CLOSED`, otherwise must be absent.",
+                          "nullable": true
                         },
                         "updatedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "When the task was last updated."
+                          "description": "When the task was last updated.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -2203,16 +2251,19 @@
                           },
                           "cveId": {
                             "type": "string",
-                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Vector": {
                             "type": "string",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                            "nullable": true
                           },
                           "cvss3Score": {
                             "type": "number",
                             "format": "float",
-                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                            "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -2342,16 +2393,19 @@
                         },
                         "cveId": {
                           "type": "string",
-                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerabilities and Exposures (CVE) identifier for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Vector": {
                           "type": "string",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 vector for the vulnerability. This field is optional.",
+                          "nullable": true
                         },
                         "cvss3Score": {
                           "type": "number",
                           "format": "float",
-                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional."
+                          "description": "The Common Vulnerability Scoring System (CVSS) version 3 score for the vulnerability. This field is optional.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -2472,7 +2526,8 @@
                           },
                           "mfaEnabled": {
                             "type": "boolean",
-                            "description": "This value is ignored if `authMethod` is SSO."
+                            "description": "This value is ignored if `authMethod` is SSO. Send `null` if the MFA state is unknown.",
+                            "nullable": true
                           },
                           "mfaMethods": {
                             "items": {
@@ -2488,7 +2543,7 @@
                               ]
                             },
                             "type": "array",
-                            "description": "The MFA settings of the user. This helps customers verify that their users are adequately protecting their accounts. This value is ignored if authMethod is SSO."
+                            "description": "The MFA settings of the user. This helps customers verify that their users are adequately protecting their accounts. This value is ignored if authMethod is SSO. Send an empty array if `mfaEnabled` is `null`, since an unknown MFA state says nothing about which methods are active."
                           },
                           "authMethod": {
                             "description": "How the user logs into the system. This is useful for us to validate security properties, like ensuring MFA is enabled if the user logs in with a password.",
@@ -2501,27 +2556,32 @@
                           },
                           "roleDescription": {
                             "type": "string",
-                            "description": "A human readable description of the user's role."
+                            "description": "A human readable description of the user's role.",
+                            "nullable": true
                           },
                           "updatedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "The last time the user was updated in the system."
+                            "description": "The last time the user was updated in the system.",
+                            "nullable": true
                           },
                           "deactivatedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "If the user is deactivated, the timestamp of that deactivation."
+                            "description": "If the user is deactivated, the timestamp of that deactivation.",
+                            "nullable": true
                           },
                           "lastLoginTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "The time at which the user last logged in."
+                            "description": "The time at which the user last logged in.",
+                            "nullable": true
                           },
                           "lastPasswordResetTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "The time at which the user last reset their password. Helps with future Vanta functionality."
+                            "description": "The time at which the user last reset their password. Helps with future Vanta functionality.",
+                            "nullable": true
                           },
                           "groupIds": {
                             "items": {
@@ -2529,7 +2589,8 @@
                               "description": "The individual group identifier."
                             },
                             "type": "array",
-                            "description": "If the user belongs to any groups/teams in the product, those corresponding group IDs. We'll map these to groups in our product in the future."
+                            "description": "If the user belongs to any groups/teams in the product, those corresponding group IDs. We'll map these to groups in our product in the future.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -2628,7 +2689,8 @@
                         },
                         "mfaEnabled": {
                           "type": "boolean",
-                          "description": "This value is ignored if `authMethod` is SSO."
+                          "description": "This value is ignored if `authMethod` is SSO. Send `null` if the MFA state is unknown.",
+                          "nullable": true
                         },
                         "mfaMethods": {
                           "items": {
@@ -2644,7 +2706,7 @@
                             ]
                           },
                           "type": "array",
-                          "description": "The MFA settings of the user. This helps customers verify that their users are adequately protecting their accounts. This value is ignored if authMethod is SSO."
+                          "description": "The MFA settings of the user. This helps customers verify that their users are adequately protecting their accounts. This value is ignored if authMethod is SSO. Send an empty array if `mfaEnabled` is `null`, since an unknown MFA state says nothing about which methods are active."
                         },
                         "authMethod": {
                           "description": "How the user logs into the system. This is useful for us to validate security properties, like ensuring MFA is enabled if the user logs in with a password.",
@@ -2657,27 +2719,32 @@
                         },
                         "roleDescription": {
                           "type": "string",
-                          "description": "A human readable description of the user's role."
+                          "description": "A human readable description of the user's role.",
+                          "nullable": true
                         },
                         "updatedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "The last time the user was updated in the system."
+                          "description": "The last time the user was updated in the system.",
+                          "nullable": true
                         },
                         "deactivatedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "If the user is deactivated, the timestamp of that deactivation."
+                          "description": "If the user is deactivated, the timestamp of that deactivation.",
+                          "nullable": true
                         },
                         "lastLoginTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "The time at which the user last logged in."
+                          "description": "The time at which the user last logged in.",
+                          "nullable": true
                         },
                         "lastPasswordResetTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "The time at which the user last reset their password. Helps with future Vanta functionality."
+                          "description": "The time at which the user last reset their password. Helps with future Vanta functionality.",
+                          "nullable": true
                         },
                         "groupIds": {
                           "items": {
@@ -2685,7 +2752,8 @@
                             "description": "The individual group identifier."
                           },
                           "type": "array",
-                          "description": "If the user belongs to any groups/teams in the product, those corresponding group IDs. We'll map these to groups in our product in the future."
+                          "description": "If the user belongs to any groups/teams in the product, those corresponding group IDs. We'll map these to groups in our product in the future.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -2829,7 +2897,8 @@
                           "trainingCompletedTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "The time at which this training course was completed by the user."
+                            "description": "The time at which this training course was completed by the user.",
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -2949,7 +3018,8 @@
                         "trainingCompletedTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "The time at which this training course was completed by the user."
+                          "description": "The time at which this training course was completed by the user.",
+                          "nullable": true
                         }
                       },
                       "required": [
@@ -3265,7 +3335,8 @@
                                 "lastOpenedTimestamp": {
                                   "type": "string",
                                   "format": "date-time",
-                                  "description": "The last time the application was opened."
+                                  "description": "The last time the application was opened.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -3319,7 +3390,8 @@
                                 },
                                 "isBootVolume": {
                                   "type": "boolean",
-                                  "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives."
+                                  "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -3378,7 +3450,8 @@
                                 "lastLoginTimestamp": {
                                   "type": "string",
                                   "format": "date-time",
-                                  "description": "The last time the user logged in to the device, if available."
+                                  "description": "The last time the user logged in to the device, if available.",
+                                  "nullable": true
                                 }
                               },
                               "required": [
@@ -3421,7 +3494,8 @@
                           },
                           "owner": {
                             "type": "string",
-                            "description": "The email address of the owner of the system, if it's known."
+                            "description": "The email address of the owner of the system, if it's known.",
+                            "nullable": true
                           },
                           "passwordPolicy": {
                             "properties": {
@@ -3433,12 +3507,14 @@
                             },
                             "required": [
                               "minimumLengthRequirement"
-                            ]
+                            ],
+                            "nullable": true
                           },
                           "lastEnrolledTimestamp": {
                             "type": "string",
                             "format": "date-time",
-                            "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment."
+                            "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment.",
+                            "nullable": true
                           },
                           "windowsSecurityProducts": {
                             "items": {
@@ -3482,7 +3558,8 @@
                               ]
                             },
                             "type": "array",
-                            "description": "A list of services that are monitored by Windows Security Center (WSC)."
+                            "description": "A list of services that are monitored by Windows Security Center (WSC).",
+                            "nullable": true
                           },
                           "windowsSecurityCenter": {
                             "properties": {
@@ -3554,7 +3631,8 @@
                               "internetSetting",
                               "userAccountControl",
                               "windowsSecurityCenterService"
-                            ]
+                            ],
+                            "nullable": true
                           }
                         },
                         "required": [
@@ -3653,7 +3731,8 @@
                               "lastOpenedTimestamp": {
                                 "type": "string",
                                 "format": "date-time",
-                                "description": "The last time the application was opened."
+                                "description": "The last time the application was opened.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -3707,7 +3786,8 @@
                               },
                               "isBootVolume": {
                                 "type": "boolean",
-                                "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives."
+                                "description": "Metadata about the boot volume helps Vanta skip checking volumes that aren't relevant, like USB Drives.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -3766,7 +3846,8 @@
                               "lastLoginTimestamp": {
                                 "type": "string",
                                 "format": "date-time",
-                                "description": "The last time the user logged in to the device, if available."
+                                "description": "The last time the user logged in to the device, if available.",
+                                "nullable": true
                               }
                             },
                             "required": [
@@ -3809,7 +3890,8 @@
                         },
                         "owner": {
                           "type": "string",
-                          "description": "The email address of the owner of the system, if it's known."
+                          "description": "The email address of the owner of the system, if it's known.",
+                          "nullable": true
                         },
                         "passwordPolicy": {
                           "properties": {
@@ -3821,12 +3903,14 @@
                           },
                           "required": [
                             "minimumLengthRequirement"
-                          ]
+                          ],
+                          "nullable": true
                         },
                         "lastEnrolledTimestamp": {
                           "type": "string",
                           "format": "date-time",
-                          "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment."
+                          "description": "A timestamp that indicates when the host computer was last enrolled within your system. If the computer has been un-enrolled and then re-enrolled, send data for the most recent enrollment.",
+                          "nullable": true
                         },
                         "windowsSecurityProducts": {
                           "items": {
@@ -3870,7 +3954,8 @@
                             ]
                           },
                           "type": "array",
-                          "description": "A list of services that are monitored by Windows Security Center (WSC)."
+                          "description": "A list of services that are monitored by Windows Security Center (WSC).",
+                          "nullable": true
                         },
                         "windowsSecurityCenter": {
                           "properties": {
@@ -3942,7 +4027,8 @@
                             "internetSetting",
                             "userAccountControl",
                             "windowsSecurityCenterService"
-                          ]
+                          ],
+                          "nullable": true
                         }
                       },
                       "required": [
