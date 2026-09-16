@@ -5564,6 +5564,484 @@
         "type": "object",
         "additionalProperties": false
       },
+      "RequirementNotApplied": {
+        "description": "A requirement the set does not apply to the personnel it covers.",
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              false
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "required"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AllPoliciesRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "acceptAll": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "required",
+          "acceptAll"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SelectedPoliciesRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "acceptAll": {
+            "type": "boolean",
+            "enum": [
+              false
+            ],
+            "nullable": false
+          },
+          "policyIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "required",
+          "acceptAll",
+          "policyIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PolicyAcceptanceRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/AllPoliciesRequired"
+          },
+          {
+            "$ref": "#/components/schemas/SelectedPoliciesRequired"
+          }
+        ]
+      },
+      "BackgroundCheckRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "cutoffDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Personnel hired after this date require a check. Null requires a check for everyone in scope."
+          }
+        },
+        "required": [
+          "required",
+          "cutoffDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "BackgroundCheckRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/BackgroundCheckRequired"
+          }
+        ]
+      },
+      "SecurityTrainingCategory": {
+        "type": "string",
+        "enum": [
+          "aiRisk",
+          "c5",
+          "ccpa",
+          "gdpr",
+          "general",
+          "hipaa",
+          "insiderThreat",
+          "pci",
+          "secureCode",
+          "socialEngineering"
+        ]
+      },
+      "SecurityTrainingRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "requiredCategories": {
+            "items": {
+              "$ref": "#/components/schemas/SecurityTrainingCategory"
+            },
+            "type": "array"
+          },
+          "requirementIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "required",
+          "requiredCategories",
+          "requirementIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SecurityTrainingRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/SecurityTrainingRequired"
+          }
+        ]
+      },
+      "PasswordManager": {
+        "type": "string",
+        "enum": [
+          "BITWARDEN",
+          "DASHLANE",
+          "ENPASS",
+          "KEEPER",
+          "LASTPASS",
+          "NORDPASS",
+          "ONEPASSWORD",
+          "PROTON",
+          "ROBOFORM",
+          "SAFEINCLOUD",
+          "TRENDMICRO"
+        ]
+      },
+      "DeviceMonitoringInstallPrompt": {
+        "type": "string",
+        "enum": [
+          "INSTALL_VANTA_AGENT",
+          "NONE"
+        ]
+      },
+      "DeviceMonitoringRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "preferredPasswordManagerId": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PasswordManager"
+              }
+            ],
+            "nullable": true
+          },
+          "installPrompt": {
+            "$ref": "#/components/schemas/DeviceMonitoringInstallPrompt"
+          }
+        },
+        "required": [
+          "required",
+          "preferredPasswordManagerId",
+          "installPrompt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "DeviceMonitoringRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/DeviceMonitoringRequired"
+          }
+        ]
+      },
+      "TaskRequirementSetCustomTask": {
+        "properties": {
+          "checklistTaskId": {
+            "type": "string"
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Applies to personnel whose employment start date is after this. Null applies to everyone."
+          }
+        },
+        "required": [
+          "checklistTaskId",
+          "effectiveDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CustomTasksRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "tasks": {
+            "items": {
+              "$ref": "#/components/schemas/TaskRequirementSetCustomTask"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "required",
+          "tasks"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CustomTasksRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/CustomTasksRequired"
+          }
+        ]
+      },
+      "OnboardingRequirements": {
+        "properties": {
+          "policyAcceptance": {
+            "$ref": "#/components/schemas/PolicyAcceptanceRequirement"
+          },
+          "backgroundCheck": {
+            "$ref": "#/components/schemas/BackgroundCheckRequirement"
+          },
+          "securityTraining": {
+            "$ref": "#/components/schemas/SecurityTrainingRequirement"
+          },
+          "deviceMonitoring": {
+            "$ref": "#/components/schemas/DeviceMonitoringRequirement"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomTasksRequirement"
+          }
+        },
+        "required": [
+          "policyAcceptance",
+          "backgroundCheck",
+          "securityTraining",
+          "deviceMonitoring",
+          "custom"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "DeactivateAllAccounts": {
+        "properties": {
+          "deactivateAll": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "deactivateAll"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "DeactivateSelectedAccounts": {
+        "properties": {
+          "deactivateAll": {
+            "type": "boolean",
+            "enum": [
+              false
+            ],
+            "nullable": false
+          },
+          "accountIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "deactivateAll",
+          "accountIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AccountSelection": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/DeactivateAllAccounts"
+          },
+          {
+            "$ref": "#/components/schemas/DeactivateSelectedAccounts"
+          }
+        ]
+      },
+      "AccountDeactivationRequired": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "accounts": {
+            "$ref": "#/components/schemas/AccountSelection"
+          }
+        },
+        "required": [
+          "required",
+          "accounts"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AccountDeactivationRequirement": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/AccountDeactivationRequired"
+          }
+        ]
+      },
+      "OffboardingRequirements": {
+        "properties": {
+          "accountDeactivation": {
+            "$ref": "#/components/schemas/AccountDeactivationRequirement"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomTasksRequirement"
+          }
+        },
+        "required": [
+          "accountDeactivation",
+          "custom"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "TaskRequirements": {
+        "properties": {
+          "onboarding": {
+            "$ref": "#/components/schemas/OnboardingRequirements"
+          },
+          "offboarding": {
+            "$ref": "#/components/schemas/OffboardingRequirements"
+          }
+        },
+        "required": [
+          "onboarding",
+          "offboarding"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "TaskRequirementSet": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The task requirement set's unique ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The task requirement set's display name."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "The task requirement set's description."
+          },
+          "pointOfContactId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The ID of the user who is the set's point of contact."
+          },
+          "isReusable": {
+            "type": "boolean",
+            "description": "Whether groups other than the one that owns this set may also apply it."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the set was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the set was last updated."
+          },
+          "taskRequirements": {
+            "$ref": "#/components/schemas/TaskRequirements",
+            "description": "The onboarding and offboarding requirements the set applies to its personnel."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "pointOfContactId",
+          "isReusable",
+          "createdAt",
+          "updatedAt",
+          "taskRequirements"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "CIA": {
         "type": "string",
         "enum": [
@@ -18892,7 +19370,7 @@
             }
           }
         },
-        "description": "Partially updates a group. At least one field must be provided.\n\nOmitted fields remain unchanged. Set `description` or `pointOfContactEmail` to `null` to clear that field. Groups imported from an identity provider (IdP) may update their description or point of contact, but cannot be renamed.",
+        "description": "Partially updates a group. At least one field must be provided.",
         "summary": "Update group",
         "tags": [
           "Groups"
