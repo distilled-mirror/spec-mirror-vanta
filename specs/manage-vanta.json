@@ -6042,6 +6042,233 @@
         "type": "object",
         "additionalProperties": false
       },
+      "PaginatedResponse_TaskRequirementSet_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VantaSecurityTrainingInput": {
+        "description": "A training supplied by Vanta.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "VANTA"
+            ],
+            "nullable": false
+          },
+          "category": {
+            "$ref": "#/components/schemas/SecurityTrainingCategory"
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "Completion instructions shown to personnel. Null uses Vanta's own."
+          },
+          "url": {
+            "type": "number",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "type",
+          "category",
+          "instructions",
+          "url"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CustomSecurityTrainingInput": {
+        "description": "A training the organization hosts itself.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOM"
+            ],
+            "nullable": false
+          },
+          "category": {
+            "$ref": "#/components/schemas/SecurityTrainingCategory"
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "Completion instructions shown to personnel."
+          },
+          "url": {
+            "type": "string",
+            "nullable": true,
+            "description": "Where personnel complete the training."
+          }
+        },
+        "required": [
+          "type",
+          "category",
+          "instructions",
+          "url"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IntegrationSecurityTrainingInput": {
+        "description": "A training completed in a connected integration",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INTEGRATION"
+            ],
+            "nullable": false
+          },
+          "category": {
+            "$ref": "#/components/schemas/SecurityTrainingCategory"
+          },
+          "instructions": {
+            "type": "number",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          },
+          "url": {
+            "type": "number",
+            "enum": [
+              null
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "type",
+          "category",
+          "instructions",
+          "url"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SecurityTrainingInput": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VantaSecurityTrainingInput"
+          },
+          {
+            "$ref": "#/components/schemas/CustomSecurityTrainingInput"
+          },
+          {
+            "$ref": "#/components/schemas/IntegrationSecurityTrainingInput"
+          }
+        ]
+      },
+      "SecurityTrainingRequiredInput": {
+        "properties": {
+          "required": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "nullable": false
+          },
+          "trainings": {
+            "items": {
+              "$ref": "#/components/schemas/SecurityTrainingInput"
+            },
+            "type": "array",
+            "description": "Replaces the set's trainings wholesale. At most one per category."
+          }
+        },
+        "required": [
+          "required",
+          "trainings"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SecurityTrainingRequirementInput": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/RequirementNotApplied"
+          },
+          {
+            "$ref": "#/components/schemas/SecurityTrainingRequiredInput"
+          }
+        ],
+        "description": "Security training is written as the trainings to require and read back as the\ncategories and requirement records the server resolved them into."
+      },
+      "OnboardingRequirementsInput": {
+        "properties": {
+          "policyAcceptance": {
+            "$ref": "#/components/schemas/PolicyAcceptanceRequirement"
+          },
+          "backgroundCheck": {
+            "$ref": "#/components/schemas/BackgroundCheckRequirement"
+          },
+          "securityTraining": {
+            "$ref": "#/components/schemas/SecurityTrainingRequirementInput"
+          },
+          "deviceMonitoring": {
+            "$ref": "#/components/schemas/DeviceMonitoringRequirement"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomTasksRequirement"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OffboardingRequirementsInput": {
+        "properties": {
+          "accountDeactivation": {
+            "$ref": "#/components/schemas/AccountDeactivationRequirement"
+          },
+          "custom": {
+            "$ref": "#/components/schemas/CustomTasksRequirement"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "TaskRequirementsInput": {
+        "properties": {
+          "onboarding": {
+            "$ref": "#/components/schemas/OnboardingRequirementsInput",
+            "description": "Onboarding requirements to replace. Omit a requirement to leave it unchanged."
+          },
+          "offboarding": {
+            "$ref": "#/components/schemas/OffboardingRequirementsInput",
+            "description": "Offboarding requirements to replace. Omit a requirement to leave it unchanged."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
       "CIA": {
         "type": "string",
         "enum": [
@@ -14177,6 +14404,283 @@
         ],
         "type": "object",
         "additionalProperties": false
+      },
+      "EvidenceSuggestionJobStatus": {
+        "type": "string",
+        "enum": [
+          "NOT_STARTED",
+          "GENERATING",
+          "EXPORTING",
+          "COMPLETED"
+        ],
+        "description": "Lifecycle of a suggestion job, from accepted through finished."
+      },
+      "EvidenceSuggestionJobScopeAll": {
+        "description": "Every in-scope control in the organization.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ALL"
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "EvidenceSuggestionJobScopeFramework": {
+        "description": "The controls mapped to one framework.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "FRAMEWORK"
+            ],
+            "nullable": false
+          },
+          "frameworkId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "frameworkId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "EvidenceSuggestionJobScopeControls": {
+        "description": "Exactly the controls named.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CONTROLS"
+            ],
+            "nullable": false
+          },
+          "controlIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "type",
+          "controlIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "EvidenceSuggestionJobScope": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobScopeAll"
+          },
+          {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobScopeFramework"
+          },
+          {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobScopeControls"
+          }
+        ],
+        "description": "Which controls a suggestion job covers."
+      },
+      "EvidenceSuggestionJobError": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "CONTROL_NOT_FOUND",
+              "CONTROL_IGNORED",
+              "AI_WORKFLOW_FAILED",
+              "EXPORT_FAILED"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "controlId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The control the error is about, or null for a job-level error."
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "controlId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "EvidenceSuggestionJobResult": {
+        "properties": {
+          "completedControls": {
+            "type": "number",
+            "format": "double",
+            "description": "Covered controls the job has finished, successfully or not."
+          },
+          "failedControls": {
+            "type": "number",
+            "format": "double",
+            "description": "Covered controls the job failed to process."
+          },
+          "totalSuggestions": {
+            "type": "number",
+            "format": "double",
+            "description": "Suggestions produced so far."
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSuggestionJobError"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "completedControls",
+          "failedControls",
+          "totalSuggestions",
+          "errors"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "EvidenceSuggestionJob": {
+        "description": "An asynchronous job that generates evidence suggestions for a set of\ncontrols.",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "Poll the job by this ID to follow its progress."
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobStatus"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobScope"
+          },
+          "result": {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobResult"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Null until the job finishes."
+          }
+        },
+        "required": [
+          "jobId",
+          "status",
+          "scope",
+          "result",
+          "createdAt",
+          "completedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateEvidenceSuggestionJobInputAll": {
+        "description": "Every custom control in the organization that is not ignored. An\norganization whose controls all come from the Vanta library has nothing in\nscope and is rejected.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "ALL"
+            ],
+            "nullable": false
+          },
+          "includeInactive": {
+            "type": "boolean",
+            "description": "Whether to include deactivated controls. Defaults to `false`."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateEvidenceSuggestionJobInputFramework": {
+        "description": "The framework's custom controls that are not ignored.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "FRAMEWORK"
+            ],
+            "nullable": false
+          },
+          "frameworkId": {
+            "type": "string",
+            "description": "A Vanta framework name, such as `soc2`, or a custom framework's ID."
+          },
+          "includeInactive": {
+            "type": "boolean",
+            "description": "Whether to include deactivated controls. Defaults to `false`."
+          }
+        },
+        "required": [
+          "type",
+          "frameworkId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateEvidenceSuggestionJobInputControls": {
+        "description": "Exactly the controls named.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CONTROLS"
+            ],
+            "nullable": false
+          },
+          "controlIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Duplicates are ignored. The cap bounds how much LLM work one request can\nqueue; use `ALL` or `FRAMEWORK` to cover a larger set.",
+            "minItems": 1,
+            "maxItems": 300
+          },
+          "includeInactive": {
+            "type": "boolean",
+            "description": "Whether to include deactivated controls. Defaults to `false`."
+          }
+        },
+        "required": [
+          "type",
+          "controlIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateEvidenceSuggestionJobInput": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/CreateEvidenceSuggestionJobInputAll"
+          },
+          {
+            "$ref": "#/components/schemas/CreateEvidenceSuggestionJobInputFramework"
+          },
+          {
+            "$ref": "#/components/schemas/CreateEvidenceSuggestionJobInputControls"
+          }
+        ],
+        "description": "Which controls to generate evidence suggestions for."
       },
       "Contract": {
         "properties": {
