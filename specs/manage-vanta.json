@@ -6255,6 +6255,37 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CreateTaskRequirementSetInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name for the set."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the set. Omit for none."
+          },
+          "isReusable": {
+            "type": "boolean",
+            "description": "Whether groups other than the one that owns this set may also apply it."
+          },
+          "onboarding": {
+            "$ref": "#/components/schemas/OnboardingRequirementsInput",
+            "description": "Onboarding requirements to apply. Omitted requirements default to not required."
+          },
+          "offboarding": {
+            "$ref": "#/components/schemas/OffboardingRequirementsInput",
+            "description": "Offboarding requirements to apply. Omitted requirements default to not required."
+          }
+        },
+        "required": [
+          "name",
+          "isReusable"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "TaskRequirementsInput": {
         "properties": {
           "onboarding": {
@@ -14552,6 +14583,31 @@
         "type": "object",
         "additionalProperties": false
       },
+      "EvidenceSuggestionJobControlStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "SUCCESS",
+          "FAILURE"
+        ],
+        "description": "Per-control progress within a job. `PENDING` at creation, then `SUCCESS` or\n`FAILURE` once the job records that control's outcome."
+      },
+      "EvidenceSuggestionJobControl": {
+        "properties": {
+          "controlId": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvidenceSuggestionJobControlStatus"
+          }
+        },
+        "required": [
+          "controlId",
+          "status"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "EvidenceSuggestionJob": {
         "description": "An asynchronous job that generates evidence suggestions for a set of\ncontrols.",
         "properties": {
@@ -14567,6 +14623,12 @@
           },
           "result": {
             "$ref": "#/components/schemas/EvidenceSuggestionJobResult"
+          },
+          "controls": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSuggestionJobControl"
+            },
+            "type": "array"
           },
           "createdAt": {
             "type": "string",
@@ -14584,6 +14646,7 @@
           "status",
           "scope",
           "result",
+          "controls",
           "createdAt",
           "completedAt"
         ],

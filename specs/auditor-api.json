@@ -45,6 +45,15 @@
           "INTERNAL"
         ]
       },
+      "AuditIrlGenerationStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "RUNNING",
+          "READY",
+          "FAILED"
+        ]
+      },
       "AuditSegmentKind": {
         "type": "string",
         "enum": [
@@ -265,6 +274,15 @@
             "$ref": "#/components/schemas/AuditFocus",
             "description": "Audit focus determines if the audit is internal or external facing"
           },
+          "irlGenerationStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuditIrlGenerationStatus"
+              }
+            ],
+            "nullable": true,
+            "description": "Generation status of this audit's Vanta-generated information request list\n(IRL). `PENDING`/`RUNNING` defer initial sync, `READY` permits a full sync,\nand `FAILED` is terminal. Null means the audit has no generated IRL."
+          },
           "auditorRequestListMetadata": {
             "properties": {
               "requestsSharedWithCustomer": {
@@ -305,6 +323,7 @@
           "modificationDate",
           "completionDate",
           "auditFocus",
+          "irlGenerationStatus",
           "segments"
         ],
         "type": "object",
@@ -3488,9 +3507,9 @@
       "WorkpaperStatus": {
         "type": "string",
         "enum": [
+          "READY",
           "NOT_GENERATED",
-          "IN_PROGRESS",
-          "READY"
+          "IN_PROGRESS"
         ]
       },
       "TestWorkpaperResponse": {
@@ -8427,6 +8446,7 @@
                             "modificationDate": "2024-03-07T21:25:56.000Z",
                             "completionDate": "2024-03-07T21:25:56.000Z",
                             "auditFocus": "EXTERNAL",
+                            "irlGenerationStatus": "READY",
                             "auditorRequestListMetadata": {
                               "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
                             },
@@ -8546,6 +8566,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
                       },
@@ -8630,6 +8651,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
                       },
@@ -13241,6 +13263,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
                       },
