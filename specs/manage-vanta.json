@@ -6361,6 +6361,77 @@
           "Enterprise Risk"
         ]
       },
+      "ScoreBreakdownEntryKind": {
+        "type": "string",
+        "enum": [
+          "SCORE",
+          "DIMENSION",
+          "FACTOR"
+        ],
+        "description": "`SCORE` is the root, `DIMENSION` is a direct child, and `FACTOR` is any deeper node."
+      },
+      "ScoreBreakdownEntryStatus": {
+        "type": "string",
+        "enum": [
+          "SCORED",
+          "MISSING",
+          "NOT_APPLICABLE"
+        ],
+        "description": "`SCORED` has an entered value; `MISSING` is unscored; `NOT_APPLICABLE`\nis excluded from its parent's calculation."
+      },
+      "ScoreBreakdownEntry": {
+        "description": "One node in the inherent risk scoring tree. Entries are ordered parents before\nchildren, with `parentId` linking each child to its parent.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Config node ID, unique within this breakdown. IDs can change when the scoring\nconfig is restructured; re-read the breakdown instead of storing them long-term."
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ScoreBreakdownEntryKind",
+            "description": "Whether this entry is the overall score, a dimension, or a factor."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of this node, from the scoring config."
+          },
+          "score": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Entered or calculated value, which may be fractional. `null` when unscored,\nnot applicable, or no aggregate value is available; see `status` for leaf nodes."
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ScoreBreakdownEntryStatus"
+              }
+            ],
+            "nullable": true,
+            "description": "Scoring status for a directly scored node. `null` for aggregates; read their\nchildren's statuses instead."
+          },
+          "scoreLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Matching option label for a directly scored node, or the register's range-band\nlabel for the overall score. `null` when no label applies, including non-root\naggregates and overall scores on registers using matrix-based severity."
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Parent entry's ID, or `null` for the overall score."
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "score",
+          "status",
+          "scoreLabel",
+          "parentId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "RiskScenario": {
         "properties": {
           "riskId": {
@@ -6474,6 +6545,14 @@
             "type": "string",
             "format": "date-time",
             "description": "The date this risk was identified. Matches the \"Identified Date\" field in the Vanta UI. Set by the customer when a risk is created; defaults to the scenario's creation time when not explicitly provided."
+          },
+          "scoreBreakdown": {
+            "items": {
+              "$ref": "#/components/schemas/ScoreBreakdownEntry"
+            },
+            "type": "array",
+            "nullable": true,
+            "description": "Overall inherent score, dimensions, and nested factors, ordered parents before\nchildren and linked by `parentId`. `null` when Flexible Risk Scoring is off or\nthe scenario has no score or matching config. Closed beta."
           }
         },
         "required": [
@@ -6495,7 +6574,8 @@
           "reviewStatus",
           "requiredApprovers",
           "type",
-          "identificationDate"
+          "identificationDate",
+          "scoreBreakdown"
         ],
         "type": "object",
         "additionalProperties": false
@@ -12305,6 +12385,21 @@
           "CONTROL_SHARING",
           "QUESTIONNAIRE"
         ]
+      },
+      "CreateTagCategoryInput": {
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "Must be unique within your organization. Surrounding whitespace is trimmed.",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "displayName"
+        ],
+        "type": "object",
+        "additionalProperties": false
       },
       "UserDefinedTag": {
         "properties": {
@@ -25117,7 +25212,36 @@
                             "reviewStatus": "DRAFT",
                             "requiredApprovers": [],
                             "type": "Risk Scenario",
-                            "identificationDate": "2024-03-07T18:46:05.944Z"
+                            "identificationDate": "2024-03-07T18:46:05.944Z",
+                            "scoreBreakdown": [
+                              {
+                                "id": "inherent-risk",
+                                "kind": "SCORE",
+                                "name": "Inherent risk",
+                                "score": 16,
+                                "status": null,
+                                "scoreLabel": "High",
+                                "parentId": null
+                              },
+                              {
+                                "id": "impact",
+                                "kind": "DIMENSION",
+                                "name": "Impact",
+                                "score": 4,
+                                "status": "SCORED",
+                                "scoreLabel": "High",
+                                "parentId": "inherent-risk"
+                              },
+                              {
+                                "id": "likelihood",
+                                "kind": "DIMENSION",
+                                "name": "Likelihood",
+                                "score": 4,
+                                "status": "SCORED",
+                                "scoreLabel": "High",
+                                "parentId": "inherent-risk"
+                              }
+                            ]
                           }
                         ],
                         "pageInfo": {
@@ -25332,7 +25456,36 @@
                       "reviewStatus": "DRAFT",
                       "requiredApprovers": [],
                       "type": "Risk Scenario",
-                      "identificationDate": "2024-03-07T18:46:05.944Z"
+                      "identificationDate": "2024-03-07T18:46:05.944Z",
+                      "scoreBreakdown": [
+                        {
+                          "id": "inherent-risk",
+                          "kind": "SCORE",
+                          "name": "Inherent risk",
+                          "score": 16,
+                          "status": null,
+                          "scoreLabel": "High",
+                          "parentId": null
+                        },
+                        {
+                          "id": "impact",
+                          "kind": "DIMENSION",
+                          "name": "Impact",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        },
+                        {
+                          "id": "likelihood",
+                          "kind": "DIMENSION",
+                          "name": "Likelihood",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        }
+                      ]
                     }
                   }
                 }
@@ -25400,7 +25553,36 @@
                       "reviewStatus": "DRAFT",
                       "requiredApprovers": [],
                       "type": "Risk Scenario",
-                      "identificationDate": "2024-03-07T18:46:05.944Z"
+                      "identificationDate": "2024-03-07T18:46:05.944Z",
+                      "scoreBreakdown": [
+                        {
+                          "id": "inherent-risk",
+                          "kind": "SCORE",
+                          "name": "Inherent risk",
+                          "score": 16,
+                          "status": null,
+                          "scoreLabel": "High",
+                          "parentId": null
+                        },
+                        {
+                          "id": "impact",
+                          "kind": "DIMENSION",
+                          "name": "Impact",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        },
+                        {
+                          "id": "likelihood",
+                          "kind": "DIMENSION",
+                          "name": "Likelihood",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        }
+                      ]
                     }
                   }
                 }
@@ -25465,7 +25647,36 @@
                       "reviewStatus": "DRAFT",
                       "requiredApprovers": [],
                       "type": "Risk Scenario",
-                      "identificationDate": "2024-03-07T18:46:05.944Z"
+                      "identificationDate": "2024-03-07T18:46:05.944Z",
+                      "scoreBreakdown": [
+                        {
+                          "id": "inherent-risk",
+                          "kind": "SCORE",
+                          "name": "Inherent risk",
+                          "score": 16,
+                          "status": null,
+                          "scoreLabel": "High",
+                          "parentId": null
+                        },
+                        {
+                          "id": "impact",
+                          "kind": "DIMENSION",
+                          "name": "Impact",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        },
+                        {
+                          "id": "likelihood",
+                          "kind": "DIMENSION",
+                          "name": "Likelihood",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        }
+                      ]
                     }
                   }
                 }
@@ -25542,7 +25753,36 @@
                       "reviewStatus": "DRAFT",
                       "requiredApprovers": [],
                       "type": "Risk Scenario",
-                      "identificationDate": "2024-03-07T18:46:05.944Z"
+                      "identificationDate": "2024-03-07T18:46:05.944Z",
+                      "scoreBreakdown": [
+                        {
+                          "id": "inherent-risk",
+                          "kind": "SCORE",
+                          "name": "Inherent risk",
+                          "score": 16,
+                          "status": null,
+                          "scoreLabel": "High",
+                          "parentId": null
+                        },
+                        {
+                          "id": "impact",
+                          "kind": "DIMENSION",
+                          "name": "Impact",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        },
+                        {
+                          "id": "likelihood",
+                          "kind": "DIMENSION",
+                          "name": "Likelihood",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        }
+                      ]
                     }
                   }
                 }
@@ -25838,7 +26078,36 @@
                       "reviewStatus": "DRAFT",
                       "requiredApprovers": [],
                       "type": "Risk Scenario",
-                      "identificationDate": "2024-03-07T18:46:05.944Z"
+                      "identificationDate": "2024-03-07T18:46:05.944Z",
+                      "scoreBreakdown": [
+                        {
+                          "id": "inherent-risk",
+                          "kind": "SCORE",
+                          "name": "Inherent risk",
+                          "score": 16,
+                          "status": null,
+                          "scoreLabel": "High",
+                          "parentId": null
+                        },
+                        {
+                          "id": "impact",
+                          "kind": "DIMENSION",
+                          "name": "Impact",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        },
+                        {
+                          "id": "likelihood",
+                          "kind": "DIMENSION",
+                          "name": "Likelihood",
+                          "score": 4,
+                          "status": "SCORED",
+                          "scoreLabel": "High",
+                          "parentId": "inherent-risk"
+                        }
+                      ]
                     }
                   }
                 }
