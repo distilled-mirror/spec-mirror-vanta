@@ -5200,6 +5200,10 @@
           "reason": {
             "type": "string",
             "description": "Reason for denying the access request."
+          },
+          "sendEmail": {
+            "type": "boolean",
+            "description": "Whether to email the requester to notify them that their request was\ndenied. The email includes the reason when one is provided. Defaults to\nfalse."
           }
         },
         "type": "object",
@@ -6005,11 +6009,6 @@
             "nullable": true,
             "description": "The task requirement set's description."
           },
-          "pointOfContactId": {
-            "type": "string",
-            "nullable": true,
-            "description": "The ID of the user who is the set's point of contact."
-          },
           "isReusable": {
             "type": "boolean",
             "description": "Whether groups other than the one that owns this set may also apply it."
@@ -6033,7 +6032,6 @@
           "id",
           "name",
           "description",
-          "pointOfContactId",
           "isReusable",
           "createdAt",
           "updatedAt",
@@ -26895,7 +26893,7 @@
             "description": "No content"
           }
         },
-        "description": "Denies an access request on a Trust Center.",
+        "description": "Denies an access request on a Trust Center. The requester is only notified\nby email when `sendEmail` is true.",
         "summary": "Deny Trust Center access request",
         "tags": [
           "Trust Centers"
