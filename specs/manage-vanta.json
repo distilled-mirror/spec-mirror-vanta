@@ -2298,6 +2298,24 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorRiskSection": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the risk section."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the risk section."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorRiskAttribute": {
         "properties": {
           "id": {
@@ -2326,6 +2344,10 @@
           "riskLevel": {
             "$ref": "#/components/schemas/VendorRiskLevel",
             "description": "Risk level of this attribute."
+          },
+          "riskSection": {
+            "$ref": "#/components/schemas/VendorRiskSection",
+            "description": "Risk section this attribute belongs to."
           }
         },
         "required": [
@@ -2334,7 +2356,8 @@
           "description",
           "vendorCategories",
           "enabled",
-          "riskLevel"
+          "riskLevel",
+          "riskSection"
         ],
         "type": "object",
         "additionalProperties": false
@@ -15105,6 +15128,116 @@
     }
   },
   "paths": {
+    "/business-units": {
+      "get": {
+        "operationId": "ListBusinessUnits",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_BusinessUnit_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "00206cf50ff41cfcc8b71921",
+                            "displayName": "Default Business Unit"
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "MDAyMDZjZjUwZmY0MWNmY2M4YjcxOTIx",
+                          "endCursor": "MDAyMDZjZjUwZmY0MWNmY2M4YjcxOTIx"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the business units for your organization.\nReturns 403 when business unit scoping is disabled for the domain.",
+        "summary": "List business units",
+        "tags": [
+          "Business Units"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
+    "/business-units/{businessUnitId}": {
+      "get": {
+        "operationId": "GetBusinessUnit",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BusinessUnit"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "00206cf50ff41cfcc8b71921",
+                      "displayName": "Default Business Unit"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Get a business unit by ID.\nReturns 403 when business unit scoping is disabled for the domain.",
+        "summary": "Get business unit by ID",
+        "tags": [
+          "Business Units"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "businessUnitId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/contracts": {
       "post": {
         "operationId": "UploadContract",
@@ -25170,6 +25303,146 @@
         ]
       }
     },
+    "/program-scopes": {
+      "get": {
+        "operationId": "ListProgramScopes",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_ProgramScope_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "6a1c939a52855e725c8d5824",
+                            "businessUnitId": "5f2c939a52855e725c8d5824",
+                            "frameworkId": "soc2"
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "NmExYzkzOWE1Mjg1NWU3MjVjOGQ1ODI0",
+                          "endCursor": "NmExYzkzOWE1Mjg1NWU3MjVjOGQ1ODI0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the program scopes for your organization. A program scope pairs a\nbusiness unit with a framework that business unit is in scope for.\nWhen business unit scoping is disabled, businessUnitId is null.",
+        "summary": "List program scopes",
+        "tags": [
+          "Program Scopes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "businessUnitIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "5f2c939a52855e725c8d5824"
+            ]
+          },
+          {
+            "in": "query",
+            "name": "frameworkIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "soc2"
+            ]
+          }
+        ]
+      }
+    },
+    "/program-scopes/{programScopeId}": {
+      "get": {
+        "operationId": "GetProgramScope",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgramScope"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "6a1c939a52855e725c8d5824",
+                      "businessUnitId": "5f2c939a52855e725c8d5824",
+                      "frameworkId": "soc2"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Get a program scope by ID.\nWhen business unit scoping is disabled, businessUnitId is null.",
+        "summary": "Get program scope by ID",
+        "tags": [
+          "Program Scopes"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "programScopeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/risk-scenarios": {
       "get": {
         "operationId": "ListRiskScenario",
@@ -31789,7 +32062,11 @@
                               "Other"
                             ],
                             "enabled": true,
-                            "riskLevel": "LOW"
+                            "riskLevel": "LOW",
+                            "riskSection": {
+                              "id": "b3a8f2c0e1d4a5b6c7d8e9f0",
+                              "name": "Types of data processed"
+                            }
                           }
                         ],
                         "pageInfo": {
