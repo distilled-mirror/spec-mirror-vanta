@@ -13099,37 +13099,6 @@
         "type": "object",
         "additionalProperties": false
       },
-      "QuestionnaireResponseMultipleChoiceAnswer": {
-        "enum": [
-          "NO",
-          "NOT_APPLICABLE",
-          "YES"
-        ],
-        "type": "string"
-      },
-      "DeprecatedQAutoAnswerForAPI": {
-        "description": "Frozen local clone of the shared `QAutoAnswer` shape, scoped to the\ndeprecated REST `answer` field so that field's contract does not track\nchanges to the shared answer-library type. No longer populated at runtime;\nremoval is tracked by CTAUTO-1973.",
-        "properties": {
-          "explanation": {
-            "type": "string",
-            "nullable": true
-          },
-          "multipleChoice": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/QuestionnaireResponseMultipleChoiceAnswer"
-              }
-            ],
-            "nullable": true
-          },
-          "multipleChoiceCustom": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "type": "object",
-        "additionalProperties": false
-      },
       "QuestionnaireResponseOriginType": {
         "type": "string",
         "enum": [
@@ -13475,11 +13444,6 @@
             "type": "string",
             "description": "The actual question text"
           },
-          "answer": {
-            "$ref": "#/components/schemas/DeprecatedQAutoAnswerForAPI",
-            "description": "The current answer for the question.",
-            "deprecated": true
-          },
           "editedBy": {
             "allOf": [
               {
@@ -13516,7 +13480,7 @@
           },
           "answerPartsValues": {
             "$ref": "#/components/schemas/Record_string.AnswerPartValue_",
-            "description": "Flat map of part-id → current value (via `toAnswerPartsValues`).\nSame key set as `answerPartsSchema.properties`. Absent when the\nresponse has no stored parts."
+            "description": "Flat map of part-id → current value (via `toAnswerPartsValues`).\nSame key set as `answerPartsSchema.properties`, which each question\ndefines for itself. Absent when the response has no stored parts."
           },
           "attachedEvidence": {
             "items": {
@@ -17805,7 +17769,16 @@
                             "id": "000000000000000000000001",
                             "question": "Do you encrypt customer data at rest?",
                             "isPendingAnswerGeneration": false,
-                            "answer": {
+                            "answerPartsSchema": {
+                              "type": "object",
+                              "properties": {
+                                "explanation": {
+                                  "type": "string",
+                                  "title": "Explanation"
+                                }
+                              }
+                            },
+                            "answerPartsValues": {
                               "explanation": "Yes, we encrypt all customer data at rest with AES-256."
                             },
                             "ownerAssignment": {
@@ -17893,7 +17866,16 @@
                       "id": "000000000000000000000001",
                       "question": "Do you encrypt customer data at rest?",
                       "isPendingAnswerGeneration": false,
-                      "answer": {
+                      "answerPartsSchema": {
+                        "type": "object",
+                        "properties": {
+                          "explanation": {
+                            "type": "string",
+                            "title": "Explanation"
+                          }
+                        }
+                      },
+                      "answerPartsValues": {
                         "explanation": "Yes, we encrypt all customer data at rest with AES-256."
                       },
                       "ownerAssignment": {
@@ -17953,7 +17935,16 @@
                       "id": "000000000000000000000001",
                       "question": "Do you encrypt customer data at rest?",
                       "isPendingAnswerGeneration": false,
-                      "answer": {
+                      "answerPartsSchema": {
+                        "type": "object",
+                        "properties": {
+                          "explanation": {
+                            "type": "string",
+                            "title": "Explanation"
+                          }
+                        }
+                      },
+                      "answerPartsValues": {
                         "explanation": "Yes, we encrypt all customer data at rest with AES-256."
                       },
                       "ownerAssignment": {
@@ -18025,7 +18016,16 @@
                       "id": "000000000000000000000001",
                       "question": "Do you encrypt customer data at rest?",
                       "isPendingAnswerGeneration": false,
-                      "answer": {
+                      "answerPartsSchema": {
+                        "type": "object",
+                        "properties": {
+                          "explanation": {
+                            "type": "string",
+                            "title": "Explanation"
+                          }
+                        }
+                      },
+                      "answerPartsValues": {
                         "explanation": "Yes, we encrypt all customer data at rest with AES-256."
                       },
                       "ownerAssignment": {
@@ -25367,6 +25367,7 @@
             }
           },
           {
+            "description": "Filter program scopes to those whose business unit ID matches any of the provided IDs.",
             "in": "query",
             "name": "businessUnitIdMatchesAny",
             "required": false,
@@ -25381,6 +25382,7 @@
             ]
           },
           {
+            "description": "Filter program scopes to those whose framework ID matches any of the provided IDs.",
             "in": "query",
             "name": "frameworkIdMatchesAny",
             "required": false,
