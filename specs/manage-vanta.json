@@ -1984,6 +1984,54 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorAssessmentQuestionCounts": {
+        "properties": {
+          "all": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The total number of visible questions.",
+            "minimum": 0
+          },
+          "needsReview": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of visible questions that need review.",
+            "minimum": 0
+          },
+          "notAnswered": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of visible questions without an answer.",
+            "minimum": 0
+          },
+          "flaggedByAI": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of visible questions flagged by Vanta AI.",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "all",
+          "needsReview",
+          "notAnswered",
+          "flaggedByAI"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionnaire": {
+        "properties": {
+          "questionCounts": {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionCounts"
+          }
+        },
+        "required": [
+          "questionCounts"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "AssessmentStatus": {
         "description": "The lifecycle status of an assessment:\n- NOT_STARTED: The assessment has not yet been started.\n- IN_PROGRESS: The assessment is underway.\n- COMPLETED: The assessment has been completed.",
         "enum": [
@@ -1992,6 +2040,146 @@
           "COMPLETED"
         ],
         "type": "string"
+      },
+      "VendorAssessmentWithQuestionnaire": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assessment."
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Unique identifier for the vendor."
+          },
+          "status": {
+            "$ref": "#/components/schemas/AssessmentStatus",
+            "description": "The lifecycle status of the assessment."
+          },
+          "completedByUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The Vanta user ID of the person who completed this assessment."
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The timestamp of when the assessment was started."
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The timestamp of when the assessment is due."
+          },
+          "overrideDueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "A manual override timestamp of when the assessment is due."
+          },
+          "completionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The timestamp of when the assessment was marked as completed."
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp of when the assessment was created."
+          },
+          "decision": {
+            "properties": {
+              "comments": {
+                "type": "string",
+                "nullable": true,
+                "description": "Comments about the assessment decision."
+              },
+              "lastUpdatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The timestamp of when the assessment decision was last set."
+              },
+              "status": {
+                "$ref": "#/components/schemas/AssessmentDecision",
+                "description": "The status of the current decision."
+              }
+            },
+            "required": [
+              "comments",
+              "lastUpdatedAt",
+              "status"
+            ],
+            "type": "object",
+            "nullable": true,
+            "description": "An object containing information about the decision of the assessment."
+          },
+          "assessmentType": {
+            "$ref": "#/components/schemas/AssessmentType",
+            "description": "The assessment type for this assessment."
+          },
+          "owner": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentOwner"
+              }
+            ],
+            "nullable": true,
+            "description": "The owner of this assessment, if assigned."
+          },
+          "questionnaire": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionnaire"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "vendorId",
+          "status",
+          "completedByUserId",
+          "startDate",
+          "dueDate",
+          "overrideDueDate",
+          "completionDate",
+          "createdDate",
+          "decision",
+          "assessmentType",
+          "owner"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorAssessmentWithQuestionnaire_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorAssessmentWithQuestionnaire"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
       },
       "VendorAssessment": {
         "properties": {
@@ -2094,33 +2282,6 @@
           "decision",
           "assessmentType",
           "owner"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "PaginatedResponse_VendorAssessment_": {
-        "properties": {
-          "results": {
-            "properties": {
-              "data": {
-                "items": {
-                  "$ref": "#/components/schemas/VendorAssessment"
-                },
-                "type": "array"
-              },
-              "pageInfo": {
-                "$ref": "#/components/schemas/PageInfo"
-              }
-            },
-            "required": [
-              "data",
-              "pageInfo"
-            ],
-            "type": "object"
-          }
-        },
-        "required": [
-          "results"
         ],
         "type": "object",
         "additionalProperties": false
@@ -8165,6 +8326,26 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OrganizationIdentity": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "displayName",
+          "region"
         ],
         "type": "object",
         "additionalProperties": false
@@ -14227,6 +14408,10 @@
       },
       "EditControlMetadataInput": {
         "properties": {
+          "implementationDetails": {
+            "type": "string",
+            "description": "How the control is implemented."
+          },
           "name": {
             "type": "string",
             "description": "A new name for the control."
@@ -32562,7 +32747,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedResponse_VendorAssessment_"
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorAssessmentWithQuestionnaire_"
                 },
                 "examples": {
                   "Example 1": {
@@ -32594,6 +32779,14 @@
                               "type": "USER",
                               "displayName": "Jane Doe",
                               "email": "jane.doe@example.com"
+                            },
+                            "questionnaire": {
+                              "questionCounts": {
+                                "all": 125,
+                                "needsReview": 125,
+                                "notAnswered": 116,
+                                "flaggedByAI": 0
+                              }
                             }
                           }
                         ],
