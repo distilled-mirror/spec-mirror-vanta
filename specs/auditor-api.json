@@ -2607,21 +2607,21 @@
               "$ref": "#/components/schemas/Section"
             },
             "type": "array",
-            "description": "Sections of a framework that this control satisfies"
+            "description": "Current framework sections this control satisfies within the audit\nsegments in which it is in scope."
           },
           "inScopeSegmentIds": {
             "items": {
               "type": "string"
             },
             "type": "array",
-            "description": "Audit segments in which this control is in scope. The array can be empty\nwhen a control is linked directly to the audit but has no framework-section\nmapping."
+            "description": "Audit segments in which this control is in scope. This can differ from\ncurrent framework mappings, and the array can be empty."
           },
           "assessments": {
             "items": {
               "$ref": "#/components/schemas/AuditControlAssessment"
             },
             "type": "array",
-            "description": "The auditor's assessments of this control, with one entry for each program\nsegment in which the control is in scope. More than one entry does not by\nitself imply more than one framework. Populated only for IRL audits when\nthe assessment feature is enabled; empty otherwise. Within an in-scope\nsegment a control with no recorded assessment coerces to `NOT_ASSESSED`; a\nsegment the control is not in scope for contributes no entry."
+            "description": "The auditor's assessments of this control, with one entry for each program\nsegment in which the control is in scope. More than one entry does not by\nitself imply more than one framework. Populated only for IRL audits when\nassessment access is allowed; empty otherwise. Within an in-scope\nsegment a control with no recorded assessment coerces to `NOT_ASSESSED`; a\nsegment the control is not in scope for contributes no entry."
           }
         },
         "required": [
