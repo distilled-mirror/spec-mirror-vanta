@@ -5813,17 +5813,18 @@
             ],
             "nullable": false
           },
-          "policyIds": {
+          "policyTypes": {
             "items": {
               "type": "string"
             },
-            "type": "array"
+            "type": "array",
+            "description": "Policy types personnel must accept."
           }
         },
         "required": [
           "required",
           "acceptAll",
-          "policyIds"
+          "policyTypes"
         ],
         "type": "object",
         "additionalProperties": false
@@ -5991,9 +5992,9 @@
           }
         ]
       },
-      "TaskRequirementSetCustomTask": {
+      "CustomRequirementAssignment": {
         "properties": {
-          "checklistTaskId": {
+          "id": {
             "type": "string"
           },
           "effectiveDate": {
@@ -6004,13 +6005,13 @@
           }
         },
         "required": [
-          "checklistTaskId",
+          "id",
           "effectiveDate"
         ],
         "type": "object",
         "additionalProperties": false
       },
-      "CustomTasksRequired": {
+      "CustomRequirementsRequired": {
         "properties": {
           "required": {
             "type": "boolean",
@@ -6019,27 +6020,27 @@
             ],
             "nullable": false
           },
-          "tasks": {
+          "requirements": {
             "items": {
-              "$ref": "#/components/schemas/TaskRequirementSetCustomTask"
+              "$ref": "#/components/schemas/CustomRequirementAssignment"
             },
             "type": "array"
           }
         },
         "required": [
           "required",
-          "tasks"
+          "requirements"
         ],
         "type": "object",
         "additionalProperties": false
       },
-      "CustomTasksRequirement": {
+      "CustomRequirements": {
         "anyOf": [
           {
             "$ref": "#/components/schemas/RequirementNotApplied"
           },
           {
-            "$ref": "#/components/schemas/CustomTasksRequired"
+            "$ref": "#/components/schemas/CustomRequirementsRequired"
           }
         ]
       },
@@ -6058,7 +6059,7 @@
             "$ref": "#/components/schemas/DeviceMonitoringRequirement"
           },
           "custom": {
-            "$ref": "#/components/schemas/CustomTasksRequirement"
+            "$ref": "#/components/schemas/CustomRequirements"
           }
         },
         "required": [
@@ -6156,7 +6157,7 @@
             "$ref": "#/components/schemas/AccountDeactivationRequirement"
           },
           "custom": {
-            "$ref": "#/components/schemas/CustomTasksRequirement"
+            "$ref": "#/components/schemas/CustomRequirements"
           }
         },
         "required": [
@@ -6235,6 +6236,105 @@
               "data": {
                 "items": {
                   "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CustomRequirementType": {
+        "type": "string",
+        "enum": [
+          "ONBOARDING",
+          "OFFBOARDING"
+        ]
+      },
+      "CustomRequirementOwnerType": {
+        "type": "string",
+        "enum": [
+          "ADMIN",
+          "EMPLOYEE"
+        ]
+      },
+      "CustomRequirement": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The custom requirement's unique ID."
+          },
+          "title": {
+            "type": "string",
+            "description": "The custom requirement's display title."
+          },
+          "requirementType": {
+            "$ref": "#/components/schemas/CustomRequirementType",
+            "description": "Whether the requirement applies during onboarding or offboarding."
+          },
+          "ownerType": {
+            "$ref": "#/components/schemas/CustomRequirementOwnerType",
+            "description": "Who completes the requirement. Offboarding requirements are always completed by an admin."
+          },
+          "textInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label for the requirement's text input, or null if it has none."
+          },
+          "fileInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label for the requirement's file input, or null if it has none."
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "Instructions for completing the requirement, or null if it has none."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the requirement was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date the requirement was last updated."
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "requirementType",
+          "ownerType",
+          "textInputLabel",
+          "fileInputLabel",
+          "instructions",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_CustomRequirement_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/CustomRequirement"
                 },
                 "type": "array"
               },
@@ -6423,7 +6523,7 @@
             "$ref": "#/components/schemas/DeviceMonitoringRequirement"
           },
           "custom": {
-            "$ref": "#/components/schemas/CustomTasksRequirement"
+            "$ref": "#/components/schemas/CustomRequirements"
           }
         },
         "type": "object",
@@ -6435,7 +6535,7 @@
             "$ref": "#/components/schemas/AccountDeactivationRequirement"
           },
           "custom": {
-            "$ref": "#/components/schemas/CustomTasksRequirement"
+            "$ref": "#/components/schemas/CustomRequirements"
           }
         },
         "type": "object",
@@ -15013,6 +15113,71 @@
           }
         ],
         "description": "Which controls to generate evidence suggestions for."
+      },
+      "EvidenceSuggestionEvidenceType": {
+        "type": "string",
+        "enum": [
+          "DOCUMENT",
+          "TEST"
+        ],
+        "description": "Whether a suggestion points at a document or at an automated test."
+      },
+      "EvidenceSuggestionStatus": {
+        "type": "string",
+        "enum": [
+          "READY_FOR_REVIEW",
+          "APPROVED",
+          "REJECTED"
+        ],
+        "description": "Where a suggestion stands with your organization. `READY_FOR_REVIEW` until\nsomeone decides on it, then `APPROVED` or `REJECTED`."
+      },
+      "EvidenceSuggestion": {
+        "description": "One piece of evidence Vanta proposes mapping to a control. A suggestion is a\nproposal only; it is not a mapping until you create one.\n\n`evidenceId` and `evidenceType` identify the suggestion within its control;\nthere is at most one suggestion per control and piece of evidence.",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "description": "The ID of the suggested document or test, per `evidenceType`."
+          },
+          "evidenceType": {
+            "$ref": "#/components/schemas/EvidenceSuggestionEvidenceType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/EvidenceSuggestionStatus"
+          }
+        },
+        "required": [
+          "evidenceId",
+          "evidenceType",
+          "status"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ControlEvidenceSuggestions": {
+        "description": "A control's evidence suggestions.\n\nSuggestions whose evidence has since been deactivated are left out, because\nthey can no longer be mapped.",
+        "properties": {
+          "controlId": {
+            "type": "string",
+            "description": "The control identifier as you supplied it in the request path."
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceSuggestion"
+            },
+            "type": "array"
+          },
+          "generationRequired": {
+            "type": "boolean",
+            "description": "Whether this control still needs an evidence suggestion job run for it."
+          }
+        },
+        "required": [
+          "controlId",
+          "suggestions",
+          "generationRequired"
+        ],
+        "type": "object",
+        "additionalProperties": false
       },
       "Contract": {
         "properties": {
