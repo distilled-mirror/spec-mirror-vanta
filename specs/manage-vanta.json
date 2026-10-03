@@ -23061,7 +23061,7 @@
             }
           }
         },
-        "description": "Mark an Answer Library entry as verified. Stamps `lastVerifiedAt` to the\ncurrent time; the entry's question, answer, tags, owner, and expiration\nare left unchanged.",
+        "description": "Mark an Answer Library entry as verified. Stamps `lastVerifiedAt` to the\ncurrent time and uses the supplied expiration date or configured review cadence.\nThe entry's question, answer, tags, and owner are left unchanged.",
         "summary": "Verify Answer Library entry",
         "tags": [
           "Knowledge Base"
