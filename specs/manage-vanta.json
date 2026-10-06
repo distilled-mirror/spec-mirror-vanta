@@ -24069,6 +24069,43 @@
         ]
       }
     },
+    "/organization": {
+      "get": {
+        "operationId": "GetOrganization",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationIdentity"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "69c55d93ca5e7c5217d4c993",
+                      "displayName": "Example Organization",
+                      "region": "us-east-1"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns the organization selected by the authenticated token.\nRequires vanta-api.all:read or vanta-api.all:write. No organization selector\nis accepted.\nThe region is the organization's home AWS region identifier (for example,\nus-east-1), not the serving endpoint.",
+        "summary": "Get connected organization",
+        "tags": [
+          "Organization"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": []
+      }
+    },
     "/people": {
       "get": {
         "operationId": "ListPeople",
@@ -24342,6 +24379,18 @@
             "required": false,
             "schema": {
               "$ref": "#/components/schemas/EmploymentStatus"
+            }
+          },
+          {
+            "description": "Filter people in scope for any of the given framework IDs. Non-viewable program scopes are ignored.",
+            "in": "query",
+            "name": "frameworkIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ]
