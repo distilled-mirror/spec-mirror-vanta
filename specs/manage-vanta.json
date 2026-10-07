@@ -7195,6 +7195,22 @@
           "ENTERPRISE"
         ]
       },
+      "RiskRegisterSettings": {
+        "properties": {
+          "applicableCustomFields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Labels of the custom fields that apply to risk scenarios in this register.\nThese are the labels accepted in the `customFields` field on risk-scenario\ncreate and update requests for this register. The enterprise register\nlists every custom field, since enterprise risks accept all of them."
+          }
+        },
+        "required": [
+          "applicableCustomFields"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "RiskRegister": {
         "description": "A risk register — a grouping of risk scenarios.\n\nRisk scenarios reference their register by **name** (the `riskRegister`\nfield on `CreateRiskScenarioInput` and `RiskScenario`). Domains with\nmultiple registers must specify a register name on create.",
         "properties": {
@@ -7219,6 +7235,10 @@
             "type": "string",
             "format": "date-time",
             "description": "When this risk register was created."
+          },
+          "settings": {
+            "$ref": "#/components/schemas/RiskRegisterSettings",
+            "description": "Configuration that applies to the risk scenarios in this register."
           }
         },
         "required": [
@@ -7226,7 +7246,8 @@
           "name",
           "description",
           "registerType",
-          "creationDate"
+          "creationDate",
+          "settings"
         ],
         "type": "object",
         "additionalProperties": false
@@ -24382,9 +24403,33 @@
             }
           },
           {
-            "description": "Filter people in scope for any of the given framework IDs. Non-viewable program scopes are ignored.",
+            "description": "Filter people in scope for any of the given framework IDs.",
             "in": "query",
             "name": "frameworkIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "description": "Filter people in scope for any of the given program scope IDs. Program scopes you cannot view are ignored. Blank IDs match nothing.",
+            "in": "query",
+            "name": "programScopeIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "description": "Filter people in scope for any of the given business unit IDs. Blank IDs match nothing.",
+            "in": "query",
+            "name": "businessUnitIdMatchesAny",
             "required": false,
             "schema": {
               "type": "array",
