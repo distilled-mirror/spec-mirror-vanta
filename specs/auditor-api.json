@@ -6675,6 +6675,7 @@
         "additionalProperties": false
       },
       "InformationRequestActivityType": {
+        "type": "string",
         "enum": [
           "AUDIT_DUPLICATION_AUDIT_TRAIL",
           "AUDIT_INFORMATION_REQUEST_EVIDENCE_FILL",
@@ -6683,8 +6684,7 @@
           "REMOVE_EVIDENCE",
           "SHARE_EVIDENCE_WITH_AUDITOR",
           "UPLOAD_EVIDENCE"
-        ],
-        "type": "string"
+        ]
       },
       "EvidenceFillOutcome": {
         "enum": [

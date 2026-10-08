@@ -6572,6 +6572,157 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CreateCustomOffboardingRequirementInput": {
+        "properties": {
+          "requirementType": {
+            "type": "string",
+            "enum": [
+              "OFFBOARDING"
+            ],
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the requirement."
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "Instructions for completing the requirement. Omit for none."
+          }
+        },
+        "required": [
+          "requirementType",
+          "title"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateCustomOnboardingRequirementInput": {
+        "properties": {
+          "requirementType": {
+            "type": "string",
+            "enum": [
+              "ONBOARDING"
+            ],
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the requirement."
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "Instructions for completing the requirement. Omit for none."
+          },
+          "ownerType": {
+            "$ref": "#/components/schemas/CustomRequirementOwnerType",
+            "description": "Who completes the requirement."
+          },
+          "textInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label for the requirement's text input. Omit for none."
+          },
+          "fileInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "Label for the requirement's file input. Omit for none."
+          }
+        },
+        "required": [
+          "requirementType",
+          "title",
+          "ownerType"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateCustomRequirementInput": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/CreateCustomOffboardingRequirementInput"
+          },
+          {
+            "$ref": "#/components/schemas/CreateCustomOnboardingRequirementInput"
+          }
+        ]
+      },
+      "UpdateCustomOffboardingRequirementInput": {
+        "properties": {
+          "requirementType": {
+            "type": "string",
+            "enum": [
+              "OFFBOARDING"
+            ],
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "New display title. Omit to preserve."
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "New instructions. Omit to preserve, null to clear."
+          }
+        },
+        "required": [
+          "requirementType"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateCustomOnboardingRequirementInput": {
+        "properties": {
+          "requirementType": {
+            "type": "string",
+            "enum": [
+              "ONBOARDING"
+            ],
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "New display title. Omit to preserve."
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true,
+            "description": "New instructions. Omit to preserve, null to clear."
+          },
+          "ownerType": {
+            "$ref": "#/components/schemas/CustomRequirementOwnerType",
+            "description": "Who completes the requirement. Omit to preserve."
+          },
+          "textInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "New label for the requirement's text input. Omit to preserve, null to clear."
+          },
+          "fileInputLabel": {
+            "type": "string",
+            "nullable": true,
+            "description": "New label for the requirement's file input. Omit to preserve, null to clear."
+          }
+        },
+        "required": [
+          "requirementType"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateCustomRequirementInput": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/UpdateCustomOffboardingRequirementInput"
+          },
+          {
+            "$ref": "#/components/schemas/UpdateCustomOnboardingRequirementInput"
+          }
+        ]
+      },
       "TaskRequirementsInput": {
         "properties": {
           "onboarding": {
@@ -7184,6 +7335,80 @@
         },
         "required": [
           "controlType"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScenarioVendorFindingMapping": {
+        "properties": {
+          "vendorFindingId": {
+            "type": "string",
+            "description": "The ID of a vendor finding mapped to the risk scenario."
+          }
+        },
+        "required": [
+          "vendorFindingId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioVendorFindingMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioVendorFindingMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddRiskScenarioVendorFindingMappingsInput": {
+        "properties": {
+          "vendorFindingIdsToLink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Vendor finding IDs to link. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "vendorFindingIdsToLink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RemoveRiskScenarioVendorFindingMappingsInput": {
+        "properties": {
+          "vendorFindingIdsToUnlink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Vendor finding IDs to unlink. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "vendorFindingIdsToUnlink"
         ],
         "type": "object",
         "additionalProperties": false
@@ -8410,6 +8635,13 @@
             ],
             "type": "object",
             "description": "The person's tasks summary, which aggregates their current status across\nall of their relevant tasks."
+          },
+          "programScopeIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Program scopes this person belongs to and the caller can view, when enabled and loaded."
           }
         },
         "required": [
@@ -23138,7 +23370,7 @@
                             "type": "FILE",
                             "title": "SOC 2 Type II Report",
                             "description": "Annual SOC 2 Type II report covering 2024.",
-                            "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                            "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                             "customerVisibility": "REQUEST_ACCESS",
                             "downloadPermission": "VIEW_AND_DOWNLOAD",
                             "isUsedInQuestionnaires": true,
@@ -23312,7 +23544,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
-                      "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                      "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
                       "isUsedInQuestionnaires": true,
@@ -23427,7 +23659,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
-                      "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                      "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
                       "isUsedInQuestionnaires": true,
@@ -23510,7 +23742,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
-                      "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                      "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
                       "isUsedInQuestionnaires": true,
@@ -23763,7 +23995,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
-                      "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                      "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
                       "isUsedInQuestionnaires": true,
@@ -23858,7 +24090,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
-                      "fileUrl": "https://vanta-uploaded-documents.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
+                      "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
                       "isUsedInQuestionnaires": true,
@@ -26760,6 +26992,135 @@
             }
           }
         ]
+      }
+    },
+    "/risk-scenarios/{riskScenarioId}/mappings/vendor-findings": {
+      "get": {
+        "operationId": "ListVendorFindingMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioVendorFindingMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List the vendor finding IDs mapped to a risk scenario, including findings\nattached directly to vendors and findings attached to security reviews.\nSupply the risk scenario's object ID.",
+        "summary": "List vendor findings mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddVendorFindingMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Link vendor findings, deriving each finding's vendor and security review.\nRepeated IDs within the request are deduplicated; already-linked findings\nare rejected. All IDs are validated before writes.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk add vendor finding mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRiskScenarioVendorFindingMappingsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RemoveVendorFindingMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Unlink vendor findings, preserving other mappings. Findings must exist in\nthis domain; an existing finding without a mapping is left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's object ID.",
+        "summary": "Bulk remove vendor finding mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveRiskScenarioVendorFindingMappingsInput"
+              }
+            }
+          }
+        }
       }
     },
     "/risk-scenarios/{riskScenarioId}/submit-for-approval": {
