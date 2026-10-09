@@ -7413,6 +7413,46 @@
         "type": "object",
         "additionalProperties": false
       },
+      "RiskScenarioEnterpriseRiskMapping": {
+        "properties": {
+          "riskId": {
+            "type": "string",
+            "description": "The Risk ID of the enterprise risk the risk scenario is linked to."
+          }
+        },
+        "required": [
+          "riskId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioEnterpriseRiskMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioEnterpriseRiskMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "RestRiskRegisterType": {
         "type": "string",
         "enum": [
@@ -11669,6 +11709,19 @@
             "type": "string",
             "description": "The framework's description."
           },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DRAFT",
+              "SNOOZED",
+              "ARCHIVED",
+              "NEW_UPGRADE",
+              null
+            ],
+            "nullable": true,
+            "description": "The framework's lifecycle status. Null means it has no lifecycle status.\nOmitted when includeStatus is false or status information is unavailable."
+          },
           "numControlsCompleted": {
             "type": "number",
             "format": "double",
@@ -11849,6 +11902,19 @@
           "description": {
             "type": "string",
             "description": "The framework's description."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "DRAFT",
+              "SNOOZED",
+              "ARCHIVED",
+              "NEW_UPGRADE",
+              null
+            ],
+            "nullable": true,
+            "description": "The framework's lifecycle status. Null means it has no lifecycle status.\nOmitted when includeStatus is false or status information is unavailable."
           },
           "numControlsCompleted": {
             "type": "number",
@@ -20253,6 +20319,7 @@
                         "data": [
                           {
                             "id": "soc2",
+                            "status": "ACTIVE",
                             "displayName": "SOC 2",
                             "shorthandName": "SOC 2",
                             "description": "AICPA standardized framework to prove a company’s security posture to prospective customers. For all US and international businesses.",
@@ -20304,6 +20371,16 @@
             "schema": {
               "$ref": "#/components/schemas/PageCursor"
             }
+          },
+          {
+            "description": "Whether to include lifecycle status. Defaults to true.",
+            "in": "query",
+            "name": "includeStatus",
+            "required": false,
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
           }
         ]
       }
@@ -20323,6 +20400,7 @@
                   "Example 1": {
                     "value": {
                       "id": "soc2",
+                      "status": "ACTIVE",
                       "displayName": "SOC 2",
                       "shorthandName": "SOC 2",
                       "description": "AICPA standardized framework to prove a company’s security posture to prospective customers. For all US and international businesses.",
@@ -20379,6 +20457,16 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "description": "Whether to include lifecycle status. Defaults to true.",
+            "in": "query",
+            "name": "includeStatus",
+            "required": false,
+            "schema": {
+              "default": true,
+              "type": "boolean"
             }
           }
         ]
@@ -26986,6 +27074,43 @@
           {
             "in": "path",
             "name": "controlId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/risk-scenarios/{riskScenarioId}/mappings/enterprise-risk": {
+      "get": {
+        "operationId": "ListEnterpriseRiskMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioEnterpriseRiskMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List the enterprise risk a risk scenario is linked to, identified by the\nenterprise risk's Risk ID. Supply the risk scenario's object ID.\nReturns at most one result. The list is empty when the scenario isn't\nlinked to an enterprise risk, when the scenario is itself an enterprise\nrisk, or when the linked enterprise risk is archived or not visible to the\ncaller.",
+        "summary": "List the enterprise risk mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
             "required": true,
             "schema": {
               "type": "string"
