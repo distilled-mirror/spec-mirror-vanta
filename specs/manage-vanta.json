@@ -6563,11 +6563,16 @@
           "offboarding": {
             "$ref": "#/components/schemas/OffboardingRequirementsInput",
             "description": "Offboarding requirements to apply. Omitted requirements default to not required."
+          },
+          "groupId": {
+            "type": "string",
+            "description": "Group to assign the new set to. Replaces the group's current set; if that set was private to the group, it is deleted."
           }
         },
         "required": [
           "name",
-          "isReusable"
+          "isReusable",
+          "groupId"
         ],
         "type": "object",
         "additionalProperties": false
@@ -6734,6 +6739,71 @@
             "description": "Offboarding requirements to replace. Omit a requirement to leave it unchanged."
           }
         },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SlaDurationUnit": {
+        "type": "string",
+        "enum": [
+          "HOURS",
+          "DAYS",
+          "BUSINESS_DAYS"
+        ]
+      },
+      "SlaSettings": {
+        "description": "An organization's remediation target for one SLA category.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The SLA category key. Built-in categories use a fixed key, such as\n`CRITICAL_VULN_SLA_DURATIONS`. Custom categories use a generated ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the SLA category."
+          },
+          "duration": {
+            "type": "number",
+            "format": "double",
+            "description": "How long remediation may take, measured in `durationUnit`."
+          },
+          "durationUnit": {
+            "$ref": "#/components/schemas/SlaDurationUnit",
+            "description": "The unit for `duration`."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "duration",
+          "durationUnit"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_SlaSettings_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/SlaSettings"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
         "type": "object",
         "additionalProperties": false
       },
@@ -14512,6 +14582,58 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CustomAsset": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of the custom inventory asset."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "The asset's name, or null if it has not been named."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "The asset's description, or null if unset."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_CustomAsset_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/CustomAsset"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "ControlDomain": {
         "enum": [
           "ARTIFICIAL_&_AUTONOMOUS_TECHNOLOGY",
@@ -17244,6 +17366,72 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/custom-assets": {
+      "get": {
+        "operationId": "ListCustomAssets",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_CustomAsset_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "670000000000000000000001",
+                            "name": "Office NAS",
+                            "description": "Shared storage in the main office"
+                          }
+                        ],
+                        "pageInfo": {
+                          "startCursor": null,
+                          "endCursor": null,
+                          "hasNextPage": false,
+                          "hasPreviousPage": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "List custom inventory assets, excluding deleted assets, newest first.\nWhen paginating, pass the previous endCursor as pageCursor.",
+        "summary": "List custom assets",
+        "tags": [
+          "Custom Assets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
             }
           }
         ]
@@ -20904,6 +21092,34 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "DeleteGroup",
+        "responses": {
+          "204": {
+            "description": "Group deleted"
+          }
+        },
+        "description": "Deletes a group by ID. The default group cannot be deleted. Groups created in Vanta must have no assigned people before deletion.",
+        "summary": "Delete group",
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       },
       "get": {
         "operationId": "GetGroup",
