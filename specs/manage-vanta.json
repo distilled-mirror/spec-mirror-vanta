@@ -4886,6 +4886,7 @@
               "cisv8",
               "cjis",
               "cmmc2",
+              "cps230",
               "cps234",
               "cri",
               "dora",
@@ -4967,6 +4968,7 @@
               "cisv8",
               "cjis",
               "cmmc2",
+              "cps230",
               "cps234",
               "cri",
               "dora",
@@ -7483,6 +7485,80 @@
         "type": "object",
         "additionalProperties": false
       },
+      "RiskScenarioIssueMapping": {
+        "properties": {
+          "issueId": {
+            "type": "string",
+            "description": "The ID of an issue mapped to the risk scenario."
+          }
+        },
+        "required": [
+          "issueId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioIssueMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioIssueMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddRiskScenarioIssueMappingsInput": {
+        "properties": {
+          "issueIdsToLink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Issue IDs to link. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "issueIdsToLink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RemoveRiskScenarioIssueMappingsInput": {
+        "properties": {
+          "issueIdsToUnlink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Issue IDs to unlink. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "issueIdsToUnlink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "RiskScenarioEnterpriseRiskMapping": {
         "properties": {
           "riskId": {
@@ -7519,6 +7595,80 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScenarioCustomAssetMapping": {
+        "properties": {
+          "customAssetId": {
+            "type": "string",
+            "description": "The ID of a custom asset mapped to the risk scenario."
+          }
+        },
+        "required": [
+          "customAssetId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioCustomAssetMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioCustomAssetMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddRiskScenarioCustomAssetMappingsInput": {
+        "properties": {
+          "customAssetIdsToLink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Custom asset IDs to link. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "customAssetIdsToLink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RemoveRiskScenarioCustomAssetMappingsInput": {
+        "properties": {
+          "customAssetIdsToUnlink": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Custom asset IDs to unlink. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "customAssetIdsToUnlink"
         ],
         "type": "object",
         "additionalProperties": false
@@ -9543,6 +9693,9 @@
             "type": "string",
             "nullable": true
           },
+          "createdAt": {
+            "type": "string"
+          },
           "lastUpdated": {
             "type": "string"
           },
@@ -9564,6 +9717,7 @@
           "expirationStatus",
           "ownerAssignment",
           "expirationDate",
+          "createdAt",
           "lastUpdated",
           "lastVerified",
           "tags"
@@ -23230,6 +23384,7 @@
                               "displayName": "Alex Rivera"
                             },
                             "expirationDate": "2025-12-31T00:00:00.000Z",
+                            "createdAt": "2024-09-03T14:22:17.000Z",
                             "lastUpdated": "2024-10-12T16:08:42.000Z",
                             "lastVerified": "2024-12-01T09:00:00.000Z",
                             "tags": [
@@ -23358,6 +23513,7 @@
                         "displayName": "Alex Rivera"
                       },
                       "expirationDate": "2025-12-31T00:00:00.000Z",
+                      "createdAt": "2024-09-03T14:22:17.000Z",
                       "lastUpdated": "2024-10-12T16:08:42.000Z",
                       "lastVerified": "2024-12-01T09:00:00.000Z",
                       "tags": [
@@ -23435,6 +23591,7 @@
                         "displayName": "Alex Rivera"
                       },
                       "expirationDate": "2025-12-31T00:00:00.000Z",
+                      "createdAt": "2024-09-03T14:22:17.000Z",
                       "lastUpdated": "2024-10-12T16:08:42.000Z",
                       "lastVerified": "2024-12-01T09:00:00.000Z",
                       "tags": [
@@ -23494,6 +23651,7 @@
                         "displayName": "Alex Rivera"
                       },
                       "expirationDate": "2025-12-31T00:00:00.000Z",
+                      "createdAt": "2024-09-03T14:22:17.000Z",
                       "lastUpdated": "2024-10-12T16:08:42.000Z",
                       "lastVerified": "2024-12-01T09:00:00.000Z",
                       "tags": [
@@ -23603,6 +23761,7 @@
                         "displayName": "Alex Rivera"
                       },
                       "expirationDate": "2025-12-31T00:00:00.000Z",
+                      "createdAt": "2024-09-03T14:22:17.000Z",
                       "lastUpdated": "2024-10-12T16:08:42.000Z",
                       "lastVerified": "2024-12-01T09:00:00.000Z",
                       "tags": [
@@ -27298,6 +27457,135 @@
         ]
       }
     },
+    "/risk-scenarios/{riskScenarioId}/mappings/custom-assets": {
+      "get": {
+        "operationId": "ListCustomAssetMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioCustomAssetMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List the IDs of existing custom assets explicitly mapped to a risk scenario.\nSupply the risk scenario's object ID.",
+        "summary": "List custom assets mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddCustomAssetMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Link custom assets to a risk scenario. Repeated IDs are deduplicated, and\nalready-linked assets are left unchanged. All assets must exist in this\ndomain; all IDs are validated before writes.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk add custom asset mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRiskScenarioCustomAssetMappingsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RemoveCustomAssetMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Unlink custom assets, preserving other mappings. Unlinked or deleted assets\nare left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's object ID.",
+        "summary": "Bulk remove custom asset mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveRiskScenarioCustomAssetMappingsInput"
+              }
+            }
+          }
+        }
+      }
+    },
     "/risk-scenarios/{riskScenarioId}/mappings/enterprise-risk": {
       "get": {
         "operationId": "ListEnterpriseRiskMappings",
@@ -27333,6 +27621,135 @@
             }
           }
         ]
+      }
+    },
+    "/risk-scenarios/{riskScenarioId}/mappings/issues": {
+      "get": {
+        "operationId": "ListIssueMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioIssueMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List the IDs of the issues mapped to a risk scenario.\nSupply the risk scenario's object ID.",
+        "summary": "List issues mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddIssueMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Link issues to a risk scenario. Repeated IDs within the request are\ndeduplicated, and issues that are already linked are left unchanged.\nEvery issue must exist in this domain; otherwise no mappings are added.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk add issue mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRiskScenarioIssueMappingsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RemoveIssueMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Unlink issues from a risk scenario, preserving other mappings. Every issue\nmust exist in this domain and be linked to the risk scenario; otherwise no\nmappings are removed. Repeated IDs within the request are deduplicated.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk remove issue mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveRiskScenarioIssueMappingsInput"
+              }
+            }
+          }
+        }
       }
     },
     "/risk-scenarios/{riskScenarioId}/mappings/vendor-findings": {

@@ -3570,6 +3570,13 @@
             "description": "Vendor name.",
             "example": "Acme Corp"
           },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this vendor is in scope for.\nOmitted when segment scoping is disabled."
+          },
           "inherentRisk": {
             "$ref": "#/components/schemas/AuditVendorRiskLevel",
             "description": "Inherent risk level of the vendor.",
@@ -4001,6 +4008,13 @@
             "description": "Display name of the group.",
             "example": "Engineering"
           },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this group is in scope for.\nOmitted when segment scoping is disabled."
+          },
           "members": {
             "type": "number",
             "format": "double",
@@ -4241,6 +4255,13 @@
             "type": "string",
             "description": "Email address of the person - always present.",
             "example": "john.doe@example.com"
+          },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this person is in scope for.\nOmitted when segment scoping is disabled."
           },
           "jobTitle": {
             "type": "string",
@@ -4496,6 +4517,13 @@
             "type": "string",
             "description": "Account name or email address (primary identifier).",
             "example": "john.doe@example.com"
+          },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this account is in scope for.\nOmitted when segment attribution is unavailable or scoping is disabled."
           },
           "owner": {
             "type": "string",
@@ -5193,6 +5221,13 @@
             "type": "string",
             "description": "Display name of the integration.",
             "example": "GitHub"
+          },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this integration is in scope for.\nOmitted when segment scoping is disabled."
           },
           "tags": {
             "items": {
@@ -7060,6 +7095,13 @@
             "description": "Code change title (e.g. PR title) - always present.",
             "example": "fix-auth-bug"
           },
+          "segmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this code change is in scope for.\nOmitted when segment scoping is disabled."
+          },
           "identifier": {
             "type": "string",
             "description": "Code change identifier (e.g. PR number).",
@@ -8728,6 +8770,9 @@
                           {
                             "id": "code_change_12345",
                             "codeChange": "fix-auth-bug",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "identifier": "101",
                             "service": "github",
                             "repository": "vanta/obsidian",
@@ -11552,6 +11597,9 @@
                           {
                             "id": "github",
                             "name": "GitHub",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "tags": [
                               "Vulnerabilities",
                               "Code changes"
@@ -11923,6 +11971,9 @@
                           {
                             "id": "5f2c939a52855e725c8d5824",
                             "name": "Acme Corp",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "vendorCategory": "SaaS",
                             "inherentRisk": "HIGH",
                             "status": "ACTIVE",
@@ -12626,6 +12677,9 @@
                           {
                             "id": "5f2c939a52855e725c8d5824",
                             "accountName": "john.doe@example.com",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "owner": "John Doe",
                             "role": [
                               "Admin"
@@ -12737,6 +12791,9 @@
                           {
                             "id": "5f2c939a52855e725c8d5824",
                             "name": "Engineering",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "members": 42,
                             "source": "Okta",
                             "tasks": [
@@ -12865,6 +12922,9 @@
                             "id": "person_12345",
                             "name": "John Doe",
                             "email": "john.doe@example.com",
+                            "segmentIds": [
+                              "5f2c939a52855e725c8d5825"
+                            ],
                             "jobTitle": "Software Engineer",
                             "employmentStatus": "CURRENTLY_EMPLOYED",
                             "startDate": "2021-01-15",
