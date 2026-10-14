@@ -2550,6 +2550,61 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorDocumentTypeCatalogEntry": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the document type. Use this to save a mapping to a document type; use the `type` field when uploading a document."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the document type."
+          },
+          "type": {
+            "type": "string",
+            "description": "Value to provide in the `type` field when uploading a vendor document."
+          },
+          "isCustom": {
+            "type": "boolean",
+            "description": "Whether this document type was created by your organization."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "isCustom"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorDocumentTypeCatalogEntry_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorDocumentTypeCatalogEntry"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorAssessmentTypeLifecycleStatus": {
         "description": "The lifecycle status of a vendor assessment type:\n- ACTIVE: The assessment type is available for use.\n- ARCHIVED: The assessment type has been archived and is kept for historical reference.",
         "enum": [
@@ -7555,6 +7610,80 @@
         },
         "required": [
           "issueIdsToUnlink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScenarioIntegrationMapping": {
+        "properties": {
+          "integrationId": {
+            "type": "string",
+            "description": "The service ID of an integration linked as a whole to the risk scenario."
+          }
+        },
+        "required": [
+          "integrationId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioIntegrationMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioIntegrationMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddRiskScenarioIntegrationMappingsInput": {
+        "properties": {
+          "integrationIdsToAdd": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Integration service IDs to link. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "integrationIdsToAdd"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RemoveRiskScenarioIntegrationMappingsInput": {
+        "properties": {
+          "integrationIdsToRemove": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Integration service IDs to unlink. Repeated IDs in this request are deduplicated.",
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "integrationIdsToRemove"
         ],
         "type": "object",
         "additionalProperties": false
@@ -27621,6 +27750,135 @@
             }
           }
         ]
+      }
+    },
+    "/risk-scenarios/{riskScenarioId}/mappings/integrations": {
+      "get": {
+        "operationId": "ListIntegrationMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioIntegrationMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List integrations linked as a whole to a risk scenario. Integrations with\nindividually selected accounts are listed through account mappings instead.\nSupply the risk scenario's object ID.",
+        "summary": "List integrations mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddIntegrationMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Link whole integrations using service IDs such as aws. This includes all\naccounts and replaces individual account selections for those integrations.\nRepeated IDs are deduplicated; already-linked integrations remain linked.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk add integration mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRiskScenarioIntegrationMappingsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RemoveIntegrationMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Unlink whole integrations and any individual account selections within them,\npreserving mappings for other integrations. Repeated IDs are deduplicated;\nintegrations already out of scope remain unchanged.\nSupply the risk scenario's object ID.",
+        "summary": "Bulk remove integration mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveRiskScenarioIntegrationMappingsInput"
+              }
+            }
+          }
+        }
       }
     },
     "/risk-scenarios/{riskScenarioId}/mappings/issues": {
