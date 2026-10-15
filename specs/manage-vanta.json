@@ -4957,6 +4957,7 @@
               "iso27001",
               "iso27001_2022",
               "iso27017",
+              "iso27017_2026",
               "iso27018",
               "iso27701",
               "iso27701_2025",
@@ -5039,6 +5040,7 @@
               "iso27001",
               "iso27001_2022",
               "iso27017",
+              "iso27017_2026",
               "iso27018",
               "iso27701",
               "iso27701_2025",
@@ -7798,6 +7800,91 @@
         },
         "required": [
           "customAssetIdsToUnlink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScenarioAccountMapping": {
+        "properties": {
+          "serviceId": {
+            "type": "string",
+            "description": "The integration's service identifier, returned as integrationId by GET /v1/integrations."
+          },
+          "accountId": {
+            "type": "string",
+            "description": "The Vanta connection ID, returned as connections[].connectionId by GET /v1/integrations."
+          },
+          "subunitId": {
+            "type": "string",
+            "description": "The provider's subunit identifier for an organization connection, such as an AWS account ID.\nOmit for standalone connections."
+          }
+        },
+        "required": [
+          "serviceId",
+          "accountId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskScenarioAccountMapping_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskScenarioAccountMapping"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AddRiskScenarioAccountMappingsInput": {
+        "properties": {
+          "accountsToLink": {
+            "items": {
+              "$ref": "#/components/schemas/RiskScenarioAccountMapping"
+            },
+            "type": "array",
+            "description": "Accounts to link. Repeated account selections in this request are deduplicated.",
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "accountsToLink"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RemoveRiskScenarioAccountMappingsInput": {
+        "properties": {
+          "accountsToUnlink": {
+            "items": {
+              "$ref": "#/components/schemas/RiskScenarioAccountMapping"
+            },
+            "type": "array",
+            "description": "Accounts to unlink. Repeated account selections in this request are deduplicated.",
+            "minItems": 1,
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "accountsToUnlink"
         ],
         "type": "object",
         "additionalProperties": false
@@ -15011,7 +15098,8 @@
               {
                 "type": "string"
               }
-            ]
+            ],
+            "description": "The framework's id, such as `soc2` or the id of a custom framework. The `FrameworkId` enum values are deprecated aliases that are still accepted."
           },
           "sectionId": {
             "type": "string"
@@ -20857,6 +20945,35 @@
       }
     },
     "/frameworks/{frameworkId}": {
+      "delete": {
+        "operationId": "DeleteCustomFramework",
+        "responses": {
+          "204": {
+            "description": "Custom framework deleted"
+          }
+        },
+        "description": "Deletes a custom framework and its requirements and control mappings. Controls,\nevidence, and mappings to other frameworks remain. Any associated audit blocks\ndeletion. Built-in frameworks cannot be deleted.",
+        "summary": "Delete a custom framework",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "ID of the custom framework to delete.",
+            "in": "path",
+            "name": "frameworkId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
       "get": {
         "operationId": "GetFramework",
         "responses": {
@@ -25227,7 +25344,7 @@
             }
           },
           {
-            "description": "Filter people in scope for any of the given framework IDs.",
+            "description": "Filter people in scope for any of the given framework IDs. Framework IDs are built-in framework identifiers or custom framework ObjectIds. Blank IDs match nothing.",
             "in": "query",
             "name": "frameworkIdMatchesAny",
             "required": false,
@@ -27584,6 +27701,135 @@
             }
           }
         ]
+      }
+    },
+    "/risk-scenarios/{riskScenarioId}/mappings/accounts": {
+      "get": {
+        "operationId": "ListAccountMappings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskScenarioAccountMapping_"
+                }
+              }
+            }
+          }
+        },
+        "description": "List explicitly linked integration accounts. Accounts included through a\nwhole-integration mapping are represented by the integrations collection.\nEach mapping has a serviceId, Vanta connection accountId, and optional subunitId.\nReplay pagination cursors exactly as returned.\nSupply the risk scenario's object ID.",
+        "summary": "List accounts mapped to a risk scenario",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AddAccountMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Link connected integration accounts using separate serviceId, accountId,\nand optional subunitId fields. Repeated selections are deduplicated.\nLinking an account already included through\nits whole integration is rejected. Supply the risk scenario's object ID.",
+        "summary": "Bulk add account mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRiskScenarioAccountMappingsInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "RemoveAccountMappings",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Unlink integration accounts, preserving other mappings. Unlinking an\naccount included through its whole integration keeps only the remaining\nconnected accounts linked; accounts connected later remain excluded.\nRepeated selections are deduplicated. Supply the risk scenario's object ID.",
+        "summary": "Bulk remove account mappings",
+        "tags": [
+          "Risk Scenarios"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskScenarioId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveRiskScenarioAccountMappingsInput"
+              }
+            }
+          }
+        }
       }
     },
     "/risk-scenarios/{riskScenarioId}/mappings/custom-assets": {
