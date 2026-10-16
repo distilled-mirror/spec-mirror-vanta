@@ -2605,6 +2605,113 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorCategory": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the vendor category."
+          },
+          "label": {
+            "type": "string",
+            "description": "Display label of the vendor category."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the vendor category, if set."
+          },
+          "isSystem": {
+            "type": "boolean",
+            "description": "Whether the category is provided by Vanta and cannot be changed."
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description",
+          "isSystem"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorCategory_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorCategory"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateVendorCategoryInput": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Display label, unique ignoring case.",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Description of the category.",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateVendorCategoryInput": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "New display label. Omit to keep the current label.",
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "New description. Pass null to clear it, or omit to keep it.",
+            "maxLength": 500
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "DeleteVendorCategoryInput": {
+        "properties": {
+          "replacementCategoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Category to move vendors to, or null to leave them uncategorized."
+          }
+        },
+        "required": [
+          "replacementCategoryId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorAssessmentTypeLifecycleStatus": {
         "description": "The lifecycle status of a vendor assessment type:\n- ACTIVE: The assessment type is available for use.\n- ARCHIVED: The assessment type has been archived and is kept for historical reference.",
         "enum": [
@@ -21825,7 +21932,10 @@
                               "disabled": null
                             }
                           }
-                        }
+                        },
+                        "programScopeIds": [
+                          "6a1c939a52855e725c8d5824"
+                        ]
                       }
                     ]
                   }
@@ -22016,7 +22126,10 @@
                             "disabled": null
                           }
                         }
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }
@@ -22227,7 +22340,10 @@
                             "disabled": null
                           }
                         }
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }
@@ -25233,7 +25349,10 @@
                                   "disabled": null
                                 }
                               }
-                            }
+                            },
+                            "programScopeIds": [
+                              "6a1c939a52855e725c8d5824"
+                            ]
                           }
                         ],
                         "pageInfo": {
@@ -25788,7 +25907,10 @@
                             "disabled": null
                           }
                         }
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }
@@ -25978,7 +26100,10 @@
                             "disabled": null
                           }
                         }
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }
@@ -26206,7 +26331,10 @@
                             "disabled": null
                           }
                         }
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }
@@ -26402,7 +26530,10 @@
                         "startDate": "2021-01-01T00:00:00.000Z",
                         "endDate": null,
                         "status": "ACTIVE"
-                      }
+                      },
+                      "programScopeIds": [
+                        "6a1c939a52855e725c8d5824"
+                      ]
                     }
                   }
                 }

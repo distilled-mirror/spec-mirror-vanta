@@ -45,6 +45,13 @@
           "INTERNAL"
         ]
       },
+      "AuditView": {
+        "type": "string",
+        "enum": [
+          "FULL",
+          "CONTROLLED"
+        ]
+      },
       "AuditIrlGenerationStatus": {
         "type": "string",
         "enum": [
@@ -274,6 +281,10 @@
             "$ref": "#/components/schemas/AuditFocus",
             "description": "Audit focus determines if the audit is internal or external facing"
           },
+          "auditView": {
+            "$ref": "#/components/schemas/AuditView",
+            "description": "How much population data the auditor can see: `FULL` (Full Audit View) or `CONTROLLED` (Controlled Audit View). Some population endpoints serve only one view; each endpoint's description says which."
+          },
           "irlGenerationStatus": {
             "allOf": [
               {
@@ -323,6 +334,7 @@
           "modificationDate",
           "completionDate",
           "auditFocus",
+          "auditView",
           "irlGenerationStatus",
           "segments"
         ],
@@ -8489,6 +8501,7 @@
                             "modificationDate": "2024-03-07T21:25:56.000Z",
                             "completionDate": "2024-03-07T21:25:56.000Z",
                             "auditFocus": "EXTERNAL",
+                            "auditView": "FULL",
                             "irlGenerationStatus": "READY",
                             "auditorRequestListMetadata": {
                               "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
@@ -8609,6 +8622,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "auditView": "FULL",
                       "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
@@ -8694,6 +8708,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "auditView": "FULL",
                       "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
@@ -8789,7 +8804,7 @@
             }
           }
         },
-        "description": "Retrieves code changes population data for an audit.\n\nThis endpoint provides access to code change records (pull requests)\nvisible to auditors during an audit engagement.\n\nSupports filtering by:\n- `search`: Searches code change titles and repository names (case-insensitive)\n- `sourcesMatchesAny`: Filters by version control source (accepted values: github, gitlab, bitbucket, azuredevops)\n- `closedAfterDate` / `closedBeforeDate`: Filters by the closed date range\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are sorted by closed date (newest first). This sort order is\nfixed and cannot be customized via query parameters.\n\nOn an audit that covers more than one framework, each code change in\nscope for any of the audit's frameworks is returned once.\n\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves code changes population data for an audit.\n\nThis endpoint provides access to code change records (pull requests)\nvisible to auditors during an audit engagement.\n\nSupports filtering by:\n- `search`: Searches code change titles and repository names (case-insensitive)\n- `sourcesMatchesAny`: Filters by version control source (accepted values: github, gitlab, bitbucket, azuredevops)\n- `closedAfterDate` / `closedBeforeDate`: Filters by the closed date range\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are sorted by closed date (newest first). This sort order is\nfixed and cannot be customized via query parameters.\n\nOn an audit that covers more than one framework, each code change in\nscope for any of the audit's frameworks is returned once.\n\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List code changes for an audit",
         "tags": [
           "Audits"
@@ -11618,7 +11633,7 @@
             }
           }
         },
-        "description": "Retrieves integration population data for an audit.\n\nThis endpoint provides access to integration records visible to auditors\nduring an audit engagement. Integrations represent connected services\n(e.g., GitHub, AWS, Slack) that provide data for the audit.\n\nSupports filtering by:\n- `search`: Searches integration names (case-insensitive)\n- `tagsMatchesAny`: Filters by integration tag (ACCESS, COMPUTERS, etc.)\n- `categoriesMatchesAny`: Filters by category (CLOUD_PROVIDER, HR_PROVIDER, etc.)\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are sorted by integration display name (ascending). This sort order\nis fixed and cannot be customized via query parameters.\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves integration population data for an audit.\n\nThis endpoint provides access to integration records visible to auditors\nduring an audit engagement. Integrations represent connected services\n(e.g., GitHub, AWS, Slack) that provide data for the audit.\n\nSupports filtering by:\n- `search`: Searches integration names (case-insensitive)\n- `tagsMatchesAny`: Filters by integration tag (ACCESS, COMPUTERS, etc.)\n- `categoriesMatchesAny`: Filters by category (CLOUD_PROVIDER, HR_PROVIDER, etc.)\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are sorted by integration display name (ascending). This sort order\nis fixed and cannot be customized via query parameters.\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List integrations for an audit",
         "tags": [
           "Audits"
@@ -11996,7 +12011,7 @@
             }
           }
         },
-        "description": "Retrieves vendor population data for an audit.\n\nThis endpoint provides access to vendor records visible to auditors\nduring an audit engagement.\n\nSupports filtering by:\n- `search`: Searches vendor names (case-insensitive)\n- `vendorStatusesMatchesAny`: Filters by vendor status (ACTIVE, ARCHIVED, IN_PROCUREMENT)\n- `inherentRiskMatchesAny`: Filters by inherent risk level\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves vendor population data for an audit.\n\nThis endpoint provides access to vendor records visible to auditors\nduring an audit engagement.\n\nSupports filtering by:\n- `search`: Searches vendor names (case-insensitive)\n- `vendorStatusesMatchesAny`: Filters by vendor status (ACTIVE, ARCHIVED, IN_PROCUREMENT)\n- `inherentRiskMatchesAny`: Filters by inherent risk level\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List vendors for an audit",
         "tags": [
           "Audits"
@@ -12229,7 +12244,7 @@
             }
           }
         },
-        "description": "Retrieves organization information for an audit.\n\nThis endpoint returns a single record containing the organization's\nbusiness information visible to auditors during an audit engagement.\n\nSorting and pagination are not applicable.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves organization information for an audit.\n\nThis endpoint returns a single record containing the organization's\nbusiness information visible to auditors during an audit engagement.\n\nSorting and pagination are not applicable.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "Get organization information for an audit",
         "tags": [
           "Audits"
@@ -12295,7 +12310,7 @@
             }
           }
         },
-        "description": "Retrieves organization notification settings for an audit.\n\nThis endpoint returns a single record containing the auditee\norganization's notification configuration — schedule, personnel\nreminder settings, and external notification subscriptions\n(Compliance, Vendors, Access Reviews, Trust Center).\n\nThe response is a single aggregate object per domain. Sorting and\npagination are not applicable. Under a controlled audit view\n(TRIMMED_DOWN), only CAV-approved fields are included.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves organization notification settings for an audit.\n\nThis endpoint returns a single record containing the auditee\norganization's notification configuration — schedule, personnel\nreminder settings, and external notification subscriptions\n(Compliance, Vendors, Access Reviews, Trust Center).\n\nThe response is a single aggregate object per domain. Sorting and\npagination are not applicable. Only CAV-approved fields are included.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "Get organization notification settings for an audit",
         "tags": [
           "Audits"
@@ -12612,7 +12627,7 @@
             }
           }
         },
-        "description": "Retrieves connected account access services for an audit.\n\nReturns the list of identity providers and access integrations (such as\nOkta, Azure AD, Google Workspace, AWS IAM) that are connected to the\norganization and provide account access data for personnel.\n\nThese integrations are used to verify user access and identity management\nduring an audit engagement.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are returned in connection order. Sort order is not guaranteed\nand cannot be customized via query parameters.\n\nOn an audit that covers more than one framework, each service in scope\nfor any of the audit's frameworks is listed once.\n\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves connected account access services for an audit.\n\nReturns the list of identity providers and access integrations (such as\nOkta, Azure AD, Google Workspace, AWS IAM) that are connected to the\norganization and provide account access data for personnel.\n\nThese integrations are used to verify user access and identity management\nduring an audit engagement.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nResults are returned in connection order. Sort order is not guaranteed\nand cannot be customized via query parameters.\n\nOn an audit that covers more than one framework, each service in scope\nfor any of the audit's frameworks is listed once.\n\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List account access services for an audit",
         "tags": [
           "Audits"
@@ -12699,7 +12714,7 @@
             }
           }
         },
-        "description": "Retrieves account access population data for an audit.\n\nThis endpoint provides access to account access records visible to auditors\nduring an audit engagement. Account access data comes from various sources:\n\n- **IDP Services** (Identity Providers): Okta, Azure AD, Google Workspace, OneLogin, PingOne\n\n  - Returns user accounts from identity providers\n  - Supports filtering by search and status\n\n- **Role Grants Services**: GCP, Azure (when role grants are enabled)\n\n  - Returns accounts with role-based access grants\n  - Supports filtering by search and status\n\n- **First-Party Account Services**: AWS, Oracle Cloud, Azure (when not using role grants), etc.\n\n  - Returns cloud provider account access records\n  - Supports filtering by search and status\n\n- **Received Account Services**: External applications (Jira, GitHub, Slack, etc.)\n\n  - Returns user accounts from third-party integrations\n  - Supports filtering by search and status\n\n\nSupports filtering by:\n- `search`: Searches account names/emails (case-insensitive)\n- `status`: Filters by account status\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nThe default sort order depends on the service type:\n- Identity provider services (e.g. Okta, Azure AD): sorted by email, ascending\n- Cloud provider services (e.g. AWS, GCP): sorted by account name, ascending\n- Role grant services: sorted by account name, ascending\n- Third-party application services (e.g. GitHub, Jira): sorted by account name, ascending\n\nSort order cannot be customized via query parameters.\n\nReturns 404 when `serviceId` is not listed by the\n`/personnel/account-access/services` endpoint for this audit.\n\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves account access population data for an audit.\n\nThis endpoint provides access to account access records visible to auditors\nduring an audit engagement. Account access data comes from various sources:\n\n- **IDP Services** (Identity Providers): Okta, Azure AD, Google Workspace, OneLogin, PingOne\n\n  - Returns user accounts from identity providers\n  - Supports filtering by search and status\n\n- **Role Grants Services**: GCP, Azure (when role grants are enabled)\n\n  - Returns accounts with role-based access grants\n  - Supports filtering by search and status\n\n- **First-Party Account Services**: AWS, Oracle Cloud, Azure (when not using role grants), etc.\n\n  - Returns cloud provider account access records\n  - Supports filtering by search and status\n\n- **Received Account Services**: External applications (Jira, GitHub, Slack, etc.)\n\n  - Returns user accounts from third-party integrations\n  - Supports filtering by search and status\n\n\nSupports filtering by:\n- `search`: Searches account names/emails (case-insensitive)\n- `status`: Filters by account status\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nThe default sort order depends on the service type:\n- Identity provider services (e.g. Okta, Azure AD): sorted by email, ascending\n- Cloud provider services (e.g. AWS, GCP): sorted by account name, ascending\n- Role grant services: sorted by account name, ascending\n- Third-party application services (e.g. GitHub, Jira): sorted by account name, ascending\n\nSort order cannot be customized via query parameters.\n\nReturns 404 when `serviceId` is not listed by the\n`/personnel/account-access/services` endpoint for this audit.\n\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List account access records for an audit",
         "tags": [
           "Audits"
@@ -12817,7 +12832,7 @@
             }
           }
         },
-        "description": "Retrieves groups population data for an audit.\n\nThis endpoint provides access to the group records visible to auditors\nduring an audit engagement. Groups represent organizational units that\ncontain people, either imported from an identity provider (IDP) or\ncreated manually in Vanta.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit\nView audits are rejected with 403.\n\nSupports filtering by:\n- `search`: Searches group names (case-insensitive)\n- `sourcesMatchesAny`: Filters by IDP source service names\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves groups population data for an audit.\n\nThis endpoint provides access to the group records visible to auditors\nduring an audit engagement. Groups represent organizational units that\ncontain people, either imported from an identity provider (IDP) or\ncreated manually in Vanta.\n\nSupports filtering by:\n- `search`: Searches group names (case-insensitive)\n- `sourcesMatchesAny`: Filters by IDP source service names\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List groups for an audit",
         "tags": [
           "Audits"
@@ -12991,7 +13006,7 @@
             }
           }
         },
-        "description": "Retrieves people population data for an audit.\n\nThis endpoint provides access to the people records visible to auditors\nduring an audit engagement. Only Controlled Audit View (CAV) audits\nare supported. Full Audit View audits are rejected with 403.\n\nSupports filtering by:\n- `search`: Searches names and email addresses\n- `status`: Filters by employment status\n- `groupsMatchesAny`: Filter people by group/role IDs\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves people population data for an audit.\n\nThis endpoint provides access to the people records visible to auditors\nduring an audit engagement.\n\nSupports filtering by:\n- `search`: Searches names and email addresses\n- `status`: Filters by employment status\n- `groupsMatchesAny`: Filter people by group/role IDs\n\nResults are sorted by name (ascending) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List people for an audit",
         "tags": [
           "Audits"
@@ -13115,7 +13130,7 @@
             }
           }
         },
-        "description": "Returns a paginated list of risk assessment snapshots available for an audit.\n\nRisk snapshots capture the state of an organization's risk register at a\npoint in time. Each snapshot has an `id` that can be used with the\n`/audits/{auditId}/risks` endpoint to retrieve the individual risk\nscenarios within that snapshot.\n\nResults are sorted by creation date (newest first). This sort order is\nfixed and cannot be customized via query parameters. Only snapshots\nthat are shared with auditors are included.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Returns a paginated list of risk assessment snapshots available for an audit.\n\nRisk snapshots capture the state of an organization's risk register at a\npoint in time. Each snapshot has an `id` that can be used with the\n`/audits/{auditId}/risks` endpoint to retrieve the individual risk\nscenarios within that snapshot.\n\nResults are sorted by creation date (newest first). This sort order is\nfixed and cannot be customized via query parameters. Only snapshots\nthat are shared with auditors are included.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List risk snapshots for an audit",
         "tags": [
           "Audits"
@@ -13215,7 +13230,7 @@
             }
           }
         },
-        "description": "Retrieves risk population data for an audit.\n\nThis endpoint provides access to the risk records visible to auditors\nduring an audit engagement. Risk data is scoped to a specific risk\nassessment snapshot identified by the `snapshotId` parameter.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit\nView audits are rejected with 403.\n\nSupports filtering by:\n- `search`: Searches risk scenario descriptions (case-insensitive)\n\nResults are sorted by identified date (newest first) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves risk population data for an audit.\n\nThis endpoint provides access to the risk records visible to auditors\nduring an audit engagement. Risk data is scoped to a specific risk\nassessment snapshot identified by the `snapshotId` parameter.\n\nSupports filtering by:\n- `search`: Searches risk scenario descriptions (case-insensitive)\n\nResults are sorted by identified date (newest first) by default.\nUse `orderBy` and `orderDirection` to customize sorting.\nSort parameters must remain consistent across paginated requests.\n\nUses cursor-based pagination. To paginate:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage`\n3. Use `results.pageInfo.endCursor` as `pageCursor` for next request\n\nSupports audits with one or more program segments.\nAudits with system segments are not supported by this endpoint.\n\nOnly Controlled Audit View (CAV) audits are supported. Full Audit View\naudits are rejected with 403. Returns 403 if the customer has not made\nthis population page visible to auditors. Also returns 403 if the\nsnapshot is not shared with auditors, and 404 if the snapshot does not\nexist. Use snapshot IDs from `GET /audits/{auditId}/risks/snapshots`,\nwhich lists only snapshots shared with auditors.\n\nRate limit: 10 requests / minute.",
         "summary": "List risks for an audit",
         "tags": [
           "Audits"
@@ -13324,6 +13339,7 @@
                       "modificationDate": "2024-03-07T21:25:56.000Z",
                       "completionDate": "2024-03-07T21:25:56.000Z",
                       "auditFocus": "EXTERNAL",
+                      "auditView": "FULL",
                       "irlGenerationStatus": "READY",
                       "auditorRequestListMetadata": {
                         "requestsSharedWithCustomer": "2024-03-07T21:25:56.000Z"
