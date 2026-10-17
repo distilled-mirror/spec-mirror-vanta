@@ -2605,6 +2605,101 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorCustomFieldDefinitionType": {
+        "type": "string",
+        "enum": [
+          "STRING",
+          "DATE",
+          "INTEGER",
+          "DECIMAL",
+          "PICKLIST"
+        ]
+      },
+      "VendorCustomFieldDefinitionOption": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier for the option."
+          },
+          "label": {
+            "type": "string",
+            "description": "Use this label as a picklist value when creating or updating a vendor."
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorCustomFieldDefinition": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier for the configured field."
+          },
+          "label": {
+            "type": "string",
+            "description": "Use this exact, case-sensitive label in vendor customFields writes."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/VendorCustomFieldDefinitionType"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/VendorCustomFieldDefinitionOption"
+            },
+            "type": "array",
+            "description": "Allowed choices for PICKLIST fields; omitted for other field types."
+          },
+          "decimalPlaces": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Configured precision for DECIMAL fields; omitted for other field types."
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "description",
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorCustomFieldDefinition_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorCustomFieldDefinition"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorCategory": {
         "properties": {
           "id": {
@@ -12152,6 +12247,108 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CreatedFrameworkControlsExport": {
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "description": "UUID used to check this export without starting another job.",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "RUNNING"
+            ],
+            "nullable": false,
+            "description": "The export has been queued for background processing."
+          }
+        },
+        "required": [
+          "exportId",
+          "status"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CreateFrameworkControlsExportInput": {
+        "properties": {
+          "frameworkId": {
+            "type": "string",
+            "description": "ID of an enabled Vanta or custom framework, for example soc2.",
+            "minLength": 1
+          },
+          "includeEvidenceStatus": {
+            "type": "boolean",
+            "description": "Include tests and documents with their PASS/FAIL outcomes. Defaults to false."
+          }
+        },
+        "required": [
+          "frameworkId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PendingFrameworkControlsExport": {
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "description": "UUID returned when the export was created.",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "RUNNING",
+              "FAILED"
+            ],
+            "description": "RUNNING means no result is available; FAILED means the export did not succeed."
+          }
+        },
+        "required": [
+          "exportId",
+          "status"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CompletedFrameworkControlsExport": {
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "description": "UUID returned when the export was created.",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "COMPLETED"
+            ],
+            "nullable": false,
+            "description": "The CSV is ready to download."
+          },
+          "downloadUrl": {
+            "type": "string",
+            "description": "Presigned CSV download URL valid for one hour. Read the export again to refresh it."
+          }
+        },
+        "required": [
+          "exportId",
+          "status",
+          "downloadUrl"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FrameworkControlsExport": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/PendingFrameworkControlsExport"
+          },
+          {
+            "$ref": "#/components/schemas/CompletedFrameworkControlsExport"
+          }
+        ]
+      },
       "CreatedFramework": {
         "properties": {
           "id": {
@@ -21046,6 +21243,100 @@
             "schema": {
               "default": true,
               "type": "boolean"
+            }
+          }
+        ]
+      }
+    },
+    "/frameworks/exports": {
+      "post": {
+        "operationId": "CreateFrameworkControlsExport",
+        "responses": {
+          "202": {
+            "description": "Export queued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedFrameworkControlsExport"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "exportId": "4b0e7c9e-2f1d-4c1a-9a55-0d6f3c2e8b71",
+                      "status": "RUNNING"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Starts a controls CSV export for a framework enabled in your organization.\nUse the returned exportId with getFrameworkControlsExport to check the same job.\nThis returns immediately; the existing export worker generates the CSV.",
+        "summary": "Create framework controls export",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "description": "Framework ID and optional evidence-row setting.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFrameworkControlsExportInput",
+                "description": "Framework ID and optional evidence-row setting."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/frameworks/exports/{exportId}": {
+      "get": {
+        "operationId": "GetFrameworkControlsExport",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkControlsExport"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "exportId": "4b0e7c9e-2f1d-4c1a-9a55-0d6f3c2e8b71",
+                      "status": "RUNNING"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Checks an existing controls export without starting another job. A completed\nexport includes a presigned CSV download URL valid for one hour, without\nrequiring an app session. Read this endpoint again to refresh an expired\nlink. RUNNING means no result is available yet, including for unknown or\nexpired export IDs. FAILED means\nthe export did not succeed; create a new export to retry.",
+        "summary": "Get framework controls export status",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Export UUID returned by createFrameworkControlsExport.",
+            "in": "path",
+            "name": "exportId",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ]

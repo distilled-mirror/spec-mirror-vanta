@@ -2450,238 +2450,6 @@
         "type": "object",
         "additionalProperties": false
       },
-      "SectionPrinciple": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The principle's unique ID."
-          },
-          "name": {
-            "type": "string",
-            "description": "The principle's name."
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "Section": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The section name"
-          },
-          "framework": {
-            "type": "string",
-            "description": "The section framework"
-          },
-          "principle": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/SectionPrinciple"
-              }
-            ],
-            "nullable": true,
-            "description": "The principle that groups this section, if any."
-          }
-        },
-        "required": [
-          "name",
-          "framework",
-          "principle"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "AuditControlAssessmentState": {
-        "type": "string",
-        "enum": [
-          "IN_PLACE",
-          "NOT_IN_PLACE",
-          "PARTIAL",
-          "NOT_ASSESSED",
-          "CONFORMING",
-          "MINOR_NON_CONFORMITY",
-          "MAJOR_NON_CONFORMITY",
-          "SATISFIED",
-          "NOT_SATISFIED",
-          "OTHER_THAN_SATISFIED",
-          "TRUE",
-          "FALSE"
-        ],
-        "description": "An auditor's assessment of a control within an audit. This is the full flat\nunion of every framework's assessment states (the superset); the selected\nsegment's framework determines which subset applies. `NOT_ASSESSED` is shared\nby all frameworks and is the default for a control that has not yet been assessed.\n\nWhich states apply to which framework:\n- Most frameworks (e.g. SOC 2): `IN_PLACE`, `NOT_IN_PLACE`, `PARTIAL`, `NOT_ASSESSED`\n- ISO 27001: `CONFORMING`, `MINOR_NON_CONFORMITY`, `MAJOR_NON_CONFORMITY`, `NOT_ASSESSED`\n- FedRAMP: `SATISFIED`, `NOT_SATISFIED`, `OTHER_THAN_SATISFIED`, `NOT_ASSESSED`\n- FedRAMP Key Security Indicators (KSI): `TRUE`, `FALSE`, `PARTIAL`, `NOT_ASSESSED`\n\nDistinct from `ControlStatus`, which is the computed tests/documents-passing\nstatus — a different concept."
-      },
-      "AuditControlAssessment": {
-        "description": "An auditor's assessment of a control within one audit segment. Assessments\ncan be recorded for any segment on the audit, `PROGRAM` or `SYSTEM`, and a\ncontrol can carry a distinct assessment per segment.\nA segment with no recorded assessment returns `NOT_ASSESSED` with a `null`\njustification.",
-        "properties": {
-          "segmentId": {
-            "type": "string",
-            "description": "The audit segment this assessment belongs to."
-          },
-          "assessmentState": {
-            "$ref": "#/components/schemas/AuditControlAssessmentState",
-            "description": "The auditor's assessment of the control for this segment; `NOT_ASSESSED`\nwhen no assessment has been recorded."
-          },
-          "justification": {
-            "type": "string",
-            "nullable": true,
-            "description": "Free-text reasoning for the assessment; `null` when none has been recorded."
-          }
-        },
-        "required": [
-          "segmentId",
-          "assessmentState",
-          "justification"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "ControlSource": {
-        "enum": [
-          "Vanta",
-          "Custom"
-        ],
-        "type": "string"
-      },
-      "AuditorControl": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The control's unique ID."
-          },
-          "externalId": {
-            "type": "string",
-            "nullable": true,
-            "description": "The control's external ID."
-          },
-          "name": {
-            "type": "string",
-            "description": "The control's name."
-          },
-          "description": {
-            "type": "string",
-            "description": "The control's description."
-          },
-          "source": {
-            "$ref": "#/components/schemas/ControlSource",
-            "description": "The control's source, either \"VANTA\" or \"CUSTOM\"."
-          },
-          "domains": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "description": "The security domains that the control belongs to."
-          },
-          "owner": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Owner"
-              }
-            ],
-            "nullable": true,
-            "description": "The control's owner."
-          },
-          "role": {
-            "type": "string",
-            "nullable": true,
-            "description": "The control's GDPR role, if the control is a GDPR control."
-          },
-          "customFields": {
-            "items": {
-              "$ref": "#/components/schemas/CustomField"
-            },
-            "type": "array",
-            "description": "The control's custom field values, if control custom fields is included in your Vanta instance."
-          },
-          "creationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "When the control was created. Returns null for Vanta library controls."
-          },
-          "modificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "When the control was last modified. Returns null for Vanta library controls."
-          },
-          "framework": {
-            "type": "string",
-            "description": "The report standard framework fulfilled by the control.\nIncomplete once a control is in scope for more than one framework.",
-            "deprecated": true
-          },
-          "sections": {
-            "items": {
-              "$ref": "#/components/schemas/Section"
-            },
-            "type": "array",
-            "description": "Current framework sections this control satisfies within the audit\nsegments in which it is in scope."
-          },
-          "inScopeSegmentIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "description": "Audit segments in which this control is in scope. This can differ from\ncurrent framework mappings, and the array can be empty."
-          },
-          "assessments": {
-            "items": {
-              "$ref": "#/components/schemas/AuditControlAssessment"
-            },
-            "type": "array",
-            "description": "The auditor's assessments of this control, with one entry for each segment\nin `inScopeSegmentIds`, which can be any segment on the audit, `PROGRAM` or\n`SYSTEM`. Populated only for IRL audits when assessment access is allowed;\nempty otherwise. A segment with no recorded assessment returns\n`NOT_ASSESSED`."
-          }
-        },
-        "required": [
-          "id",
-          "externalId",
-          "name",
-          "description",
-          "source",
-          "domains",
-          "owner",
-          "customFields",
-          "creationDate",
-          "modificationDate",
-          "framework",
-          "sections",
-          "inScopeSegmentIds",
-          "assessments"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "PaginatedResponse_AuditorControl_": {
-        "properties": {
-          "results": {
-            "properties": {
-              "data": {
-                "items": {
-                  "$ref": "#/components/schemas/AuditorControl"
-                },
-                "type": "array"
-              },
-              "pageInfo": {
-                "$ref": "#/components/schemas/PageInfo"
-              }
-            },
-            "required": [
-              "data",
-              "pageInfo"
-            ],
-            "type": "object"
-          }
-        },
-        "required": [
-          "results"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
       "AddCommentInput": {
         "properties": {
           "text": {
@@ -2840,253 +2608,6 @@
           "reminderWindow",
           "isRestricted",
           "auditorEmail"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "AuditorApiControl": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The control's unique ID."
-          },
-          "externalId": {
-            "type": "string",
-            "nullable": true,
-            "description": "The control's external ID."
-          },
-          "name": {
-            "type": "string",
-            "description": "The control's name."
-          },
-          "description": {
-            "type": "string",
-            "description": "The control's description."
-          },
-          "source": {
-            "$ref": "#/components/schemas/ControlSource",
-            "description": "The control's source, either \"VANTA\" or \"CUSTOM\"."
-          },
-          "domains": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "description": "The security domains that the control belongs to."
-          },
-          "owner": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Owner"
-              }
-            ],
-            "nullable": true,
-            "description": "The control's owner."
-          },
-          "role": {
-            "type": "string",
-            "nullable": true,
-            "description": "The control's GDPR role, if the control is a GDPR control."
-          },
-          "customFields": {
-            "items": {
-              "$ref": "#/components/schemas/CustomField"
-            },
-            "type": "array",
-            "description": "The control's custom field values, if control custom fields is included in your Vanta instance."
-          },
-          "creationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "When the control was created. Returns null for Vanta library controls."
-          },
-          "modificationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true,
-            "description": "When the control was last modified. Returns null for Vanta library controls."
-          }
-        },
-        "required": [
-          "id",
-          "externalId",
-          "name",
-          "description",
-          "source",
-          "domains",
-          "owner",
-          "customFields",
-          "creationDate",
-          "modificationDate"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "ControlDomain": {
-        "enum": [
-          "ARTIFICIAL_&_AUTONOMOUS_TECHNOLOGY",
-          "ASSET_MANAGEMENT",
-          "BUSINESS_CONTINUITY_&_DISASTER_RECOVERY",
-          "CAPACITY_&_PERFORMANCE_PLANNING",
-          "CHANGE_MANAGEMENT",
-          "CLOUD_SECURITY",
-          "COMPLIANCE",
-          "CONFIGURATION_MANAGEMENT",
-          "CONTINUOUS_MONITORING",
-          "CRYPTOGRAPHIC_PROTECTIONS",
-          "DATA_CLASSIFICATION_&_HANDLING",
-          "EMBEDDED_TECHNOLOGY",
-          "ENDPOINT_SECURITY",
-          "HUMAN_RESOURCES_SECURITY",
-          "IDENTIFICATION_&_AUTHENTICATION",
-          "INCIDENT_RESPONSE",
-          "INFORMATION_ASSURANCE",
-          "MAINTENANCE",
-          "MOBILE_DEVICE_MANAGEMENT",
-          "NETWORK SECURITY",
-          "PHYSICAL_&_ENVIRONMENTAL_SECURITY",
-          "PRIVACY",
-          "PROJECT_&_RESOURCE MANAGEMENT",
-          "RISK_MANAGEMENT",
-          "SECURE_ENGINEERING_&_ARCHITECTURE",
-          "SECURITY_AWARENESS_&_TRAINING",
-          "SECURITY_OPERATIONS",
-          "SECURITY_&_PRIVACY_GOVERNANCE",
-          "TECHNOLOGY_DEVELOPMENT_&_ACQUISITION",
-          "THIRD-PARTY_MANAGEMENT",
-          "THREAT_MANAGEMENT",
-          "VULNERABILITY_&_PATCH_MANAGEMENT",
-          "WEB_SECURITY",
-          "ADMINISTRATIVE",
-          "PHYSICAL",
-          "TECHNICAL",
-          "BASIC",
-          "DERIVED"
-        ],
-        "type": "string"
-      },
-      "FrameworkId": {
-        "enum": [
-          "AU_E_8",
-          "AWS_FTR",
-          "CCPA",
-          "CIS_V8",
-          "CPS_234",
-          "DORA",
-          "FEDRAMP",
-          "GDPR",
-          "HIPAA",
-          "HITRUST_E1",
-          "ISO_27001",
-          "ISO_27001_2022",
-          "ISO_27017",
-          "ISO_27018",
-          "ISO_27701",
-          "ISO_42001",
-          "ISO_9001",
-          "MSFT_SSPA",
-          "MVSP",
-          "NIS_2D",
-          "NIST_171",
-          "NIST_171_R3",
-          "NIST_53",
-          "NIST_AI_RMF",
-          "NIST_CSF",
-          "NIST_CSF_2",
-          "OFDSS",
-          "PCI_SAQ_A",
-          "PCI_SAQ_A_EP",
-          "PCI_SAQ_D_MERCHANT",
-          "PCI_SAQ_D_SP",
-          "PCI_DDS_4",
-          "SOC_2",
-          "SOX_ITGC",
-          "UK_CYBER_ESSENTIALS",
-          "US_DATA_PRIVACY"
-        ],
-        "type": "string"
-      },
-      "FrameworkSection": {
-        "properties": {
-          "frameworkId": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FrameworkId"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "The framework's id, such as `soc2` or the id of a custom framework. The `FrameworkId` enum values are deprecated aliases that are still accepted."
-          },
-          "sectionId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "frameworkId",
-          "sectionId"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "GdprRole": {
-        "enum": [
-          "BOTH",
-          "CONTROLLER",
-          "PROCESSOR"
-        ],
-        "type": "string"
-      },
-      "CreateCustomControlInput": {
-        "properties": {
-          "externalId": {
-            "type": "string",
-            "description": "The external id of the control."
-          },
-          "name": {
-            "type": "string",
-            "nullable": true,
-            "description": "The name of the control."
-          },
-          "description": {
-            "type": "string",
-            "description": "The description of the control."
-          },
-          "effectiveDate": {
-            "type": "string",
-            "format": "date-time",
-            "description": "The effective date of the control."
-          },
-          "category": {
-            "$ref": "#/components/schemas/ControlDomain",
-            "description": "The category of the control. See the ControlDomain enum for possible values."
-          },
-          "sections": {
-            "items": {
-              "$ref": "#/components/schemas/FrameworkSection"
-            },
-            "type": "array",
-            "nullable": true,
-            "description": "Framework sections that the control should be mapped to."
-          },
-          "role": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GdprRole"
-              }
-            ],
-            "nullable": true,
-            "description": "The GDPR role of the control, which specifies whether the data is being \"collected\" or \"processed\". See the GdprRole enum for possible values.\nThis field should only be included for controls that are to be mapped to the GDPR framework."
-          }
-        },
-        "required": [
-          "externalId",
-          "name",
-          "description",
-          "effectiveDate",
-          "category"
         ],
         "type": "object",
         "additionalProperties": false
@@ -6898,6 +6419,485 @@
           "auditEndDate",
           "earlyAccessStartsAt",
           "allowAuditorEmails"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SectionPrinciple": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The principle's unique ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The principle's name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Section": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The section name"
+          },
+          "framework": {
+            "type": "string",
+            "description": "The section framework"
+          },
+          "principle": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SectionPrinciple"
+              }
+            ],
+            "nullable": true,
+            "description": "The principle that groups this section, if any."
+          }
+        },
+        "required": [
+          "name",
+          "framework",
+          "principle"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AuditControlAssessmentState": {
+        "type": "string",
+        "enum": [
+          "IN_PLACE",
+          "NOT_IN_PLACE",
+          "PARTIAL",
+          "NOT_ASSESSED",
+          "CONFORMING",
+          "MINOR_NON_CONFORMITY",
+          "MAJOR_NON_CONFORMITY",
+          "SATISFIED",
+          "NOT_SATISFIED",
+          "OTHER_THAN_SATISFIED",
+          "TRUE",
+          "FALSE"
+        ],
+        "description": "An auditor's assessment of a control within an audit. This is the full flat\nunion of every framework's assessment states (the superset); the selected\nsegment's framework determines which subset applies. `NOT_ASSESSED` is shared\nby all frameworks and is the default for a control that has not yet been assessed.\n\nWhich states apply to which framework:\n- Most frameworks (e.g. SOC 2): `IN_PLACE`, `NOT_IN_PLACE`, `PARTIAL`, `NOT_ASSESSED`\n- ISO 27001: `CONFORMING`, `MINOR_NON_CONFORMITY`, `MAJOR_NON_CONFORMITY`, `NOT_ASSESSED`\n- FedRAMP: `SATISFIED`, `NOT_SATISFIED`, `OTHER_THAN_SATISFIED`, `NOT_ASSESSED`\n- FedRAMP Key Security Indicators (KSI): `TRUE`, `FALSE`, `PARTIAL`, `NOT_ASSESSED`\n\nDistinct from `ControlStatus`, which is the computed tests/documents-passing\nstatus — a different concept."
+      },
+      "AuditControlAssessment": {
+        "description": "An auditor's assessment of a control within one audit segment. Assessments\ncan be recorded for any segment on the audit, `PROGRAM` or `SYSTEM`, and a\ncontrol can carry a distinct assessment per segment.\nA segment with no recorded assessment returns `NOT_ASSESSED` with a `null`\njustification.",
+        "properties": {
+          "segmentId": {
+            "type": "string",
+            "description": "The audit segment this assessment belongs to."
+          },
+          "assessmentState": {
+            "$ref": "#/components/schemas/AuditControlAssessmentState",
+            "description": "The auditor's assessment of the control for this segment; `NOT_ASSESSED`\nwhen no assessment has been recorded."
+          },
+          "justification": {
+            "type": "string",
+            "nullable": true,
+            "description": "Free-text reasoning for the assessment; `null` when none has been recorded."
+          }
+        },
+        "required": [
+          "segmentId",
+          "assessmentState",
+          "justification"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ControlSource": {
+        "enum": [
+          "Vanta",
+          "Custom"
+        ],
+        "type": "string"
+      },
+      "AuditorControl": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The control's unique ID."
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The control's external ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The control's name."
+          },
+          "description": {
+            "type": "string",
+            "description": "The control's description."
+          },
+          "source": {
+            "$ref": "#/components/schemas/ControlSource",
+            "description": "The control's source, either \"VANTA\" or \"CUSTOM\"."
+          },
+          "domains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The security domains that the control belongs to."
+          },
+          "owner": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Owner"
+              }
+            ],
+            "nullable": true,
+            "description": "The control's owner."
+          },
+          "role": {
+            "type": "string",
+            "nullable": true,
+            "description": "The control's GDPR role, if the control is a GDPR control."
+          },
+          "customFields": {
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            },
+            "type": "array",
+            "description": "The control's custom field values, if control custom fields is included in your Vanta instance."
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the control was created. Returns null for Vanta library controls."
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the control was last modified. Returns null for Vanta library controls."
+          },
+          "framework": {
+            "type": "string",
+            "description": "The report standard framework fulfilled by the control.\nIncomplete once a control is in scope for more than one framework.",
+            "deprecated": true
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "type": "array",
+            "description": "Current framework sections this control satisfies within the audit\nsegments in which it is in scope."
+          },
+          "inScopeSegmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Audit segments in which this control is in scope. This can differ from\ncurrent framework mappings, and the array can be empty."
+          },
+          "assessments": {
+            "items": {
+              "$ref": "#/components/schemas/AuditControlAssessment"
+            },
+            "type": "array",
+            "description": "The auditor's assessments of this control, with one entry for each segment\nin `inScopeSegmentIds`, which can be any segment on the audit, `PROGRAM` or\n`SYSTEM`. Populated only for IRL audits when assessment access is allowed;\nempty otherwise. A segment with no recorded assessment returns\n`NOT_ASSESSED`."
+          }
+        },
+        "required": [
+          "id",
+          "externalId",
+          "name",
+          "description",
+          "source",
+          "domains",
+          "owner",
+          "customFields",
+          "creationDate",
+          "modificationDate",
+          "framework",
+          "sections",
+          "inScopeSegmentIds",
+          "assessments"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AuditorControl_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AuditorControl"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AuditorApiControl": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The control's unique ID."
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The control's external ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The control's name."
+          },
+          "description": {
+            "type": "string",
+            "description": "The control's description."
+          },
+          "source": {
+            "$ref": "#/components/schemas/ControlSource",
+            "description": "The control's source, either \"VANTA\" or \"CUSTOM\"."
+          },
+          "domains": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The security domains that the control belongs to."
+          },
+          "owner": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Owner"
+              }
+            ],
+            "nullable": true,
+            "description": "The control's owner."
+          },
+          "role": {
+            "type": "string",
+            "nullable": true,
+            "description": "The control's GDPR role, if the control is a GDPR control."
+          },
+          "customFields": {
+            "items": {
+              "$ref": "#/components/schemas/CustomField"
+            },
+            "type": "array",
+            "description": "The control's custom field values, if control custom fields is included in your Vanta instance."
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the control was created. Returns null for Vanta library controls."
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the control was last modified. Returns null for Vanta library controls."
+          }
+        },
+        "required": [
+          "id",
+          "externalId",
+          "name",
+          "description",
+          "source",
+          "domains",
+          "owner",
+          "customFields",
+          "creationDate",
+          "modificationDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ControlDomain": {
+        "enum": [
+          "ARTIFICIAL_&_AUTONOMOUS_TECHNOLOGY",
+          "ASSET_MANAGEMENT",
+          "BUSINESS_CONTINUITY_&_DISASTER_RECOVERY",
+          "CAPACITY_&_PERFORMANCE_PLANNING",
+          "CHANGE_MANAGEMENT",
+          "CLOUD_SECURITY",
+          "COMPLIANCE",
+          "CONFIGURATION_MANAGEMENT",
+          "CONTINUOUS_MONITORING",
+          "CRYPTOGRAPHIC_PROTECTIONS",
+          "DATA_CLASSIFICATION_&_HANDLING",
+          "EMBEDDED_TECHNOLOGY",
+          "ENDPOINT_SECURITY",
+          "HUMAN_RESOURCES_SECURITY",
+          "IDENTIFICATION_&_AUTHENTICATION",
+          "INCIDENT_RESPONSE",
+          "INFORMATION_ASSURANCE",
+          "MAINTENANCE",
+          "MOBILE_DEVICE_MANAGEMENT",
+          "NETWORK SECURITY",
+          "PHYSICAL_&_ENVIRONMENTAL_SECURITY",
+          "PRIVACY",
+          "PROJECT_&_RESOURCE MANAGEMENT",
+          "RISK_MANAGEMENT",
+          "SECURE_ENGINEERING_&_ARCHITECTURE",
+          "SECURITY_AWARENESS_&_TRAINING",
+          "SECURITY_OPERATIONS",
+          "SECURITY_&_PRIVACY_GOVERNANCE",
+          "TECHNOLOGY_DEVELOPMENT_&_ACQUISITION",
+          "THIRD-PARTY_MANAGEMENT",
+          "THREAT_MANAGEMENT",
+          "VULNERABILITY_&_PATCH_MANAGEMENT",
+          "WEB_SECURITY",
+          "ADMINISTRATIVE",
+          "PHYSICAL",
+          "TECHNICAL",
+          "BASIC",
+          "DERIVED"
+        ],
+        "type": "string"
+      },
+      "FrameworkId": {
+        "enum": [
+          "AU_E_8",
+          "AWS_FTR",
+          "CCPA",
+          "CIS_V8",
+          "CPS_234",
+          "DORA",
+          "FEDRAMP",
+          "GDPR",
+          "HIPAA",
+          "HITRUST_E1",
+          "ISO_27001",
+          "ISO_27001_2022",
+          "ISO_27017",
+          "ISO_27018",
+          "ISO_27701",
+          "ISO_42001",
+          "ISO_9001",
+          "MSFT_SSPA",
+          "MVSP",
+          "NIS_2D",
+          "NIST_171",
+          "NIST_171_R3",
+          "NIST_53",
+          "NIST_AI_RMF",
+          "NIST_CSF",
+          "NIST_CSF_2",
+          "OFDSS",
+          "PCI_SAQ_A",
+          "PCI_SAQ_A_EP",
+          "PCI_SAQ_D_MERCHANT",
+          "PCI_SAQ_D_SP",
+          "PCI_DDS_4",
+          "SOC_2",
+          "SOX_ITGC",
+          "UK_CYBER_ESSENTIALS",
+          "US_DATA_PRIVACY"
+        ],
+        "type": "string"
+      },
+      "FrameworkSection": {
+        "properties": {
+          "frameworkId": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FrameworkId"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "The framework's id, such as `soc2` or the id of a custom framework. The `FrameworkId` enum values are deprecated aliases that are still accepted."
+          },
+          "sectionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "frameworkId",
+          "sectionId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "GdprRole": {
+        "enum": [
+          "BOTH",
+          "CONTROLLER",
+          "PROCESSOR"
+        ],
+        "type": "string"
+      },
+      "CreateCustomControlInput": {
+        "properties": {
+          "externalId": {
+            "type": "string",
+            "description": "The external id of the control."
+          },
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the control."
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the control."
+          },
+          "effectiveDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The effective date of the control."
+          },
+          "category": {
+            "$ref": "#/components/schemas/ControlDomain",
+            "description": "The category of the control. See the ControlDomain enum for possible values."
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/FrameworkSection"
+            },
+            "type": "array",
+            "nullable": true,
+            "description": "Framework sections that the control should be mapped to."
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GdprRole"
+              }
+            ],
+            "nullable": true,
+            "description": "The GDPR role of the control, which specifies whether the data is being \"collected\" or \"processed\". See the GdprRole enum for possible values.\nThis field should only be included for controls that are to be mapped to the GDPR framework."
+          }
+        },
+        "required": [
+          "externalId",
+          "name",
+          "description",
+          "effectiveDate",
+          "category"
         ],
         "type": "object",
         "additionalProperties": false
