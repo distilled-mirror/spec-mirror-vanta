@@ -686,6 +686,22 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorEngagement": {
+        "properties": {
+          "engagementVendorId": {
+            "type": "string"
+          },
+          "parentVendorId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "engagementVendorId",
+          "parentVendorId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorAuthenticationMethod": {
         "description": "The authentication method a vendor uses:\n- AUTH_0: The vendor authenticates using Auth0\n- AZURE_AD: The vendor authenticates using Azure Active Directory\n- G_SUITE: The vendor authenticates using Google Workspace\n- O_AUTH: The vendor authenticates using OAuth\n- O365: The vendor authenticates using Office 365\n- OKTA: The vendor authenticates using Okta\n- ONE_LOGIN: The vendor authenticates using OneLogin\n- OWA: The vendor authenticates using OWA\n- SSO: The vendor authenticates using SSO\n- USERNAME_PASSWORD: The vendor authenticates using usernames and passwords",
         "enum": [
@@ -1082,6 +1098,35 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorRelationshipSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The vendor's unique ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "The vendor's display name."
+          },
+          "status": {
+            "$ref": "#/components/schemas/VendorStatus",
+            "description": "The vendor's current status."
+          },
+          "websiteUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The vendor's website URL, or null when none is set."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "websiteUrl"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "Vendor": {
         "properties": {
           "id": {
@@ -1293,6 +1338,23 @@
             "type": "object",
             "nullable": true,
             "description": "The task tracker procurement request associated with this vendor (if linked)."
+          },
+          "engagements": {
+            "items": {
+              "$ref": "#/components/schemas/VendorRelationshipSummary"
+            },
+            "type": "array",
+            "description": "Child vendors managed as engagements of this vendor, sorted by name.\nIncludes accessible managed, in-procurement, and archived engagements.\nEmpty when there are none.",
+            "maxItems": 100
+          },
+          "parentVendor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorRelationshipSummary"
+              }
+            ],
+            "nullable": true,
+            "description": "The parent vendor of this engagement, or null when there is no accessible parent."
           }
         },
         "required": [
@@ -2491,12 +2553,20 @@
             "type": "string",
             "description": "Description of the risk attribute."
           },
+          "vendorCategoryIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Authoritative category IDs this risk attribute applies to, including system category IDs and custom category IDs."
+          },
           "vendorCategories": {
             "items": {
               "type": "string"
             },
             "type": "array",
-            "description": "Vendor categories this risk attribute applies to."
+            "description": "Legacy category display labels.",
+            "deprecated": true
           },
           "enabled": {
             "type": "boolean",
@@ -2515,6 +2585,7 @@
           "id",
           "name",
           "description",
+          "vendorCategoryIds",
           "vendorCategories",
           "enabled",
           "riskLevel",
@@ -34553,8 +34624,14 @@
                             "vendorCategories": [
                               "Marketing",
                               "Office operation",
-                              "Recruiting",
-                              "Other"
+                              "Other",
+                              "Recruiting"
+                            ],
+                            "vendorCategoryIds": [
+                              "00000000000000000000000d",
+                              "00000000000000000000000e",
+                              "00000000000000000000000f",
+                              "000000000000000000000013"
                             ],
                             "enabled": true,
                             "riskLevel": "LOW",
@@ -34890,13 +34967,59 @@
                         "url": "https://random-company.atlassian.net/browse/PROJ-123"
                       }
                     }
+                  },
+                  "Example 2": {
+                    "value": {
+                      "id": "507f1f77bcf86cd799439011",
+                      "name": "Atlassian",
+                      "websiteUrl": "https://www.atlassian.com/",
+                      "accountManagerName": null,
+                      "accountManagerEmail": null,
+                      "servicesProvided": "SaaS",
+                      "additionalNotes": null,
+                      "securityOwnerUserId": null,
+                      "businessOwnerUserId": null,
+                      "contractStartDate": null,
+                      "contractRenewalDate": null,
+                      "contractTerminationDate": null,
+                      "nextSecurityReviewDueDate": null,
+                      "lastSecurityReviewCompletionDate": null,
+                      "isVisibleToAuditors": true,
+                      "isRiskAutoScored": true,
+                      "riskAttributeIds": [],
+                      "category": null,
+                      "authDetails": {
+                        "method": null,
+                        "passwordMFA": null,
+                        "passwordRequiresNumber": null,
+                        "passwordRequiresSymbol": null,
+                        "passwordMinimumLength": null
+                      },
+                      "status": "MANAGED",
+                      "inherentRiskLevel": "HIGH",
+                      "residualRiskLevel": "MEDIUM",
+                      "vendorHeadquarters": null,
+                      "contractAmount": null,
+                      "customFields": null,
+                      "latestDecision": null,
+                      "linkedTaskTrackerTaskProcurementRequest": null,
+                      "engagements": [
+                        {
+                          "id": "507f1f77bcf86cd799439012",
+                          "name": "Jira",
+                          "status": "MANAGED",
+                          "websiteUrl": "https://www.atlassian.com/software/jira"
+                        }
+                      ],
+                      "parentVendor": null
+                    }
                   }
                 }
               }
             }
           }
         },
-        "description": "Get a vendor.",
+        "description": "Get a vendor. Includes engagement and parent vendor summaries when vendor engagements are enabled.",
         "summary": "Get vendor by ID",
         "tags": [
           "Vendors"
