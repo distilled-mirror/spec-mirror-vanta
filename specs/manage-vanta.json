@@ -12318,6 +12318,40 @@
         "type": "object",
         "additionalProperties": false
       },
+      "FrameworkVariantSelection": {
+        "properties": {
+          "frameworkId": {
+            "type": "string"
+          },
+          "variantIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "frameworkId",
+          "variantIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SetFrameworkVariantInput": {
+        "properties": {
+          "variantIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "variantIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "CreatedFrameworkControlsExport": {
         "properties": {
           "exportId": {
@@ -21622,6 +21656,53 @@
             }
           }
         ]
+      }
+    },
+    "/frameworks/{frameworkId}/variants": {
+      "put": {
+        "operationId": "SetFrameworkVariant",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkVariantSelection"
+                }
+              }
+            }
+          }
+        },
+        "description": "Replaces all selected control sets for an enabled, customer-selectable framework.\nvariantIds is the complete desired selection, not additions or removals; an empty\nselection is rejected. Returns the saved framework ID and variant IDs.",
+        "summary": "Set framework control sets",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "frameworkId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetFrameworkVariantInput"
+              }
+            }
+          }
+        }
       }
     },
     "/groups": {
