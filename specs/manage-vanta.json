@@ -3753,6 +3753,10 @@
       },
       "TrustCenterVideo": {
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the video. Send it back on PUT to keep the video."
+          },
           "url": {
             "type": "string",
             "description": "Canonical URL for the video."
@@ -3768,6 +3772,7 @@
           }
         },
         "required": [
+          "id",
           "url",
           "title"
         ],
@@ -3791,6 +3796,10 @@
       },
       "SetTrustCenterVideoItem": {
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID of an existing video on this Trust Center, to keep that video. Omit to add a new video. An ID that matches no existing video returns 404."
+          },
           "url": {
             "type": "string",
             "description": "Full video URL (e.g. \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\" or \"https://vimeo.com/123456\"). Supported platforms: YouTube, Vimeo."
@@ -12540,6 +12549,22 @@
         "type": "object",
         "additionalProperties": false
       },
+      "FrameworkActiveVariant": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "Framework": {
         "properties": {
           "id": {
@@ -12600,6 +12625,17 @@
             "type": "number",
             "format": "double",
             "description": "The total number of tests in the framework."
+          },
+          "isPurchased": {
+            "type": "boolean",
+            "description": "Whether the framework is in your program. Progress counts are -1 for\nunpurchased frameworks."
+          },
+          "activeVariants": {
+            "items": {
+              "$ref": "#/components/schemas/FrameworkActiveVariant"
+            },
+            "type": "array",
+            "description": "The assessment tiers your program is on, such as HITRUST i1. Omitted for\nframeworks without tiers."
           }
         },
         "required": [
@@ -12612,7 +12648,8 @@
           "numDocumentsPassing",
           "numDocumentsTotal",
           "numTestsPassing",
-          "numTestsTotal"
+          "numTestsTotal",
+          "isPurchased"
         ],
         "type": "object",
         "additionalProperties": false
@@ -12734,6 +12771,95 @@
         "type": "object",
         "additionalProperties": false
       },
+      "FrameworkRequirementItem": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shorthand": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentRequirementId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The parent requirement's ID, or null for a top-level requirement."
+          },
+          "category": {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "id"
+            ],
+            "type": "object",
+            "nullable": true
+          },
+          "controlIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the controls mapped to the requirement."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "shorthand",
+          "description",
+          "parentRequirementId",
+          "category",
+          "controlIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FrameworkRequirements": {
+        "properties": {
+          "scope": {
+            "type": "string",
+            "enum": [
+              "MY_PROGRAM",
+              "CATALOG"
+            ],
+            "description": "MY_PROGRAM reflects your program's control mappings; CATALOG is the\nframework's published requirements. Custom frameworks are always\nMY_PROGRAM."
+          },
+          "variants": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The variants the requirements were resolved against."
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FrameworkRequirementItem"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "scope",
+          "variants",
+          "items"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "FrameworkDetail": {
         "properties": {
           "id": {
@@ -12801,6 +12927,17 @@
             },
             "type": "array",
             "description": "The famework's list of requirement categories."
+          },
+          "activeVariants": {
+            "items": {
+              "$ref": "#/components/schemas/FrameworkActiveVariant"
+            },
+            "type": "array",
+            "description": "The assessment tiers your program is on, such as HITRUST i1. Omitted for\nframeworks without tiers."
+          },
+          "requirements": {
+            "$ref": "#/components/schemas/FrameworkRequirements",
+            "description": "The framework's requirements as a flat list that preserves their\nhierarchy. Omitted when requirements are unavailable."
           }
         },
         "required": [
@@ -13553,13 +13690,15 @@
         "additionalProperties": false
       },
       "DiscoveredVendorSource": {
-        "description": "The source of the discovered vendor.\nOKTA: The vendor was discovered via an Okta integration\nJAMF: The vendor was discovered via a JAMF integration\nGSUITE: The vendor was discovered via an GSuite integration\nVENDR: The vendor was discovered via a Vendr integration\nOFFICE: The vendor was discovered via a microsoft office integration",
+        "description": "The source of the discovered vendor.\nOKTA: The vendor was discovered via an Okta integration\nJAMF: The vendor was discovered via a JAMF integration\nGSUITE: The vendor was discovered via an GSuite integration\nVENDR: The vendor was discovered via a Vendr integration\nOFFICE: The vendor was discovered via a microsoft office integration\nOFFICE_GCC_HIGH: The vendor was discovered via a microsoft office GCC High integration\nTORII: The vendor was discovered via a Torii integration",
         "enum": [
           "OKTA",
           "JAMF",
           "GSUITE",
           "VENDR",
-          "OFFICE"
+          "OFFICE",
+          "OFFICE_GCC_HIGH",
+          "TORII"
         ],
         "type": "string"
       },
@@ -21291,6 +21430,13 @@
                             "displayName": "SOC 2",
                             "shorthandName": "SOC 2",
                             "description": "AICPA standardized framework to prove a company’s security posture to prospective customers. For all US and international businesses.",
+                            "isPurchased": true,
+                            "activeVariants": [
+                              {
+                                "id": "SOC2_SECURITY",
+                                "label": "Security"
+                              }
+                            ],
                             "numControlsCompleted": 43,
                             "numControlsTotal": 86,
                             "numDocumentsPassing": 7,
@@ -21313,7 +21459,7 @@
             }
           }
         },
-        "description": "Lists available frameworks.",
+        "description": "Lists frameworks in your program, or every available framework.",
         "summary": "List available frameworks",
         "tags": [
           "Frameworks"
@@ -21344,6 +21490,26 @@
             "description": "Whether to include lifecycle status. Defaults to true.",
             "in": "query",
             "name": "includeStatus",
+            "required": false,
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Whether to return only frameworks in your program. Defaults to true.",
+            "in": "query",
+            "name": "purchasedOnly",
+            "required": false,
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Whether to look up progress counts for purchased frameworks. Defaults to true. Counts are -1 when this is false and for unpurchased frameworks.",
+            "in": "query",
+            "name": "includeProgress",
             "required": false,
             "schema": {
               "default": true,
@@ -21523,7 +21689,35 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "activeVariants": [
+                        {
+                          "id": "SOC2_SECURITY",
+                          "label": "Security"
+                        }
+                      ],
+                      "requirements": {
+                        "scope": "MY_PROGRAM",
+                        "variants": [
+                          "SOC2_SECURITY"
+                        ],
+                        "items": [
+                          {
+                            "id": "CC 1.1",
+                            "name": "",
+                            "shorthand": null,
+                            "description": "COSO Principle 1: The entity demonstrates a commitment to integrity and ethical values.",
+                            "parentRequirementId": null,
+                            "category": {
+                              "id": "CC 1.0",
+                              "name": "Control Environment"
+                            },
+                            "controlIds": [
+                              "background-checks-performed"
+                            ]
+                          }
+                        ]
+                      }
                     }
                   }
                 }
@@ -21558,6 +21752,42 @@
             "schema": {
               "default": true,
               "type": "boolean"
+            }
+          },
+          {
+            "description": "Whether to include the flat requirements list. Defaults to false.",
+            "in": "query",
+            "name": "includeRequirements",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Used with includeRequirements. MY_PROGRAM (default) returns requirements as mapped in your program; CATALOG returns the framework's published requirements. Custom frameworks always use MY_PROGRAM. Both require the framework to be in your program.",
+            "in": "query",
+            "name": "requirementsScope",
+            "required": false,
+            "schema": {
+              "default": "MY_PROGRAM",
+              "type": "string",
+              "enum": [
+                "MY_PROGRAM",
+                "CATALOG"
+              ]
+            }
+          },
+          {
+            "description": "Catalog variant IDs to resolve CATALOG requirements against. Defaults to the framework's published defaults. Ignored for MY_PROGRAM, which uses your program's variants.",
+            "in": "query",
+            "name": "variants",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         ]
@@ -33996,6 +34226,7 @@
                     "value": {
                       "results": [
                         {
+                          "id": "a2f7e1b9d0c3f4e5a6c7b8d9",
                           "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                           "title": "Product security overview",
                           "description": "An overview of our security practices"
@@ -34680,6 +34911,259 @@
             }
           }
         ]
+      }
+    },
+    "/vendor-categories": {
+      "get": {
+        "operationId": "ListVendorCategories",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorCategory_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "6696ea0595df50d5cd6ec3b8",
+                            "label": "Payroll",
+                            "description": "Payroll and benefits providers.",
+                            "isSystem": false
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "NjY5NmVhMDU5NWRmNTBkNWNkNmVjM2I4",
+                          "endCursor": "NjY5NmVhMDU5NWRmNTBkNWNkNmVjM2I4"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists Vanta's system vendor categories followed by your custom categories.",
+        "summary": "List vendor categories",
+        "tags": [
+          "Vendor Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateVendorCategory",
+        "responses": {
+          "201": {
+            "description": "Vendor category created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorCategory"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "6696ea0595df50d5cd6ec3b8",
+                      "label": "Payroll",
+                      "description": "Payroll and benefits providers.",
+                      "isSystem": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a custom vendor category, up to 100 per organization.",
+        "summary": "Create vendor category",
+        "tags": [
+          "Vendor Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVendorCategoryInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendor-categories/{categoryId}": {
+      "get": {
+        "operationId": "GetVendorCategoryById",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorCategory"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "6696ea0595df50d5cd6ec3b8",
+                      "label": "Payroll",
+                      "description": "Payroll and benefits providers.",
+                      "isSystem": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Gets a system or custom vendor category by ID.",
+        "summary": "Get vendor category by ID",
+        "tags": [
+          "Vendor Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateVendorCategory",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorCategory"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "6696ea0595df50d5cd6ec3b8",
+                      "label": "Payroll",
+                      "description": "Payroll and benefits providers.",
+                      "isSystem": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Updates a custom vendor category. System categories cannot be updated.",
+        "summary": "Update vendor category",
+        "tags": [
+          "Vendor Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVendorCategoryInput"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "DeleteVendorCategory",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Deletes a custom vendor category and moves its vendors to the replacement\ncategory. If the request times out, fetch the category before retrying.",
+        "summary": "Delete vendor category",
+        "tags": [
+          "Vendor Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteVendorCategoryInput"
+              }
+            }
+          }
+        }
       }
     },
     "/vendor-risk-attributes": {
