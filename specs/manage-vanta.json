@@ -2103,6 +2103,14 @@
         ],
         "type": "string"
       },
+      "VendorAssessmentTypeAudience": {
+        "description": "Who fills out a vendor assessment:\n- EXTERNAL: The vendor fills out the assessment.\n- INTERNAL: The organization's own employees fill out the assessment.",
+        "enum": [
+          "EXTERNAL",
+          "INTERNAL"
+        ],
+        "type": "string"
+      },
       "VendorAssessmentWithQuestionnaire": {
         "properties": {
           "id": {
@@ -2116,6 +2124,10 @@
           "status": {
             "$ref": "#/components/schemas/AssessmentStatus",
             "description": "The lifecycle status of the assessment."
+          },
+          "audience": {
+            "$ref": "#/components/schemas/VendorAssessmentTypeAudience",
+            "description": "Who fills out this assessment."
           },
           "completedByUserId": {
             "type": "string",
@@ -2203,6 +2215,7 @@
           "id",
           "vendorId",
           "status",
+          "audience",
           "completedByUserId",
           "startDate",
           "dueDate",
@@ -2256,6 +2269,10 @@
           "status": {
             "$ref": "#/components/schemas/AssessmentStatus",
             "description": "The lifecycle status of the assessment."
+          },
+          "audience": {
+            "$ref": "#/components/schemas/VendorAssessmentTypeAudience",
+            "description": "Who fills out this assessment."
           },
           "completedByUserId": {
             "type": "string",
@@ -2335,6 +2352,7 @@
           "id",
           "vendorId",
           "status",
+          "audience",
           "completedByUserId",
           "startDate",
           "dueDate",
@@ -2904,13 +2922,18 @@
           "status": {
             "$ref": "#/components/schemas/VendorAssessmentTypeLifecycleStatus",
             "description": "The lifecycle status of the assessment type."
+          },
+          "audience": {
+            "$ref": "#/components/schemas/VendorAssessmentTypeAudience",
+            "description": "Who fills out assessments of this type."
           }
         },
         "required": [
           "id",
           "name",
           "description",
-          "status"
+          "status",
+          "audience"
         ],
         "type": "object",
         "additionalProperties": false
@@ -2938,6 +2961,138 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAlertSeverity": {
+        "type": "string",
+        "enum": [
+          "CRITICAL",
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ]
+      },
+      "VendorAlertStatus": {
+        "type": "string",
+        "enum": [
+          "OPEN",
+          "ESCALATED",
+          "RESOLVED",
+          "NOT_RELEVANT",
+          "AUTO_RESOLVED"
+        ]
+      },
+      "VendorAlertType": {
+        "type": "string",
+        "enum": [
+          "GENERAL",
+          "CVE",
+          "LEAKED_CREDENTIALS"
+        ]
+      },
+      "VendorAlert": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the vendor alert."
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Unique identifier of the vendor associated with the alert."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the monitoring finding that triggered the alert."
+          },
+          "description": {
+            "type": "string",
+            "description": "Details of the monitoring finding that triggered the alert."
+          },
+          "severity": {
+            "$ref": "#/components/schemas/VendorAlertSeverity",
+            "description": "Severity of the monitoring finding."
+          },
+          "status": {
+            "$ref": "#/components/schemas/VendorAlertStatus",
+            "description": "Current alert status. AUTO_RESOLVED indicates automatic resolution;\nNOT_RELEVANT indicates the alert was marked as not relevant."
+          },
+          "category": {
+            "type": "string",
+            "description": "Security category, such as Vulnerabilities or Application security."
+          },
+          "type": {
+            "$ref": "#/components/schemas/VendorAlertType",
+            "description": "Type of monitoring finding: general, CVE, or leaked credentials."
+          },
+          "source": {
+            "type": "string",
+            "nullable": true,
+            "description": "Source of the monitoring finding, or null when unavailable."
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time the alert was created, in ISO 8601 format."
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time the alert was last updated, in ISO 8601 format."
+          }
+        },
+        "required": [
+          "id",
+          "vendorId",
+          "title",
+          "description",
+          "severity",
+          "status",
+          "category",
+          "type",
+          "source",
+          "creationDate",
+          "updatedDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorAlert_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorAlert"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "OutboundError": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
         ],
         "type": "object",
         "additionalProperties": false
@@ -34810,7 +34965,8 @@
                             "id": "6696ea0595df50d5cd6ec3b8",
                             "name": "Security",
                             "description": "Assessment of a vendor's security posture.",
-                            "status": "ACTIVE"
+                            "status": "ACTIVE",
+                            "audience": "EXTERNAL"
                           }
                         ],
                         "pageInfo": {
@@ -34883,7 +35039,8 @@
                       "id": "6696ea0595df50d5cd6ec3b8",
                       "name": "Security",
                       "description": "Assessment of a vendor's security posture.",
-                      "status": "ACTIVE"
+                      "status": "ACTIVE",
+                      "audience": "EXTERNAL"
                     }
                   }
                 }
@@ -35752,6 +35909,7 @@
                             "id": "a2f7e1b9d0c3f4e5a6c7b8d8",
                             "vendorId": "6696e9bca247cbdf1c8e5054",
                             "status": "COMPLETED",
+                            "audience": "EXTERNAL",
                             "completedByUserId": "6696ea0595df50d5cd6ec3b7",
                             "startDate": "2024-02-01T00:00:00.000Z",
                             "dueDate": "2024-03-01T00:00:00.000Z",
@@ -35877,6 +36035,7 @@
                       "id": "a2f7e1b9d0c3f4e5a6c7b8d8",
                       "vendorId": "6696e9bca247cbdf1c8e5054",
                       "status": "COMPLETED",
+                      "audience": "EXTERNAL",
                       "completedByUserId": "6696ea0595df50d5cd6ec3b7",
                       "startDate": "2024-02-01T00:00:00.000Z",
                       "dueDate": "2024-03-01T00:00:00.000Z",
