@@ -897,6 +897,11 @@
             "type": "array",
             "description": "The list of risk attribute IDs the vendor has been assigned to."
           },
+          "categoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The ID of the vendor's category."
+          },
           "category": {
             "properties": {
               "displayName": {
@@ -908,7 +913,8 @@
             ],
             "type": "object",
             "nullable": true,
-            "description": "The vendor's category."
+            "description": "The vendor's category.",
+            "deprecated": true
           },
           "authDetails": {
             "properties": {
@@ -1022,7 +1028,7 @@
               "$ref": "#/components/schemas/VendorRelationshipSummary"
             },
             "type": "array",
-            "description": "Child vendors managed as engagements of this vendor, sorted by name.\nIncludes accessible managed, in-procurement, and archived engagements.\nEmpty when there are none.",
+            "description": "A product, service, or subsidiary you use from a vendor. Each engagement\nbelongs to one parent vendor, has its own risk score and assessments, and\ncannot have engagements of its own. Returned engagements are sorted by name.\nEmpty when there are none.",
             "maxItems": 100
           },
           "parentVendor": {
@@ -1053,6 +1059,7 @@
           "isVisibleToAuditors",
           "isRiskAutoScored",
           "riskAttributeIds",
+          "categoryId",
           "category",
           "authDetails",
           "status",
@@ -3191,7 +3198,14 @@
             "type": "string",
             "nullable": true,
             "description": "Vendor category (e.g. cloud provider, SaaS).",
-            "example": "cloudProvider"
+            "example": "cloudProvider",
+            "deprecated": true
+          },
+          "vendorCategoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of the vendor's category.",
+            "example": "000000000000000000000002"
           },
           "residualRisk": {
             "allOf": [
@@ -12037,6 +12051,7 @@
                               "5f2c939a52855e725c8d5825"
                             ],
                             "vendorCategory": "SaaS",
+                            "vendorCategoryId": "5f2c939a52855e725c8d5826",
                             "inherentRisk": "HIGH",
                             "status": "ACTIVE",
                             "findings": 3,
@@ -13478,6 +13493,7 @@
                             "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                             "isVisibleToAuditors": true,
                             "isRiskAutoScored": true,
+                            "categoryId": "000000000000000000000001",
                             "category": {
                               "displayName": "cloudMonitoring"
                             },

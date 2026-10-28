@@ -1219,6 +1219,11 @@
             "type": "array",
             "description": "The list of risk attribute IDs the vendor has been assigned to."
           },
+          "categoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The ID of the vendor's category."
+          },
           "category": {
             "properties": {
               "displayName": {
@@ -1230,7 +1235,8 @@
             ],
             "type": "object",
             "nullable": true,
-            "description": "The vendor's category."
+            "description": "The vendor's category.",
+            "deprecated": true
           },
           "authDetails": {
             "properties": {
@@ -1344,7 +1350,7 @@
               "$ref": "#/components/schemas/VendorRelationshipSummary"
             },
             "type": "array",
-            "description": "Child vendors managed as engagements of this vendor, sorted by name.\nIncludes accessible managed, in-procurement, and archived engagements.\nEmpty when there are none.",
+            "description": "A product, service, or subsidiary you use from a vendor. Each engagement\nbelongs to one parent vendor, has its own risk score and assessments, and\ncannot have engagements of its own. Returned engagements are sorted by name.\nEmpty when there are none.",
             "maxItems": 100
           },
           "parentVendor": {
@@ -1375,6 +1381,7 @@
           "isVisibleToAuditors",
           "isRiskAutoScored",
           "riskAttributeIds",
+          "categoryId",
           "category",
           "authDetails",
           "status",
@@ -8519,6 +8526,7 @@
           "ET",
           "RO",
           "AR",
+          "EL",
           "SK",
           "SV",
           "TR",
@@ -12512,6 +12520,55 @@
         },
         "required": [
           "variantIds"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FrameworkSnooze": {
+        "properties": {
+          "frameworkId": {
+            "type": "string",
+            "description": "ID of the framework, for example soc2."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SNOOZED"
+            ],
+            "description": "The framework's status after the request."
+          },
+          "snoozedUntilDate": {
+            "type": "string",
+            "nullable": true,
+            "description": "Date a snoozed framework becomes active again, in YYYY-MM-DD format. Null when the framework is active.",
+            "example": "2026-12-01"
+          },
+          "hasChanged": {
+            "type": "boolean",
+            "description": "False only when reactivating a framework that was already active, so nothing changed."
+          }
+        },
+        "required": [
+          "frameworkId",
+          "status",
+          "snoozedUntilDate",
+          "hasChanged"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SnoozeFrameworkInput": {
+        "properties": {
+          "snoozedUntilDate": {
+            "type": "string",
+            "description": "Date the framework becomes active again at 00:00 UTC, in YYYY-MM-DD format. Must be tomorrow or later.",
+            "example": "2026-12-01",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "required": [
+          "snoozedUntilDate"
         ],
         "type": "object",
         "additionalProperties": false
@@ -20412,6 +20469,7 @@
                       "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
+                      "categoryId": "000000000000000000000001",
                       "category": {
                         "displayName": "cloudMonitoring"
                       },
@@ -22041,6 +22099,130 @@
             }
           }
         ]
+      }
+    },
+    "/frameworks/{frameworkId}/reactivate": {
+      "post": {
+        "operationId": "ReactivateFramework",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkSnooze"
+                },
+                "examples": {
+                  "Reactivate a snoozed framework": {
+                    "value": {
+                      "frameworkId": "soc2",
+                      "status": "ACTIVE",
+                      "snoozedUntilDate": null,
+                      "hasChanged": true
+                    }
+                  },
+                  "Framework already active": {
+                    "value": {
+                      "frameworkId": "soc2",
+                      "status": "ACTIVE",
+                      "snoozedUntilDate": null,
+                      "hasChanged": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Reactivates a snoozed framework in your organization now, instead of waiting\nfor its snooze end date. Its tests, documents and policies become active again,\nand notifications resume. Reactivating a framework that is already active\nchanges nothing and returns hasChanged false. Draft and archived frameworks\ncannot be reactivated.",
+        "summary": "Reactivate a snoozed framework",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "ID of the framework to reactivate, for example soc2.",
+            "in": "path",
+            "name": "frameworkId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/frameworks/{frameworkId}/snooze": {
+      "post": {
+        "operationId": "SnoozeFramework",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkSnooze"
+                },
+                "examples": {
+                  "Snooze a framework": {
+                    "value": {
+                      "frameworkId": "soc2",
+                      "status": "SNOOZED",
+                      "snoozedUntilDate": "2026-12-01",
+                      "hasChanged": true
+                    }
+                  },
+                  "Change the snooze end date": {
+                    "value": {
+                      "frameworkId": "soc2",
+                      "status": "SNOOZED",
+                      "snoozedUntilDate": "2027-01-15",
+                      "hasChanged": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Snoozes an active framework in your organization until a date, or changes the\nend date of an existing snooze. While a framework is snoozed, its tests and\ndocuments are hidden and send no notifications, and its policies are marked\ninactive. Vanta keeps collecting data in the background, and the framework\nreturns to active at 00:00 UTC on snoozedUntilDate. Draft and archived\nframeworks cannot be snoozed.",
+        "summary": "Snooze a framework",
+        "tags": [
+          "Frameworks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "ID of the framework to snooze, for example soc2.",
+            "in": "path",
+            "name": "frameworkId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Date the framework becomes active again.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnoozeFrameworkInput",
+                "description": "Date the framework becomes active again."
+              }
+            }
+          }
+        }
       }
     },
     "/frameworks/{frameworkId}/variants": {
@@ -28677,7 +28859,7 @@
             }
           }
         },
-        "description": "List explicitly linked integration accounts. Accounts included through a\nwhole-integration mapping are represented by the integrations collection.\nEach mapping has a serviceId, Vanta connection accountId, and optional subunitId.\nReplay pagination cursors exactly as returned.\nSupply the risk scenario's object ID.",
+        "description": "List explicitly linked integration accounts. Accounts included through a\nwhole-integration mapping are represented by the integrations collection.\nEach mapping has a serviceId, Vanta connection accountId, and optional subunitId.\nReplay pagination cursors exactly as returned.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "List accounts mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -28721,7 +28903,7 @@
             "description": "No content"
           }
         },
-        "description": "Link connected integration accounts using separate serviceId, accountId,\nand optional subunitId fields. Repeated selections are deduplicated.\nLinking an account already included through\nits whole integration is rejected. Supply the risk scenario's object ID.",
+        "description": "Link connected integration accounts using separate serviceId, accountId,\nand optional subunitId fields. Repeated selections are deduplicated.\nLinking an account already included through its whole integration is\nrejected. Supply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk add account mappings",
         "tags": [
           "Risk Scenarios"
@@ -28759,7 +28941,7 @@
             "description": "No content"
           }
         },
-        "description": "Unlink integration accounts, preserving other mappings. Unlinking an\naccount included through its whole integration keeps only the remaining\nconnected accounts linked; accounts connected later remain excluded.\nRepeated selections are deduplicated. Supply the risk scenario's object ID.",
+        "description": "Unlink integration accounts, preserving other mappings. Unlinking an\naccount included through its whole integration keeps only the remaining\nconnected accounts linked; accounts connected later remain excluded.\nRepeated selections are deduplicated. Supply the risk scenario's Risk ID\nor object ID.",
         "summary": "Bulk remove account mappings",
         "tags": [
           "Risk Scenarios"
@@ -28806,7 +28988,7 @@
             }
           }
         },
-        "description": "List the IDs of existing custom assets explicitly mapped to a risk scenario.\nSupply the risk scenario's object ID.",
+        "description": "List the IDs of existing custom assets explicitly mapped to a risk scenario.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "List custom assets mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -28850,7 +29032,7 @@
             "description": "No content"
           }
         },
-        "description": "Link custom assets to a risk scenario. Repeated IDs are deduplicated, and\nalready-linked assets are left unchanged. All assets must exist in this\ndomain; all IDs are validated before writes.\nSupply the risk scenario's object ID.",
+        "description": "Link custom assets to a risk scenario. Repeated IDs are deduplicated, and\nalready-linked assets are left unchanged. All assets must exist in this\ndomain; all IDs are validated before writes.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk add custom asset mappings",
         "tags": [
           "Risk Scenarios"
@@ -28888,7 +29070,7 @@
             "description": "No content"
           }
         },
-        "description": "Unlink custom assets, preserving other mappings. Unlinked or deleted assets\nare left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's object ID.",
+        "description": "Unlink custom assets, preserving other mappings. Unlinked or deleted assets\nare left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's Risk ID or object ID.",
         "summary": "Bulk remove custom asset mappings",
         "tags": [
           "Risk Scenarios"
@@ -28935,7 +29117,7 @@
             }
           }
         },
-        "description": "List the enterprise risk a risk scenario is linked to, identified by the\nenterprise risk's Risk ID. Supply the risk scenario's object ID.\nReturns at most one result. The list is empty when the scenario isn't\nlinked to an enterprise risk, when the scenario is itself an enterprise\nrisk, or when the linked enterprise risk is archived or not visible to the\ncaller.",
+        "description": "List the enterprise risk a risk scenario is linked to, identified by the\nenterprise risk's Risk ID. Supply the risk scenario's Risk ID or object ID.\nReturns at most one result. The list is empty when the scenario isn't\nlinked to an enterprise risk, when the scenario is itself an enterprise\nrisk, or when the linked enterprise risk is archived or not visible to the\ncaller.",
         "summary": "List the enterprise risk mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -28972,7 +29154,7 @@
             }
           }
         },
-        "description": "List integrations linked as a whole to a risk scenario. Integrations with\nindividually selected accounts are listed through account mappings instead.\nSupply the risk scenario's object ID.",
+        "description": "List integrations linked as a whole to a risk scenario. Integrations with\nindividually selected accounts are listed through account mappings instead.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "List integrations mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -29016,7 +29198,7 @@
             "description": "No content"
           }
         },
-        "description": "Link whole integrations using service IDs such as aws. This includes all\naccounts and replaces individual account selections for those integrations.\nRepeated IDs are deduplicated; already-linked integrations remain linked.\nSupply the risk scenario's object ID.",
+        "description": "Link whole integrations using service IDs such as aws. This includes all\naccounts and replaces individual account selections for those integrations.\nRepeated IDs are deduplicated; already-linked integrations remain linked.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk add integration mappings",
         "tags": [
           "Risk Scenarios"
@@ -29054,7 +29236,7 @@
             "description": "No content"
           }
         },
-        "description": "Unlink whole integrations and any individual account selections within them,\npreserving mappings for other integrations. Repeated IDs are deduplicated;\nintegrations already out of scope remain unchanged.\nSupply the risk scenario's object ID.",
+        "description": "Unlink whole integrations and any individual account selections within them,\npreserving mappings for other integrations. Repeated IDs are deduplicated;\nintegrations already out of scope remain unchanged.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk remove integration mappings",
         "tags": [
           "Risk Scenarios"
@@ -29101,7 +29283,7 @@
             }
           }
         },
-        "description": "List the IDs of the issues mapped to a risk scenario.\nSupply the risk scenario's object ID.",
+        "description": "List the IDs of the issues mapped to a risk scenario.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "List issues mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -29145,7 +29327,7 @@
             "description": "No content"
           }
         },
-        "description": "Link issues to a risk scenario. Repeated IDs within the request are\ndeduplicated, and issues that are already linked are left unchanged.\nEvery issue must exist in this domain; otherwise no mappings are added.\nSupply the risk scenario's object ID.",
+        "description": "Link issues to a risk scenario. Repeated IDs within the request are\ndeduplicated, and issues that are already linked are left unchanged.\nEvery issue must exist in this domain; otherwise no mappings are added.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk add issue mappings",
         "tags": [
           "Risk Scenarios"
@@ -29183,7 +29365,7 @@
             "description": "No content"
           }
         },
-        "description": "Unlink issues from a risk scenario, preserving other mappings. Every issue\nmust exist in this domain and be linked to the risk scenario; otherwise no\nmappings are removed. Repeated IDs within the request are deduplicated.\nSupply the risk scenario's object ID.",
+        "description": "Unlink issues from a risk scenario, preserving other mappings. Every issue\nmust exist in this domain and be linked to the risk scenario; otherwise no\nmappings are removed. Repeated IDs within the request are deduplicated.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk remove issue mappings",
         "tags": [
           "Risk Scenarios"
@@ -29230,7 +29412,7 @@
             }
           }
         },
-        "description": "List the vendor finding IDs mapped to a risk scenario, including findings\nattached directly to vendors and findings attached to security reviews.\nSupply the risk scenario's object ID.",
+        "description": "List the vendor finding IDs mapped to a risk scenario, including findings\nattached directly to vendors and findings attached to security reviews.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "List vendor findings mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
@@ -29274,7 +29456,7 @@
             "description": "No content"
           }
         },
-        "description": "Link vendor findings, deriving each finding's vendor and security review.\nRepeated IDs within the request are deduplicated; already-linked findings\nare rejected. All IDs are validated before writes.\nSupply the risk scenario's object ID.",
+        "description": "Link vendor findings, deriving each finding's vendor and security review.\nRepeated IDs within the request are deduplicated; already-linked findings\nare rejected. All IDs are validated before writes.\nSupply the risk scenario's Risk ID or object ID.",
         "summary": "Bulk add vendor finding mappings",
         "tags": [
           "Risk Scenarios"
@@ -29312,7 +29494,7 @@
             "description": "No content"
           }
         },
-        "description": "Unlink vendor findings, preserving other mappings. Findings must exist in\nthis domain; an existing finding without a mapping is left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's object ID.",
+        "description": "Unlink vendor findings, preserving other mappings. Findings must exist in\nthis domain; an existing finding without a mapping is left unchanged.\nRepeated IDs within the request are deduplicated. Supply the risk\nscenario's Risk ID or object ID.",
         "summary": "Bulk remove vendor finding mappings",
         "tags": [
           "Risk Scenarios"
@@ -35444,6 +35626,7 @@
                       "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
+                      "categoryId": "000000000000000000000001",
                       "category": {
                         "displayName": "cloudMonitoring"
                       },
@@ -35536,6 +35719,7 @@
                             "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                             "isVisibleToAuditors": true,
                             "isRiskAutoScored": true,
+                            "categoryId": "000000000000000000000001",
                             "category": {
                               "displayName": "cloudMonitoring"
                             },
@@ -35664,6 +35848,7 @@
                       "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
+                      "categoryId": "000000000000000000000001",
                       "category": {
                         "displayName": "cloudMonitoring"
                       },
@@ -35709,6 +35894,7 @@
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
                       "riskAttributeIds": [],
+                      "categoryId": null,
                       "category": null,
                       "authDetails": {
                         "method": null,
@@ -35826,6 +36012,7 @@
                       "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
+                      "categoryId": "000000000000000000000001",
                       "category": {
                         "displayName": "cloudMonitoring"
                       },
@@ -36975,6 +37162,7 @@
                       "nextSecurityReviewDueDate": "2025-01-01T00:00:00.000Z",
                       "isVisibleToAuditors": true,
                       "isRiskAutoScored": true,
+                      "categoryId": "000000000000000000000001",
                       "category": {
                         "displayName": "cloudMonitoring"
                       },
