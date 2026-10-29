@@ -1517,7 +1517,13 @@
           },
           "category": {
             "type": "string",
-            "description": "The vendor's category."
+            "description": "The vendor's category. Cannot be combined with `categoryId`.",
+            "deprecated": true
+          },
+          "categoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The ID of the vendor's category. Pass null for no category, or omit to let Vanta pick one. Cannot be combined with `category`."
           },
           "inherentRiskLevel": {
             "$ref": "#/components/schemas/VendorRiskLevel",
@@ -1685,7 +1691,13 @@
           },
           "category": {
             "type": "string",
-            "description": "The vendor's category."
+            "description": "The vendor's category. Cannot be combined with `categoryId`.",
+            "deprecated": true
+          },
+          "categoryId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The ID of the vendor's category. Pass null to clear it, or omit to keep it. Cannot be combined with `category`."
           },
           "inherentRiskLevel": {
             "allOf": [
@@ -2546,6 +2558,351 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorSecurityIncidentAlertResolutionState": {
+        "type": "string",
+        "enum": [
+          "OPEN",
+          "RESOLVED"
+        ]
+      },
+      "VendorSecurityIncidentAlertStatus": {
+        "type": "string",
+        "enum": [
+          "POTENTIAL",
+          "CONFIRMED",
+          "SUSPECTED"
+        ]
+      },
+      "VendorSecurityIncidentAlertRootCause": {
+        "type": "string",
+        "enum": [
+          "UNSPECIFIED",
+          "PHISHING",
+          "COMPROMISED_CREDENTIALS",
+          "VENDOR_PARTNER_COMPROMISE",
+          "ZERO_DAY_VULNERABILITY",
+          "KNOWN_VULNERABILITY",
+          "MISCONFIGURATION",
+          "INSIDER_THREAT",
+          "DDOS_ATTACK",
+          "PHYSICAL_ACCESS",
+          "PUBLICLY_EXPOSED_SENSITIVE_INTERFACE",
+          "NOT_DISCLOSED"
+        ]
+      },
+      "VendorSecurityIncidentAlertThreatActor": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertEvidenceContentCategory": {
+        "type": "string",
+        "enum": [
+          "SEC",
+          "LEGAL",
+          "DATA_BREACH",
+          "GENERAL",
+          "EVIDENCE_OF_COMPROMISE",
+          "CLAIM_POST",
+          "PACKAGE_REGISTRY_PAGE",
+          "REGULATORY_FILING",
+          "VENDOR_NOTES",
+          "PUBLIC_NEWS_DISCUSSION"
+        ]
+      },
+      "VendorSecurityIncidentAlertPublicUrlEvidence": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PUBLIC_URL_EVIDENCE"
+            ],
+            "nullable": false
+          },
+          "contentCategory": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertEvidenceContentCategory"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "contentCategory",
+          "url"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertImpactSeverity": {
+        "type": "string",
+        "enum": [
+          "UNSPECIFIED",
+          "CRITICAL",
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ]
+      },
+      "VendorSecurityIncidentAlertAffectedParty": {
+        "type": "string",
+        "enum": [
+          "CUSTOMERS",
+          "EMPLOYEES",
+          "THIRD_PARTIES",
+          "MIXED",
+          "UNKNOWN"
+        ]
+      },
+      "VendorSecurityIncidentAlertDataLeakStatus": {
+        "type": "string",
+        "enum": [
+          "UNSPECIFIED",
+          "UNKNOWN",
+          "OBSERVED",
+          "CONFIRMED"
+        ]
+      },
+      "VendorSecurityIncidentAlertDenialOfServiceConsequence": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "DENIAL_OF_SERVICE"
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertUnauthorizedAccessConsequence": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNAUTHORIZED_ACCESS"
+            ],
+            "nullable": false
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertDataCategory": {
+        "type": "string",
+        "enum": [
+          "PII",
+          "PHI",
+          "FINANCIAL",
+          "CREDENTIALS",
+          "INTELLECTUAL_PROPERTY"
+        ]
+      },
+      "VendorSecurityIncidentAlertDataLeakSeverity": {
+        "type": "string",
+        "enum": [
+          "UNSPECIFIED",
+          "CRITICAL",
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ]
+      },
+      "VendorSecurityIncidentAlertDataLeakConsequence": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "DATA_LEAK"
+            ],
+            "nullable": false
+          },
+          "dataCategories": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertDataCategory"
+            },
+            "type": "array"
+          },
+          "severity": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertDataLeakSeverity"
+          }
+        },
+        "required": [
+          "type",
+          "dataCategories",
+          "severity"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertConsequence": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertDenialOfServiceConsequence"
+          },
+          {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertUnauthorizedAccessConsequence"
+          },
+          {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertDataLeakConsequence"
+          }
+        ]
+      },
+      "VendorSecurityIncidentAlertImpact": {
+        "properties": {
+          "severity": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpactSeverity"
+          },
+          "context": {
+            "type": "string"
+          },
+          "affectedParties": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertAffectedParty"
+            },
+            "type": "array"
+          },
+          "dataLeakStatus": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertDataLeakStatus"
+          },
+          "consequences": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertConsequence"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "severity",
+          "context",
+          "affectedParties",
+          "dataLeakStatus",
+          "consequences"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlertTimelineEventType": {
+        "type": "string",
+        "enum": [
+          "INITIAL_ACCESS",
+          "HACKER_DISCLOSURE",
+          "INCIDENT_DETECTION",
+          "DATA_BREACH_NOTIFICATION",
+          "SEC_FILING",
+          "LAWSUIT_FILING"
+        ]
+      },
+      "VendorSecurityIncidentAlertTimelineEvent": {
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertTimelineEventType"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "type",
+          "occurredAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorSecurityIncidentAlert": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Organization-specific alert ID."
+          },
+          "resolutionState": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertResolutionState"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "affectedVendorIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "relatedVendorIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertStatus"
+          },
+          "title": {
+            "type": "string"
+          },
+          "rootCause": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertRootCause"
+          },
+          "threatActor": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertThreatActor"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertPublicUrlEvidence"
+            },
+            "type": "array"
+          },
+          "impact": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpact"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertTimelineEvent"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "resolutionState",
+          "createdAt",
+          "updatedAt",
+          "affectedVendorIds",
+          "relatedVendorIds",
+          "status",
+          "title",
+          "rootCause",
+          "threatActor",
+          "evidence",
+          "impact",
+          "timeline"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorRiskSection": {
         "properties": {
           "id": {
@@ -3065,6 +3422,51 @@
         "type": "object",
         "additionalProperties": false
       },
+      "UpdateVendorAlertsResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/VendorAlert"
+            },
+            "type": "array",
+            "description": "Updated alerts, once per ID, in first-occurrence request order."
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateVendorAlertsInput": {
+        "properties": {
+          "alertIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the vendor alerts to update. Each alert must belong to your organization.\nRepeated IDs are ignored; the supplied status applies to every unique ID.",
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "ESCALATED",
+              "RESOLVED",
+              "NOT_RELEVANT"
+            ],
+            "description": "Target status for every supplied alert. AUTO_RESOLVED is system-controlled."
+          }
+        },
+        "required": [
+          "alertIds",
+          "status"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "PaginatedResponse_VendorAlert_": {
         "properties": {
           "results": {
@@ -3088,18 +3490,6 @@
         },
         "required": [
           "results"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "OutboundError": {
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
         ],
         "type": "object",
         "additionalProperties": false
@@ -15512,6 +15902,49 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CustomerTrustAccountCustomRevenueMetric": {
+        "properties": {
+          "metricId": {
+            "type": "string",
+            "description": "Unique identifier of the configured revenue metric"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display name of the revenue metric"
+          },
+          "fieldName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mapped CRM field name, or null if no CRM field is mapped"
+          },
+          "syncedAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Amount synced from the CRM, or null if no synced value exists"
+          },
+          "overrideAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Manual override amount, or null if no override exists. When present, takes precedence over syncedAmount."
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the amount, from the synced value or the organization's default currency (USD if unset)"
+          }
+        },
+        "required": [
+          "metricId",
+          "displayName",
+          "fieldName",
+          "syncedAmount",
+          "overrideAmount",
+          "currency"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "CustomerTrustAccountVantaApi": {
         "description": "Vanta API representation of a CustomerTrustAccount.",
         "properties": {
@@ -15563,6 +15996,13 @@
             },
             "type": "array",
             "description": "Tags assigned to this account, grouped by category"
+          },
+          "customRevenueMetrics": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerTrustAccountCustomRevenueMetric"
+            },
+            "type": "array",
+            "description": "Configured revenue metrics with synced and manual override amounts. Empty when no metrics are configured."
           }
         },
         "required": [
@@ -15574,7 +16014,8 @@
           "ndaDetails",
           "accessConfig",
           "customFields",
-          "tagsByCategory"
+          "tagsByCategory",
+          "customRevenueMetrics"
         ],
         "type": "object",
         "additionalProperties": false
@@ -18604,6 +19045,16 @@
                               "autoApprovalEnabled": false,
                               "grantAccessOption": "INCLUDE_EVERYTHING_REQUESTED"
                             },
+                            "customRevenueMetrics": [
+                              {
+                                "metricId": "507f1f77bcf86cd799439014",
+                                "displayName": "Annual recurring revenue",
+                                "fieldName": "AnnualRecurringRevenue__c",
+                                "syncedAmount": 120000,
+                                "overrideAmount": 125000,
+                                "currency": "USD"
+                              }
+                            ],
                             "customFields": [
                               {
                                 "label": "externalId",
@@ -18707,6 +19158,16 @@
                         "autoApprovalEnabled": false,
                         "grantAccessOption": "INCLUDE_EVERYTHING_REQUESTED"
                       },
+                      "customRevenueMetrics": [
+                        {
+                          "metricId": "507f1f77bcf86cd799439014",
+                          "displayName": "Annual recurring revenue",
+                          "fieldName": "AnnualRecurringRevenue__c",
+                          "syncedAmount": 120000,
+                          "overrideAmount": 125000,
+                          "currency": "USD"
+                        }
+                      ],
                       "customFields": [
                         {
                           "label": "externalId",
@@ -18778,6 +19239,16 @@
                         "autoApprovalEnabled": false,
                         "grantAccessOption": "INCLUDE_EVERYTHING_REQUESTED"
                       },
+                      "customRevenueMetrics": [
+                        {
+                          "metricId": "507f1f77bcf86cd799439014",
+                          "displayName": "Annual recurring revenue",
+                          "fieldName": "AnnualRecurringRevenue__c",
+                          "syncedAmount": 120000,
+                          "overrideAmount": 125000,
+                          "currency": "USD"
+                        }
+                      ],
                       "customFields": [
                         {
                           "label": "externalId",
@@ -18874,6 +19345,16 @@
                         "autoApprovalEnabled": false,
                         "grantAccessOption": "INCLUDE_EVERYTHING_REQUESTED"
                       },
+                      "customRevenueMetrics": [
+                        {
+                          "metricId": "507f1f77bcf86cd799439014",
+                          "displayName": "Annual recurring revenue",
+                          "fieldName": "AnnualRecurringRevenue__c",
+                          "syncedAmount": 120000,
+                          "overrideAmount": 125000,
+                          "currency": "USD"
+                        }
+                      ],
                       "customFields": [
                         {
                           "label": "externalId",
@@ -29117,8 +29598,8 @@
             }
           }
         },
-        "description": "List the enterprise risk a risk scenario is linked to, identified by the\nenterprise risk's Risk ID. Supply the risk scenario's Risk ID or object ID.\nReturns at most one result. The list is empty when the scenario isn't\nlinked to an enterprise risk, when the scenario is itself an enterprise\nrisk, or when the linked enterprise risk is archived or not visible to the\ncaller.",
-        "summary": "List the enterprise risk mapped to a risk scenario",
+        "description": "List every enterprise risk a risk scenario is linked to that the caller\ncan view, identified by each enterprise risk's Risk ID, in link order.\nSupply the risk scenario's Risk ID or object ID. Archived enterprise risks\nand enterprise risks the caller can't view are omitted. The list is empty\nwhen the scenario isn't linked to an enterprise risk or when the scenario\nis itself an enterprise risk.",
+        "summary": "List the enterprise risks mapped to a risk scenario",
         "tags": [
           "Risk Scenarios"
         ],
@@ -35806,6 +36287,95 @@
               "items": {
                 "$ref": "#/components/schemas/VendorStatus"
               }
+            }
+          }
+        ]
+      }
+    },
+    "/vendors/{parentVendorId}/engagement-relationship/{engagementVendorId}": {
+      "put": {
+        "operationId": "SetEngagement",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorEngagement"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "engagementVendorId": "507f1f77bcf86cd799439011",
+                      "parentVendorId": "507f1f77bcf86cd799439012"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Sets an existing vendor as an engagement of the specified parent vendor.\nReturns 200 without changes when already attached to this parent.\nRejects vendors attached to a different parent, preserving that relationship.",
+        "summary": "Set vendor engagement",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "parentVendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "engagementVendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "RemoveEngagement",
+        "responses": {
+          "200": {
+            "description": "Vendor engagement removed"
+          }
+        },
+        "description": "Removes the engagement relationship without deleting either vendor.\nReturns 200 without changes when the engagement has no parent or belongs\nto a different parent.",
+        "summary": "Remove vendor engagement",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "parentVendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "engagementVendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ]

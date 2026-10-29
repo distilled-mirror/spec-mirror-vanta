@@ -5688,7 +5688,7 @@
         ]
       },
       "VantaTestEvidence": {
-        "description": "Evidence in the form of a Vanta automated test run.\nVanta Tests are automated compliance tests with metadata like test status,\nexecution time, and file type. Tests generate evidence files that can be\nworkpapers, raw data, or API request logs.",
+        "description": "Evidence in the form of a Vanta automated test run.\nVanta Tests are automated compliance tests with metadata like test status,\nexecution time, and file type. Tests generate evidence files that can be\nworkpapers, raw data, or API request logs.\nEach file in a snapshot is returned as a separate evidence item. These\nitems share `testId` and `snapshotId` and differ by `fileType`.",
         "properties": {
           "title": {
             "type": "string",
@@ -5824,7 +5824,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The unique identifier for the evidence within Vanta's system.\nFormat: ObjectId as a string (e.g., \"6890e473dce1da5d8406f5e7\")."
+            "description": "The unique identifier for the evidence within Vanta's system.\nUse it as the key when you sync evidence of any type.\nEach evidence item has at most one file. A file attached to two\ninformation requests appears as two evidence items with\ndifferent IDs.\nFormat: ObjectId as a string (e.g., \"6890e473dce1da5d8406f5e7\")."
           },
           "evidenceType": {
             "$ref": "#/components/schemas/InformationRequestSupportedEvidenceType",
@@ -9152,6 +9152,18 @@
                 "type": "string"
               }
             }
+          },
+          {
+            "description": "Return only controls whose `inScopeSegmentIds` include at least one of\nthese segment IDs from the audit's `segments[].id` (exact,\ncase-sensitive). IDs that aren't segments on this audit match nothing.\nRepeat the parameter for several IDs, and send the same filters with\nevery `pageCursor`.",
+            "in": "query",
+            "name": "segmentIdsMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ]
       }
@@ -11307,7 +11319,7 @@
             }
           }
         },
-        "description": "Retrieves a paginated list of all evidence attached to an information request,\nenabling auditors to review evidence submitted by customers.\n\nThis endpoint always includes soft-deleted records (where `deletionDate !== null`).\nClients should check the `deletionDate` field to identify and handle deleted records\nappropriately in their systems.\n\nIf the information request itself has been deleted, this endpoint returns a\n4xx HTTP error instead of its evidence.\n\nThis endpoint supports delta synchronization via the `changedSinceDate` parameter,\nallowing efficient polling for changes without retrieving the entire dataset.\n\nPagination usage:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage` to see if more data exists\n3. If true, use `results.pageInfo.endCursor` as `pageCursor` in next request\n4. Repeat until `hasNextPage` is false\n\nDelta sync usage:\n1. Store the timestamp of your last sync\n2. Pass that timestamp as `changedSinceDate`\n3. Only evidence created, modified, shared, or deleted since that timestamp is returned\n4. Process updates, including soft-deletes (deletionDate !== null)\n5. Update your last sync timestamp to the current time\n\nRate limit: 50 requests / minute.",
+        "description": "Retrieves a paginated list of all evidence attached to an information request,\nenabling auditors to review evidence submitted by customers.\n\nThis endpoint always includes soft-deleted records (where `deletionDate !== null`).\nClients should check the `deletionDate` field to identify and handle deleted records\nappropriately in their systems.\n\nIf the information request itself has been deleted, this endpoint returns a\n4xx HTTP error instead of its evidence.\n\nThis endpoint supports delta synchronization via the `changedSinceDate` parameter,\nallowing efficient polling for changes without retrieving the entire dataset.\n\nPagination usage:\n1. Make initial request with desired `pageSize`\n2. Check `results.pageInfo.hasNextPage` to see if more data exists\n3. If true, use `results.pageInfo.endCursor` as `pageCursor` in next request\n4. Repeat until `hasNextPage` is false\n\nDelta sync usage:\n1. Store the timestamp of your last sync\n2. Pass that timestamp as `changedSinceDate`\n3. Only evidence created, modified, shared, or deleted since that timestamp is returned\n4. Process updates, including soft-deletes (deletionDate !== null)\n5. Update your last sync timestamp to the current time\n\nIdentifying evidence and files:\n- Use `id` as the key for each evidence item, whatever its type.\n- To recognize the same file across information requests, use the\n\n  file key for the evidence type. UPLOADED_DOCUMENT uses `evidence.id`.\n  VANTA_DOCUMENT and VANTA_POLICY use `evidence.file.id`, which\n  identifies the source document or policy file. VANTA_TEST uses\n  `evidence.snapshotId` plus `evidence.fileType`. LINK, OBSERVATION,\n  and VANTA_TEST_SNAPSHOT evidence has no file.\n- Do not use `file.url` as a key. It is a temporary download link.\n\nRate limit: 50 requests / minute.",
         "summary": "List evidence for an information request",
         "tags": [
           "Audits"
