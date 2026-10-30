@@ -5852,6 +5852,13 @@
             "nullable": true,
             "description": "Timestamp when the evidence was soft-deleted.\nNull if the evidence has not been deleted.\nSoft deletes retain evidence in the system for audit history while hiding\nit from normal operations.\nFormat: ISO 8601 UTC timestamp."
           },
+          "capturedSegmentIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the audit segments this evidence was relevant to when captured.\nEmpty for uploaded, link and observation evidence, and for evidence captured before attribution was recorded."
+          },
           "evidence": {
             "$ref": "#/components/schemas/InformationRequestEvidenceUnion",
             "description": "The evidence content. Structure varies based on evidenceType."
@@ -5862,6 +5869,7 @@
           "evidenceType",
           "creationDate",
           "modificationDate",
+          "capturedSegmentIds",
           "evidence"
         ],
         "type": "object",
@@ -11292,16 +11300,24 @@
                         "data": [
                           {
                             "id": "6890e473dce1da5d8406f5e8",
-                            "evidenceType": "UPLOADED_DOCUMENT",
+                            "evidenceType": "VANTA_DOCUMENT",
                             "visibleToAuditorDate": "2025-10-16T12:00:00.000Z",
                             "creationDate": "2025-10-15T10:30:00.000Z",
                             "modificationDate": "2025-10-16T12:00:00.000Z",
                             "deletionDate": null,
+                            "capturedSegmentIds": [
+                              "6890e473dce1da5d8406f5ec"
+                            ],
                             "evidence": {
-                              "id": "6890e473dce1da5d8406f5ea",
-                              "filename": "security-policy.pdf",
-                              "mimeType": "application/pdf",
-                              "url": "https://example.com/presigned-url"
+                              "title": "System boundary diagram",
+                              "documentVersionId": "6890e473dce1da5d8406f5ee",
+                              "file": {
+                                "type": "uploaded",
+                                "id": "6890e473dce1da5d8406f5ef",
+                                "filename": "system-boundary.pdf",
+                                "mimeType": "application/pdf",
+                                "url": "https://example.com/presigned-url"
+                              }
                             }
                           }
                         ],
@@ -11405,16 +11421,24 @@
                   "Example 1": {
                     "value": {
                       "id": "6890e473dce1da5d8406f5e8",
-                      "evidenceType": "UPLOADED_DOCUMENT",
+                      "evidenceType": "VANTA_DOCUMENT",
                       "visibleToAuditorDate": "2025-10-16T12:00:00.000Z",
                       "creationDate": "2025-10-15T10:30:00.000Z",
                       "modificationDate": "2025-10-16T12:00:00.000Z",
                       "deletionDate": null,
+                      "capturedSegmentIds": [
+                        "6890e473dce1da5d8406f5ec"
+                      ],
                       "evidence": {
-                        "id": "6890e473dce1da5d8406f5ea",
-                        "filename": "security-policy.pdf",
-                        "mimeType": "application/pdf",
-                        "url": "https://example.com/presigned-url"
+                        "title": "System boundary diagram",
+                        "documentVersionId": "6890e473dce1da5d8406f5ee",
+                        "file": {
+                          "type": "uploaded",
+                          "id": "6890e473dce1da5d8406f5ef",
+                          "filename": "system-boundary.pdf",
+                          "mimeType": "application/pdf",
+                          "url": "https://example.com/presigned-url"
+                        }
                       }
                     }
                   }

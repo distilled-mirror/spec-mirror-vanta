@@ -2558,6 +2558,141 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorExternalFindingCveMetadata": {
+        "properties": {
+          "cvssScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "epssScore": {
+            "type": "string",
+            "nullable": true
+          },
+          "publishedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nvdUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "cvssScore",
+          "epssScore",
+          "publishedDate",
+          "nvdUrl"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorExternalFinding": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the external finding."
+          },
+          "vendorId": {
+            "type": "string",
+            "description": "Unique identifier of the vendor in your organization."
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "HIGH",
+              "MEDIUM",
+              "LOW",
+              "INFO"
+            ]
+          },
+          "severityReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "RESOLVED"
+            ]
+          },
+          "category": {
+            "type": "string",
+            "description": "Security category, such as Vulnerabilities or Exposed services."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "GENERAL",
+              "CVE",
+              "LEAKED_CREDENTIALS"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstSeenDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time the finding was first seen, in ISO 8601 format."
+          },
+          "lastSeenDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time the finding was last seen, in ISO 8601 format."
+          },
+          "appearances": {
+            "type": "number",
+            "format": "double"
+          },
+          "remediationGuidance": {
+            "type": "string",
+            "nullable": true
+          },
+          "riskContext": {
+            "type": "string",
+            "nullable": true
+          },
+          "cveMetadata": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorExternalFindingCveMetadata"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "vendorId",
+          "title",
+          "description",
+          "severity",
+          "severityReason",
+          "status",
+          "category",
+          "type",
+          "source",
+          "firstSeenDate",
+          "lastSeenDate",
+          "appearances",
+          "remediationGuidance",
+          "riskContext",
+          "cveMetadata"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorSecurityIncidentAlertResolutionState": {
         "type": "string",
         "enum": [
@@ -7696,6 +7831,211 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScoreProfileType": {
+        "type": "string",
+        "enum": [
+          "CLASSIC",
+          "ADVANCED"
+        ]
+      },
+      "RiskScoreStageKey": {
+        "type": "string",
+        "enum": [
+          "INHERENT",
+          "CURRENT",
+          "TARGET"
+        ]
+      },
+      "RiskScoreStage": {
+        "properties": {
+          "stageKey": {
+            "$ref": "#/components/schemas/RiskScoreStageKey",
+            "description": "What the stage measures. `INHERENT` is risk before any controls,\n`CURRENT` is risk with today's controls, and `TARGET` is risk expected\nafter planned treatment."
+          },
+          "label": {
+            "type": "string",
+            "description": "The domain's name for this stage."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "stageKey",
+          "label",
+          "description"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskScoreProfile": {
+        "properties": {
+          "profileType": {
+            "$ref": "#/components/schemas/RiskScoreProfileType",
+            "description": "`CLASSIC` scores the `CURRENT` and `TARGET` stages. `ADVANCED` also\nscores `INHERENT`."
+          },
+          "scoreStages": {
+            "items": {
+              "$ref": "#/components/schemas/RiskScoreStage"
+            },
+            "type": "array",
+            "description": "The stages, in display order."
+          }
+        },
+        "required": [
+          "profileType",
+          "scoreStages"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskCategoryType": {
+        "type": "string",
+        "enum": [
+          "VANTA_DEFAULT",
+          "CUSTOM"
+        ]
+      },
+      "RiskCategory": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/RiskCategoryType",
+            "description": "`VANTA_DEFAULT` for a category Vanta provides, or `CUSTOM` for one the\ndomain created."
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskCustomFieldDataType": {
+        "type": "string",
+        "enum": [
+          "CURRENCY",
+          "DATE",
+          "DECIMAL",
+          "INTEGER",
+          "PICKLIST",
+          "STRING",
+          "USER"
+        ]
+      },
+      "RiskCustomFieldCurrencyUnit": {
+        "type": "string",
+        "enum": [
+          "DEFAULT",
+          "K",
+          "M",
+          "B"
+        ]
+      },
+      "RiskCustomFieldCurrency": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "ISO 4217 currency code, such as `USD`."
+          },
+          "unit": {
+            "$ref": "#/components/schemas/RiskCustomFieldCurrencyUnit",
+            "description": "The unit amounts are shown in: `K` (thousands), `M` (millions),\n`B` (billions), or `DEFAULT` (no unit)."
+          }
+        },
+        "required": [
+          "code",
+          "unit"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskCustomField": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "The value accepted as `label` in the `customFields` field on\nrisk-scenario create and update requests."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataType": {
+            "$ref": "#/components/schemas/RiskCustomFieldDataType"
+          },
+          "picklistOptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "nullable": true,
+            "description": "The values a `PICKLIST` field accepts. `null` for other data types."
+          },
+          "decimalPlaces": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "The number of decimal places a `DECIMAL` field keeps. `null` for other\ndata types."
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RiskCustomFieldCurrency"
+              }
+            ],
+            "nullable": true,
+            "description": "The currency of a `CURRENCY` field. `null` for other data types."
+          }
+        },
+        "required": [
+          "label",
+          "description",
+          "dataType",
+          "picklistOptions",
+          "decimalPlaces",
+          "currency"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskSettings": {
+        "description": "The domain's risk settings: the stages risks are scored at, and the\ncategories and custom fields available on risk scenarios.",
+        "properties": {
+          "scoreProfile": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RiskScoreProfile"
+              }
+            ],
+            "nullable": true,
+            "description": "The stages every risk is scored at, with the domain's names for them.\n`null` when score stages aren't available to the domain."
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/RiskCategory"
+            },
+            "type": "array",
+            "description": "The categories risk scenarios can belong to: Vanta's default categories\nfollowed by the domain's custom ones. A category's `name` is the value\naccepted in the `categories` field on risk-scenario create and update\nrequests."
+          },
+          "customFields": {
+            "items": {
+              "$ref": "#/components/schemas/RiskCustomField"
+            },
+            "type": "array",
+            "description": "The custom fields configured for risk scenarios, in display order."
+          }
+        },
+        "required": [
+          "scoreProfile",
+          "categories",
+          "customFields"
         ],
         "type": "object",
         "additionalProperties": false
@@ -23958,6 +24298,109 @@
         }
       }
     },
+    "/groups/{groupId}/task-requirement-set": {
+      "get": {
+        "operationId": "GetGroupTaskRequirementSet",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/TaskRequirementSet"
+                    }
+                  ],
+                  "nullable": true
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Engineering Onboarding",
+                      "description": "Requirements for engineers",
+                      "isReusable": true,
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z",
+                      "taskRequirements": {
+                        "onboarding": {
+                          "policyAcceptance": {
+                            "required": true,
+                            "acceptAll": true
+                          },
+                          "backgroundCheck": {
+                            "required": true,
+                            "cutoffDate": null
+                          },
+                          "securityTraining": {
+                            "required": true,
+                            "requiredCategories": [
+                              "general"
+                            ],
+                            "requirementIds": [
+                              "5f2c939a52855e725c8d5826"
+                            ]
+                          },
+                          "deviceMonitoring": {
+                            "required": true,
+                            "preferredPasswordManagerId": "ONEPASSWORD",
+                            "installPrompt": "INSTALL_VANTA_AGENT"
+                          },
+                          "custom": {
+                            "required": true,
+                            "requirements": [
+                              {
+                                "id": "5f2c939a52855e725c8d5827",
+                                "effectiveDate": null
+                              }
+                            ]
+                          }
+                        },
+                        "offboarding": {
+                          "accountDeactivation": {
+                            "required": true,
+                            "accounts": {
+                              "deactivateAll": true
+                            }
+                          },
+                          "custom": {
+                            "required": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "The group has no task requirement set"
+          }
+        },
+        "description": "Gets the task requirement set applied to a group. Returns no content if the\ngroup has no task requirement set.",
+        "summary": "Get group task requirement set",
+        "tags": [
+          "Groups"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "groupId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/integrations": {
       "get": {
         "operationId": "ListConnectedIntegrations",
@@ -30107,6 +30550,732 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/SubmitRiskForApprovalInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task-requirement-sets": {
+      "get": {
+        "operationId": "ListTaskRequirementSets",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_TaskRequirementSet_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "eyJpIjowfQ==",
+                          "endCursor": "eyJpIjowfQ=="
+                        },
+                        "data": [
+                          {
+                            "id": "5f2c939a52855e725c8d5824",
+                            "name": "Engineering Onboarding",
+                            "description": "Requirements for engineers",
+                            "isReusable": true,
+                            "createdAt": "2024-03-07T18:46:05.944Z",
+                            "updatedAt": "2024-03-07T18:46:05.944Z",
+                            "taskRequirements": {
+                              "onboarding": {
+                                "policyAcceptance": {
+                                  "required": true,
+                                  "acceptAll": true
+                                },
+                                "backgroundCheck": {
+                                  "required": true,
+                                  "cutoffDate": null
+                                },
+                                "securityTraining": {
+                                  "required": true,
+                                  "requiredCategories": [
+                                    "general"
+                                  ],
+                                  "requirementIds": [
+                                    "5f2c939a52855e725c8d5826"
+                                  ]
+                                },
+                                "deviceMonitoring": {
+                                  "required": true,
+                                  "preferredPasswordManagerId": "ONEPASSWORD",
+                                  "installPrompt": "INSTALL_VANTA_AGENT"
+                                },
+                                "custom": {
+                                  "required": true,
+                                  "requirements": [
+                                    {
+                                      "id": "5f2c939a52855e725c8d5827",
+                                      "effectiveDate": null
+                                    }
+                                  ]
+                                }
+                              },
+                              "offboarding": {
+                                "accountDeactivation": {
+                                  "required": true,
+                                  "accounts": {
+                                    "deactivateAll": true
+                                  }
+                                },
+                                "custom": {
+                                  "required": false
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the organization's task requirement sets.",
+        "summary": "List task requirement sets",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Filter sets by reusable status. If omitted, returns both reusable and non-reusable sets.",
+            "in": "query",
+            "name": "reusable",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateTaskRequirementSet",
+        "responses": {
+          "201": {
+            "description": "Task requirement set created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Engineering Onboarding",
+                      "description": "Requirements for engineers",
+                      "isReusable": true,
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z",
+                      "taskRequirements": {
+                        "onboarding": {
+                          "policyAcceptance": {
+                            "required": true,
+                            "acceptAll": true
+                          },
+                          "backgroundCheck": {
+                            "required": true,
+                            "cutoffDate": null
+                          },
+                          "securityTraining": {
+                            "required": true,
+                            "requiredCategories": [
+                              "general"
+                            ],
+                            "requirementIds": [
+                              "5f2c939a52855e725c8d5826"
+                            ]
+                          },
+                          "deviceMonitoring": {
+                            "required": true,
+                            "preferredPasswordManagerId": "ONEPASSWORD",
+                            "installPrompt": "INSTALL_VANTA_AGENT"
+                          },
+                          "custom": {
+                            "required": true,
+                            "requirements": [
+                              {
+                                "id": "5f2c939a52855e725c8d5827",
+                                "effectiveDate": null
+                              }
+                            ]
+                          }
+                        },
+                        "offboarding": {
+                          "accountDeactivation": {
+                            "required": true,
+                            "accounts": {
+                              "deactivateAll": true
+                            }
+                          },
+                          "custom": {
+                            "required": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a task requirement set and assigns it to a group.",
+        "summary": "Create task requirement set",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaskRequirementSetInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task-requirement-sets/custom-requirements": {
+      "get": {
+        "operationId": "ListCustomRequirements",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_CustomRequirement_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "eyJpIjowfQ==",
+                          "endCursor": "eyJpIjowfQ=="
+                        },
+                        "data": [
+                          {
+                            "id": "5f2c939a52855e725c8d5827",
+                            "title": "Sign the acceptable use policy",
+                            "requirementType": "ONBOARDING",
+                            "ownerType": "EMPLOYEE",
+                            "textInputLabel": null,
+                            "fileInputLabel": "Signed policy",
+                            "instructions": "Download, sign, and upload the acceptable use policy.",
+                            "createdAt": "2024-03-07T18:46:05.944Z",
+                            "updatedAt": "2024-03-07T18:46:05.944Z"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the organization's custom onboarding and offboarding requirements.",
+        "summary": "List custom requirements",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Filter requirements by type. If omitted, returns both onboarding and offboarding requirements.",
+            "in": "query",
+            "name": "requirementType",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/CustomRequirementType"
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "CreateCustomRequirement",
+        "responses": {
+          "201": {
+            "description": "Custom requirement created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomRequirement"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5827",
+                      "title": "Sign the acceptable use policy",
+                      "requirementType": "ONBOARDING",
+                      "ownerType": "EMPLOYEE",
+                      "textInputLabel": null,
+                      "fileInputLabel": "Signed policy",
+                      "instructions": "Download, sign, and upload the acceptable use policy.",
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Creates a custom onboarding or offboarding requirement.",
+        "summary": "Create custom requirement",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomRequirementInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task-requirement-sets/custom-requirements/{customRequirementId}": {
+      "patch": {
+        "operationId": "UpdateCustomRequirement",
+        "responses": {
+          "200": {
+            "description": "Custom requirement updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomRequirement"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5827",
+                      "title": "Sign the acceptable use policy",
+                      "requirementType": "ONBOARDING",
+                      "ownerType": "EMPLOYEE",
+                      "textInputLabel": null,
+                      "fileInputLabel": "Signed policy",
+                      "instructions": "Download, sign, and upload the acceptable use policy.",
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Partially updates a custom onboarding or offboarding requirement. The requirement type\nmust match the requirement being updated.",
+        "summary": "Update custom requirement",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "customRequirementId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomRequirementInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task-requirement-sets/{requirementSetId}": {
+      "get": {
+        "operationId": "GetTaskRequirementSet",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Engineering Onboarding",
+                      "description": "Requirements for engineers",
+                      "isReusable": true,
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z",
+                      "taskRequirements": {
+                        "onboarding": {
+                          "policyAcceptance": {
+                            "required": true,
+                            "acceptAll": true
+                          },
+                          "backgroundCheck": {
+                            "required": true,
+                            "cutoffDate": null
+                          },
+                          "securityTraining": {
+                            "required": true,
+                            "requiredCategories": [
+                              "general"
+                            ],
+                            "requirementIds": [
+                              "5f2c939a52855e725c8d5826"
+                            ]
+                          },
+                          "deviceMonitoring": {
+                            "required": true,
+                            "preferredPasswordManagerId": "ONEPASSWORD",
+                            "installPrompt": "INSTALL_VANTA_AGENT"
+                          },
+                          "custom": {
+                            "required": true,
+                            "requirements": [
+                              {
+                                "id": "5f2c939a52855e725c8d5827",
+                                "effectiveDate": null
+                              }
+                            ]
+                          }
+                        },
+                        "offboarding": {
+                          "accountDeactivation": {
+                            "required": true,
+                            "accounts": {
+                              "deactivateAll": true
+                            }
+                          },
+                          "custom": {
+                            "required": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get task requirement set by ID",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "requirementSetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/task-requirement-sets/{requirementSetId}/details": {
+      "patch": {
+        "operationId": "UpdateTaskRequirementSetDetails",
+        "responses": {
+          "200": {
+            "description": "Task requirement set updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Engineering Onboarding",
+                      "description": "Requirements for engineers",
+                      "isReusable": true,
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z",
+                      "taskRequirements": {
+                        "onboarding": {
+                          "policyAcceptance": {
+                            "required": true,
+                            "acceptAll": true
+                          },
+                          "backgroundCheck": {
+                            "required": true,
+                            "cutoffDate": null
+                          },
+                          "securityTraining": {
+                            "required": true,
+                            "requiredCategories": [
+                              "general"
+                            ],
+                            "requirementIds": [
+                              "5f2c939a52855e725c8d5826"
+                            ]
+                          },
+                          "deviceMonitoring": {
+                            "required": true,
+                            "preferredPasswordManagerId": "ONEPASSWORD",
+                            "installPrompt": "INSTALL_VANTA_AGENT"
+                          },
+                          "custom": {
+                            "required": true,
+                            "requirements": [
+                              {
+                                "id": "5f2c939a52855e725c8d5827",
+                                "effectiveDate": null
+                              }
+                            ]
+                          }
+                        },
+                        "offboarding": {
+                          "accountDeactivation": {
+                            "required": true,
+                            "accounts": {
+                              "deactivateAll": true
+                            }
+                          },
+                          "custom": {
+                            "required": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Partially updates a task requirement set's details.",
+        "summary": "Update task requirement set details",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "requirementSetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "New description. Omit to preserve."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "New name. Omit to preserve."
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task-requirement-sets/{requirementSetId}/requirements": {
+      "patch": {
+        "operationId": "UpdateTaskRequirementSetRequirements",
+        "responses": {
+          "200": {
+            "description": "Task requirement set requirements updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskRequirementSet"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Engineering Onboarding",
+                      "description": "Requirements for engineers",
+                      "isReusable": true,
+                      "createdAt": "2024-03-07T18:46:05.944Z",
+                      "updatedAt": "2024-03-07T18:46:05.944Z",
+                      "taskRequirements": {
+                        "onboarding": {
+                          "policyAcceptance": {
+                            "required": true,
+                            "acceptAll": true
+                          },
+                          "backgroundCheck": {
+                            "required": true,
+                            "cutoffDate": null
+                          },
+                          "securityTraining": {
+                            "required": true,
+                            "requiredCategories": [
+                              "general"
+                            ],
+                            "requirementIds": [
+                              "5f2c939a52855e725c8d5826"
+                            ]
+                          },
+                          "deviceMonitoring": {
+                            "required": true,
+                            "preferredPasswordManagerId": "ONEPASSWORD",
+                            "installPrompt": "INSTALL_VANTA_AGENT"
+                          },
+                          "custom": {
+                            "required": true,
+                            "requirements": [
+                              {
+                                "id": "5f2c939a52855e725c8d5827",
+                                "effectiveDate": null
+                              }
+                            ]
+                          }
+                        },
+                        "offboarding": {
+                          "accountDeactivation": {
+                            "required": true,
+                            "accounts": {
+                              "deactivateAll": true
+                            }
+                          },
+                          "custom": {
+                            "required": false
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Partially updates the onboarding and offboarding requirements a task requirement set\napplies to its personnel. Supplying a requirement replaces it outright; omitting one\nleaves it as it was.",
+        "summary": "Update task requirement set requirements",
+        "tags": [
+          "Task Requirement Sets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "requirementSetId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskRequirementsInput"
               }
             }
           }
