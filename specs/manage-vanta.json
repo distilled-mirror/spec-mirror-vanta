@@ -2385,6 +2385,20 @@
         "type": "object",
         "additionalProperties": false
       },
+      "StartVendorAssessmentInput": {
+        "properties": {
+          "assessmentTypeId": {
+            "type": "string",
+            "description": "ID of the assessment type to start for this vendor.",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          }
+        },
+        "required": [
+          "assessmentTypeId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "FindingRiskStatus": {
         "description": "The status of the finding:\n- ACCEPT: The finding and its risk has been accepted and no follow up is required.\n- REMEDIATE: The finding needs to be remediated in some way.\n- NONE: The finding is not related to an observed risk that needs to be accepted or remediated.",
         "enum": [
@@ -3038,6 +3052,109 @@
         "type": "object",
         "additionalProperties": false
       },
+      "PaginatedResponse_VendorSecurityIncidentAlert_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorSecurityIncidentAlert"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ListVendorSecurityIncidentAlertsQuery": {
+        "properties": {
+          "pageSize": {
+            "$ref": "#/components/schemas/PageSize"
+          },
+          "pageCursor": {
+            "$ref": "#/components/schemas/PageCursor"
+          },
+          "q": {
+            "type": "string",
+            "description": "Search incident alerts."
+          },
+          "vendorIdMatchesAny": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Organization vendor IDs.",
+            "minItems": 1,
+            "maxItems": 20
+          },
+          "resolutionStateMatchesAny": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertResolutionState"
+            },
+            "type": "array",
+            "description": "Filter by resolution state. Returns alerts matching any of the specified states.",
+            "minItems": 1
+          },
+          "confirmationStatusMatchesAny": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertStatus"
+            },
+            "type": "array",
+            "description": "Filter by incident confirmation status. Returns alerts matching any of the specified statuses.",
+            "minItems": 1
+          },
+          "impactSeverityMatchesAny": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpactSeverity"
+            },
+            "type": "array",
+            "description": "Filter by overall impact severity. Returns alerts matching any of the specified severities.",
+            "minItems": 1
+          },
+          "dataLeakSeverityMatchesAny": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpactSeverity"
+            },
+            "type": "array",
+            "description": "Matches a DATA_LEAK consequence's severity, independently of overall impact.",
+            "minItems": 1
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "creationDate",
+              "impactSeverity",
+              "resolutionState",
+              "confirmationStatus"
+            ],
+            "default": "creationDate"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Ascending means oldest first, highest impact first (CRITICAL to LOW to UNSPECIFIED),\nOPEN before RESOLVED, or CONFIRMED before SUSPECTED before POTENTIAL.\nDescending reverses each order.",
+            "default": "desc"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorRiskSection": {
         "properties": {
           "id": {
@@ -3625,6 +3742,76 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAlertSettingsItem": {
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "Application security",
+              "Exposed application user interfaces",
+              "Exposed services",
+              "Exposed & leaked sensitive information",
+              "End of life & outdated applications",
+              "Sensitive interfaces exposure",
+              "Threat intelligence",
+              "Trust",
+              "Vulnerabilities",
+              "Vulnerable misconfigurations",
+              "Security incidents"
+            ],
+            "description": "Alert category."
+          },
+          "isEnabled": {
+            "type": "boolean",
+            "description": "Whether alerts in this category are enabled."
+          },
+          "riskLevelSetting": {
+            "type": "string",
+            "enum": [
+              "ANY",
+              "LOW_MEDIUM_HIGH_CRITICAL",
+              "MEDIUM_HIGH_CRITICAL",
+              "HIGH_CRITICAL",
+              "CRITICAL"
+            ],
+            "description": "Vendor inherent-risk levels that produce alerts. ANY includes unscored vendors."
+          },
+          "severitySetting": {
+            "type": "string",
+            "enum": [
+              "ANY",
+              "MEDIUM_HIGH_CRITICAL",
+              "HIGH_CRITICAL",
+              "CRITICAL"
+            ],
+            "description": "Alert severities to include. ANY includes all severities."
+          }
+        },
+        "required": [
+          "category",
+          "isEnabled",
+          "riskLevelSetting",
+          "severitySetting"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAlertSettingsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VendorAlertSettingsItem"
+            },
+            "type": "array",
+            "description": "Effective organization-wide settings, including defaults for missing categories."
+          }
+        },
+        "required": [
+          "items"
         ],
         "type": "object",
         "additionalProperties": false
@@ -5919,6 +6106,7 @@
               "fedramp20x",
               "fedramp20x_2026",
               "fedramp20x_classA",
+              "fedramp20x_classBC",
               "gdpr",
               "hipaa",
               "hitruste1",
@@ -6002,6 +6190,7 @@
               "fedramp20x",
               "fedramp20x_2026",
               "fedramp20x_classA",
+              "fedramp20x_classBC",
               "gdpr",
               "hipaa",
               "hitruste1",
@@ -17751,6 +17940,294 @@
           "question",
           "lastUpdated",
           "answer"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiProduct": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Canonical product catalog ID."
+          },
+          "name": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "vendorUrl": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "PURPOSE_BUILT",
+              "EMBEDDED"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "recentDeviceCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "recentUserCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Distinct personnel linked through recent devices or identity-provider observations."
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lastObservedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Latest qualifying device check-in or identity-provider update, not evidence of usage."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "vendor",
+          "vendorUrl",
+          "category",
+          "description",
+          "recentDeviceCount",
+          "recentUserCount",
+          "sources",
+          "lastObservedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiProduct_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiProduct"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiProductUser": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Personnel record ID linked through reporting devices or identity-provider assignments."
+          },
+          "deviceCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastObservedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Latest qualifying device check-in or identity-provider update, not evidence of product usage."
+          }
+        },
+        "required": [
+          "id",
+          "deviceCount",
+          "lastObservedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiProductUser_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiProductUser"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiProductDevice": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Personnel record ID, or null for an unowned device or an unmapped owner."
+          },
+          "operatingSystem": {
+            "type": "string",
+            "nullable": true
+          },
+          "serialNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sources": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lastObservedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Latest qualifying device check-in, not evidence of product usage."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "ownerId",
+          "operatingSystem",
+          "serialNumber",
+          "sources",
+          "lastObservedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiProductDevice_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiProductDevice"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiProductUseCase": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisationalRole": {
+            "type": "string",
+            "enum": [
+              "DEPLOYER",
+              "PROVIDER",
+              null
+            ],
+            "nullable": true
+          },
+          "ownerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Auth user IDs of the documented use case's owners."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "organisationalRole",
+          "ownerIds",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiProductUseCase_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiProductUseCase"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
         ],
         "type": "object",
         "additionalProperties": false
