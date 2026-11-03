@@ -1413,6 +1413,7 @@
         "type": "string"
       },
       "VantaBasedPersonInfoSource": {
+        "title": "VantaBasedPersonInfoSource",
         "description": "The person's information comes from what is set in Vanta.",
         "properties": {
           "type": {
@@ -1432,6 +1433,7 @@
         "type": "string"
       },
       "ScimBasedPersonInfoSource": {
+        "title": "ScimBasedPersonInfoSource",
         "description": "The person's information comes from SCIM.",
         "properties": {
           "type": {
@@ -1451,6 +1453,7 @@
         "type": "string"
       },
       "IntegrationBasedPersonInfoSource": {
+        "title": "IntegrationBasedPersonInfoSource",
         "description": "The person's information comes from an integration.",
         "properties": {
           "integrationId": {
@@ -5389,6 +5392,7 @@
         ]
       },
       "UploadedDocumentEvidence": {
+        "title": "UploadedDocumentEvidence",
         "description": "Evidence in the form of an uploaded document file.\nThe URL is a temporary presigned URL that expires after a certain period.",
         "properties": {
           "id": {
@@ -5417,6 +5421,7 @@
         "additionalProperties": false
       },
       "LinkEvidence": {
+        "title": "LinkEvidence",
         "description": "Evidence in the form of a link to external documentation or resources.",
         "properties": {
           "title": {
@@ -5440,6 +5445,7 @@
         "additionalProperties": false
       },
       "ObservationEvidence": {
+        "title": "ObservationEvidence",
         "description": "Evidence in the form of a text observation or note.",
         "properties": {
           "observationDetails": {
@@ -5454,6 +5460,7 @@
         "additionalProperties": false
       },
       "VantaDocumentUploadedEvidence": {
+        "title": "VantaDocumentUploadedEvidence",
         "description": "Represents an uploaded file in a Vanta Document.\nThe file is stored in Vanta's system and accessed via a presigned URL.",
         "properties": {
           "type": {
@@ -5491,6 +5498,7 @@
         "additionalProperties": false
       },
       "VantaDocumentLinkEvidence": {
+        "title": "VantaDocumentLinkEvidence",
         "description": "Represents an external link in a Vanta Document.\nThe link points to documentation hosted outside of Vanta's system.",
         "properties": {
           "type": {
@@ -5519,6 +5527,7 @@
         "additionalProperties": false
       },
       "VantaDocumentEvidence": {
+        "title": "VantaDocumentEvidence",
         "description": "Evidence in the form of a Vanta Document.\nVanta Documents are managed documents with metadata like expiration dates\nand versioning. They can either be uploaded files stored in Vanta or\nlinks to external documentation.",
         "properties": {
           "title": {
@@ -5575,6 +5584,7 @@
         "additionalProperties": false
       },
       "VantaPolicyEvidence": {
+        "title": "VantaPolicyEvidence",
         "description": "Evidence in the form of a Vanta Policy.\nVanta Policies are compliance policies with metadata like locale,\neffective dates, and versioning. Policies are always uploaded files\nstored in Vanta's system.",
         "properties": {
           "title": {
@@ -5688,6 +5698,7 @@
         ]
       },
       "VantaTestEvidence": {
+        "title": "VantaTestEvidence",
         "description": "Evidence in the form of a Vanta automated test run.\nVanta Tests are automated compliance tests with metadata like test status,\nexecution time, and file type. Tests generate evidence files that can be\nworkpapers, raw data, or API request logs.\nEach file in a snapshot is returned as a separate evidence item. These\nitems share `testId` and `snapshotId` and differ by `fileType`.",
         "properties": {
           "title": {
@@ -5747,6 +5758,7 @@
         "additionalProperties": false
       },
       "VantaTestSnapshotEvidence": {
+        "title": "VantaTestSnapshotEvidence",
         "description": "Evidence in the form of a Vanta automated test run snapshot.\n\nUnlike VantaTestEvidence (which represents a single file within a test run's\nevidence packet), a snapshot represents the entire test-run bundle. Use the\ndedicated snapshot detail endpoint to retrieve the files associated with a\nsnapshot.",
         "properties": {
           "snapshotId": {
@@ -6846,6 +6858,7 @@
         "type": "string"
       },
       "FrameworkId": {
+        "title": "FrameworkId",
         "enum": [
           "AU_E_8",
           "AWS_FTR",
@@ -7310,6 +7323,7 @@
         "type": "string"
       },
       "AtlasClusterDatabase": {
+        "title": "AtlasClusterDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7358,6 +7372,7 @@
         "type": "string"
       },
       "AzureCosmosDBDatabase": {
+        "title": "AzureCosmosDBDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7401,6 +7416,7 @@
         "type": "string"
       },
       "AzureCosmosDBForPostgreSQLDatabase": {
+        "title": "AzureCosmosDBForPostgreSQLDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7451,6 +7467,7 @@
         "type": "string"
       },
       "AzureDatabaseForExternalSQLVariantDatabase": {
+        "title": "AzureDatabaseForExternalSQLVariantDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7501,6 +7518,7 @@
         "type": "string"
       },
       "AzureSQLDatabaseDatabase": {
+        "title": "AzureSQLDatabaseDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7551,6 +7569,7 @@
         "type": "string"
       },
       "AzureSQLManagedInstanceDatabase": {
+        "title": "AzureSQLManagedInstanceDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7598,6 +7617,7 @@
         "type": "string"
       },
       "AzureSQLServerOnVMsDatabase": {
+        "title": "AzureSQLServerOnVMsDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7641,6 +7661,7 @@
         "type": "string"
       },
       "AzureSynapseWarehouseDatabase": {
+        "title": "AzureSynapseWarehouseDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7687,6 +7708,7 @@
         "type": "string"
       },
       "BigQueryDatasetDatabase": {
+        "title": "BigQueryDatasetDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7729,6 +7751,7 @@
         "type": "string"
       },
       "BigtableInstanceDatabase": {
+        "title": "BigtableInstanceDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7771,6 +7794,7 @@
         "type": "string"
       },
       "CloudSQLInstanceDatabase": {
+        "title": "CloudSQLInstanceDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7816,6 +7840,7 @@
         "type": "string"
       },
       "DatastoreProjectDatabase": {
+        "title": "DatastoreProjectDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7859,6 +7884,7 @@
         "type": "string"
       },
       "DigitalOceanMongodbClusterDatabase": {
+        "title": "DigitalOceanMongodbClusterDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7901,6 +7927,7 @@
         "type": "string"
       },
       "DigitalOceanRedisClusterDatabase": {
+        "title": "DigitalOceanRedisClusterDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7943,6 +7970,7 @@
         "type": "string"
       },
       "DigitalOceanRelationalDbClusterDatabase": {
+        "title": "DigitalOceanRelationalDbClusterDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -7988,6 +8016,7 @@
         "type": "string"
       },
       "DynamoDBTableDatabase": {
+        "title": "DynamoDBTableDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -8042,6 +8071,7 @@
         "type": "string"
       },
       "FirestoreProjectDatabase": {
+        "title": "FirestoreProjectDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -8085,6 +8115,7 @@
         "type": "string"
       },
       "OracleCloudAutonomousDatabaseDatabase": {
+        "title": "OracleCloudAutonomousDatabaseDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -8127,6 +8158,7 @@
         "type": "string"
       },
       "RDSInstanceDatabase": {
+        "title": "RDSInstanceDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -8188,6 +8220,7 @@
         "type": "string"
       },
       "RedshiftClusterDatabase": {
+        "title": "RedshiftClusterDatabase",
         "properties": {
           "id": {
             "type": "string",
@@ -8236,6 +8269,7 @@
         "type": "string"
       },
       "SpannerInstanceDatabase": {
+        "title": "SpannerInstanceDatabase",
         "properties": {
           "id": {
             "type": "string",

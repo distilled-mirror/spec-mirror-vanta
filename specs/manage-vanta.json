@@ -366,6 +366,7 @@
         "type": "string"
       },
       "SuccessResponse": {
+        "title": "SuccessResponse",
         "properties": {
           "id": {
             "type": "string",
@@ -394,6 +395,7 @@
         "description": "Exclude from T those types that are assignable to U"
       },
       "NonSuccessResponse": {
+        "title": "NonSuccessResponse",
         "properties": {
           "id": {
             "type": "string",
@@ -2707,6 +2709,122 @@
         "type": "object",
         "additionalProperties": false
       },
+      "PaginatedResponse_VendorExternalFinding_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorExternalFinding"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ListVendorExternalFindingsQuery": {
+        "properties": {
+          "pageSize": {
+            "$ref": "#/components/schemas/PageSize"
+          },
+          "pageCursor": {
+            "$ref": "#/components/schemas/PageCursor"
+          },
+          "q": {
+            "type": "string",
+            "description": "Search finding titles and descriptions."
+          },
+          "severityMatchesAny": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "CRITICAL",
+                "HIGH",
+                "MEDIUM",
+                "LOW",
+                "INFO"
+              ]
+            },
+            "type": "array",
+            "description": "Match any specified severity. Omitted: all except INFO.",
+            "minItems": 1
+          },
+          "statusMatchesAny": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "RESOLVED"
+              ]
+            },
+            "type": "array",
+            "description": "Match any specified status. Omitted: both statuses.",
+            "minItems": 1
+          },
+          "categoryMatchesAny": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "Application security",
+                "Exposed application user interfaces",
+                "Exposed services",
+                "Exposed & leaked sensitive information",
+                "End of life & outdated applications",
+                "Sensitive interfaces exposure",
+                "Threat intelligence",
+                "Trust",
+                "Vulnerabilities",
+                "Vulnerable misconfigurations"
+              ]
+            },
+            "type": "array",
+            "description": "Match any specified monitoring category, exactly and case-sensitively. Omitted: all categories.",
+            "minItems": 1
+          },
+          "firstSeenStartDate": {
+            "type": "string",
+            "description": "Inclusive ISO 8601 first-seen lower bound. Supply both date bounds with start no later than end."
+          },
+          "firstSeenEndDate": {
+            "type": "string",
+            "description": "Inclusive ISO 8601 first-seen upper bound. Supply both date bounds with start no later than end."
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "firstSeenDate",
+              "severity",
+              "title"
+            ],
+            "default": "firstSeenDate"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "description": "Ascending means oldest first, highest severity first (CRITICAL to INFO), or title A to Z.\nDescending reverses each order, matching security incident alerts' severity convention.",
+            "default": "desc"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorSecurityIncidentAlertResolutionState": {
         "type": "string",
         "enum": [
@@ -2824,6 +2942,7 @@
         ]
       },
       "VendorSecurityIncidentAlertDenialOfServiceConsequence": {
+        "title": "VendorSecurityIncidentAlertDenialOfServiceConsequence",
         "properties": {
           "type": {
             "type": "string",
@@ -2840,6 +2959,7 @@
         "additionalProperties": false
       },
       "VendorSecurityIncidentAlertUnauthorizedAccessConsequence": {
+        "title": "VendorSecurityIncidentAlertUnauthorizedAccessConsequence",
         "properties": {
           "type": {
             "type": "string",
@@ -2876,6 +2996,7 @@
         ]
       },
       "VendorSecurityIncidentAlertDataLeakConsequence": {
+        "title": "VendorSecurityIncidentAlertDataLeakConsequence",
         "properties": {
           "type": {
             "type": "string",
@@ -3152,6 +3273,45 @@
             "default": "desc"
           }
         },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateVendorSecurityIncidentAlertsResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/VendorSecurityIncidentAlert"
+            },
+            "type": "array",
+            "description": "Updated alerts, once per ID, in first-occurrence request order."
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateVendorSecurityIncidentAlertsInput": {
+        "properties": {
+          "alertIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the security incident alerts to update. Use each alert’s ID, not the ID of the incident it reports. Every alert must belong to your organization.",
+            "minItems": 1,
+            "maxItems": 100
+          },
+          "resolutionState": {
+            "$ref": "#/components/schemas/VendorSecurityIncidentAlertResolutionState",
+            "description": "Target resolution state for every supplied alert. Use OPEN to reopen."
+          }
+        },
+        "required": [
+          "alertIds",
+          "resolutionState"
+        ],
         "type": "object",
         "additionalProperties": false
       },
@@ -3746,23 +3906,45 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorAlertSettingsCategoryName": {
+        "type": "string",
+        "enum": [
+          "Application security",
+          "Exposed application user interfaces",
+          "Exposed services",
+          "Exposed & leaked sensitive information",
+          "End of life & outdated applications",
+          "Sensitive interfaces exposure",
+          "Threat intelligence",
+          "Trust",
+          "Vulnerabilities",
+          "Vulnerable misconfigurations",
+          "Security incidents"
+        ]
+      },
+      "VendorAlertRiskLevelSetting": {
+        "type": "string",
+        "enum": [
+          "ANY",
+          "LOW_MEDIUM_HIGH_CRITICAL",
+          "MEDIUM_HIGH_CRITICAL",
+          "HIGH_CRITICAL",
+          "CRITICAL"
+        ]
+      },
+      "VendorAlertSeveritySetting": {
+        "type": "string",
+        "enum": [
+          "ANY",
+          "MEDIUM_HIGH_CRITICAL",
+          "HIGH_CRITICAL",
+          "CRITICAL"
+        ]
+      },
       "VendorAlertSettingsItem": {
         "properties": {
           "category": {
-            "type": "string",
-            "enum": [
-              "Application security",
-              "Exposed application user interfaces",
-              "Exposed services",
-              "Exposed & leaked sensitive information",
-              "End of life & outdated applications",
-              "Sensitive interfaces exposure",
-              "Threat intelligence",
-              "Trust",
-              "Vulnerabilities",
-              "Vulnerable misconfigurations",
-              "Security incidents"
-            ],
+            "$ref": "#/components/schemas/VendorAlertSettingsCategoryName",
             "description": "Alert category."
           },
           "isEnabled": {
@@ -3770,24 +3952,11 @@
             "description": "Whether alerts in this category are enabled."
           },
           "riskLevelSetting": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "LOW_MEDIUM_HIGH_CRITICAL",
-              "MEDIUM_HIGH_CRITICAL",
-              "HIGH_CRITICAL",
-              "CRITICAL"
-            ],
+            "$ref": "#/components/schemas/VendorAlertRiskLevelSetting",
             "description": "Vendor inherent-risk levels that produce alerts. ANY includes unscored vendors."
           },
           "severitySetting": {
-            "type": "string",
-            "enum": [
-              "ANY",
-              "MEDIUM_HIGH_CRITICAL",
-              "HIGH_CRITICAL",
-              "CRITICAL"
-            ],
+            "$ref": "#/components/schemas/VendorAlertSeveritySetting",
             "description": "Alert severities to include. ANY includes all severities."
           }
         },
@@ -3812,6 +3981,43 @@
         },
         "required": [
           "items"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAlertSettingsChange": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/VendorAlertSettingsCategoryName"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "riskLevelSetting": {
+            "$ref": "#/components/schemas/VendorAlertRiskLevelSetting"
+          },
+          "severitySetting": {
+            "$ref": "#/components/schemas/VendorAlertSeveritySetting"
+          }
+        },
+        "required": [
+          "category"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateVendorAlertSettingsInput": {
+        "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/VendorAlertSettingsChange"
+            },
+            "type": "array",
+            "description": "Partial updates, with each category appearing at most once. Omitted fields remain unchanged."
+          }
+        },
+        "required": [
+          "changes"
         ],
         "type": "object",
         "additionalProperties": false
@@ -4017,12 +4223,14 @@
         "additionalProperties": false
       },
       "BannerSetting.GRADIENT": {
+        "title": "BannerSetting.GRADIENT",
         "enum": [
           "GRADIENT"
         ],
         "type": "string"
       },
       "BannerSetting.MINIMAL": {
+        "title": "BannerSetting.MINIMAL",
         "enum": [
           "MINIMAL"
         ],
@@ -6089,6 +6297,7 @@
               "aiact",
               "aiuc1",
               "aiuc1_26q3",
+              "aiuc1_26q4",
               "atc",
               "aue8",
               "awsFTR",
@@ -6173,6 +6382,7 @@
               "aiact",
               "aiuc1",
               "aiuc1_26q3",
+              "aiuc1_26q4",
               "atc",
               "aue8",
               "awsFTR",
@@ -6974,6 +7184,7 @@
         "additionalProperties": false
       },
       "RequirementNotApplied": {
+        "title": "RequirementNotApplied",
         "description": "A requirement the set does not apply to the personnel it covers.",
         "properties": {
           "required": {
@@ -6991,6 +7202,7 @@
         "additionalProperties": false
       },
       "AllPoliciesRequired": {
+        "title": "AllPoliciesRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7015,6 +7227,7 @@
         "additionalProperties": false
       },
       "SelectedPoliciesRequired": {
+        "title": "SelectedPoliciesRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7060,6 +7273,7 @@
         ]
       },
       "BackgroundCheckRequired": {
+        "title": "BackgroundCheckRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7096,6 +7310,7 @@
         "type": "string",
         "enum": [
           "aiRisk",
+          "businessContinuity",
           "c5",
           "ccpa",
           "gdpr",
@@ -7108,6 +7323,7 @@
         ]
       },
       "SecurityTrainingRequired": {
+        "title": "SecurityTrainingRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7171,6 +7387,7 @@
         ]
       },
       "DeviceMonitoringRequired": {
+        "title": "DeviceMonitoringRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7229,6 +7446,7 @@
         "additionalProperties": false
       },
       "CustomRequirementsRequired": {
+        "title": "CustomRequirementsRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7290,6 +7508,7 @@
         "additionalProperties": false
       },
       "DeactivateAllAccounts": {
+        "title": "DeactivateAllAccounts",
         "properties": {
           "deactivateAll": {
             "type": "boolean",
@@ -7306,6 +7525,7 @@
         "additionalProperties": false
       },
       "DeactivateSelectedAccounts": {
+        "title": "DeactivateSelectedAccounts",
         "properties": {
           "deactivateAll": {
             "type": "boolean",
@@ -7339,6 +7559,7 @@
         ]
       },
       "AccountDeactivationRequired": {
+        "title": "AccountDeactivationRequired",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7573,6 +7794,7 @@
         "additionalProperties": false
       },
       "VantaSecurityTrainingInput": {
+        "title": "VantaSecurityTrainingInput",
         "description": "A training supplied by Vanta.",
         "properties": {
           "type": {
@@ -7608,6 +7830,7 @@
         "additionalProperties": false
       },
       "CustomSecurityTrainingInput": {
+        "title": "CustomSecurityTrainingInput",
         "description": "A training the organization hosts itself.",
         "properties": {
           "type": {
@@ -7641,6 +7864,7 @@
         "additionalProperties": false
       },
       "IntegrationSecurityTrainingInput": {
+        "title": "IntegrationSecurityTrainingInput",
         "description": "A training completed in a connected integration",
         "properties": {
           "type": {
@@ -7691,6 +7915,7 @@
         ]
       },
       "SecurityTrainingRequiredInput": {
+        "title": "SecurityTrainingRequiredInput",
         "properties": {
           "required": {
             "type": "boolean",
@@ -7795,6 +8020,7 @@
         "additionalProperties": false
       },
       "CreateCustomOffboardingRequirementInput": {
+        "title": "CreateCustomOffboardingRequirementInput",
         "properties": {
           "requirementType": {
             "type": "string",
@@ -7821,6 +8047,7 @@
         "additionalProperties": false
       },
       "CreateCustomOnboardingRequirementInput": {
+        "title": "CreateCustomOnboardingRequirementInput",
         "properties": {
           "requirementType": {
             "type": "string",
@@ -7872,6 +8099,7 @@
         ]
       },
       "UpdateCustomOffboardingRequirementInput": {
+        "title": "UpdateCustomOffboardingRequirementInput",
         "properties": {
           "requirementType": {
             "type": "string",
@@ -7897,6 +8125,7 @@
         "additionalProperties": false
       },
       "UpdateCustomOnboardingRequirementInput": {
+        "title": "UpdateCustomOnboardingRequirementInput",
         "properties": {
           "requirementType": {
             "type": "string",
@@ -8230,6 +8459,7 @@
         "additionalProperties": false
       },
       "CIA": {
+        "title": "CIA",
         "type": "string",
         "enum": [
           "Confidentiality",
@@ -8238,6 +8468,7 @@
         ]
       },
       "Treatment": {
+        "title": "Treatment",
         "type": "string",
         "enum": [
           "Mitigate",
@@ -8449,7 +8680,7 @@
               "$ref": "#/components/schemas/CustomAttribute"
             },
             "type": "array",
-            "description": "The list of custom fields.\nYou can reference existing custom fields in the Risk Management settings and/or create new ones.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields"
+            "description": "The list of custom fields.\nYou can reference existing custom fields in the Risk Management settings and/or create new ones.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields\n\nEmpty if the organization doesn't have custom fields."
           },
           "isArchived": {
             "type": "boolean",
@@ -8537,6 +8768,7 @@
         "additionalProperties": false
       },
       "UNCATEGORIZED": {
+        "title": "UNCATEGORIZED",
         "type": "string",
         "enum": [
           "Uncategorized"
@@ -8544,6 +8776,7 @@
         "nullable": false
       },
       "NO_TREATMENT_TYPE": {
+        "title": "NO_TREATMENT_TYPE",
         "type": "string",
         "enum": [
           "No treatment type"
@@ -8634,7 +8867,7 @@
               "$ref": "#/components/schemas/CustomAttribute"
             },
             "type": "array",
-            "description": "The list of custom attributes.\nYou can reference existing custom attributes in the Risk Management settings and/or create new ones.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields"
+            "description": "The list of custom attributes.\nYou can reference existing custom attributes in the Risk Management settings and/or create new ones.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields\n\nIf the organization doesn't have custom fields, a non-empty list is\nrejected and an empty list is ignored."
           },
           "type": {
             "$ref": "#/components/schemas/RiskScenarioType",
@@ -8723,7 +8956,7 @@
               "$ref": "#/components/schemas/CustomAttribute"
             },
             "type": "array",
-            "description": "The list of custom fields.\nYou can reference custom fields in the Risk Management settings and/or create new one.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields"
+            "description": "The list of custom fields.\nYou can reference custom fields in the Risk Management settings and/or create new one.\nThe format is:\n- {label: \"field-name\", value: \"string-representation\"} for text, date, number and currency fields\n- {label: \"field-name\", value: [\"option1\", \"option2\"]} for picklist fields\n\nIf the organization doesn't have custom fields, a non-empty list is\nrejected and an empty list is ignored."
           },
           "type": {
             "$ref": "#/components/schemas/RiskScenarioType",
@@ -9266,7 +9499,7 @@
               "type": "string"
             },
             "type": "array",
-            "description": "Labels of the custom fields that apply to risk scenarios in this register.\nThese are the labels accepted in the `customFields` field on risk-scenario\ncreate and update requests for this register. The enterprise register\nlists every custom field, since enterprise risks accept all of them."
+            "description": "Labels of the custom fields that apply to risk scenarios in this register.\nThese are the labels accepted in the `customFields` field on risk-scenario\ncreate and update requests for this register. The enterprise register\nlists every custom field, since enterprise risks accept all of them.\nEmpty if the organization doesn't have custom fields."
           }
         },
         "required": [
@@ -9580,12 +9813,14 @@
         "additionalProperties": false
       },
       "NotificationFrequency.DAILY": {
+        "title": "NotificationFrequency.DAILY",
         "enum": [
           "DAILY"
         ],
         "type": "string"
       },
       "NotificationFrequency.WEEKLY": {
+        "title": "NotificationFrequency.WEEKLY",
         "enum": [
           "WEEKLY"
         ],
@@ -9599,6 +9834,7 @@
         "type": "string"
       },
       "EnabledPersonnelNotificationSettings": {
+        "title": "EnabledPersonnelNotificationSettings",
         "properties": {
           "enabled": {
             "type": "boolean",
@@ -9638,6 +9874,7 @@
         "additionalProperties": false
       },
       "DisabledPersonnelNotificationSettings": {
+        "title": "DisabledPersonnelNotificationSettings",
         "properties": {
           "enabled": {
             "type": "boolean",
@@ -9740,6 +9977,7 @@
         "type": "string"
       },
       "VantaBasedPersonInfoSource": {
+        "title": "VantaBasedPersonInfoSource",
         "description": "The person's information comes from what is set in Vanta.",
         "properties": {
           "type": {
@@ -9759,6 +9997,7 @@
         "type": "string"
       },
       "ScimBasedPersonInfoSource": {
+        "title": "ScimBasedPersonInfoSource",
         "description": "The person's information comes from SCIM.",
         "properties": {
           "type": {
@@ -9778,6 +10017,7 @@
         "type": "string"
       },
       "IntegrationBasedPersonInfoSource": {
+        "title": "IntegrationBasedPersonInfoSource",
         "description": "The person's information comes from an integration.",
         "properties": {
           "integrationId": {
@@ -10763,6 +11003,7 @@
         "additionalProperties": false
       },
       "KnowledgeBaseWebpageResourceOutput": {
+        "title": "KnowledgeBaseWebpageResourceOutput",
         "properties": {
           "id": {
             "type": "string"
@@ -11000,6 +11241,7 @@
         "additionalProperties": false
       },
       "KnowledgeBaseDocumentResourceOutput": {
+        "title": "KnowledgeBaseDocumentResourceOutput",
         "properties": {
           "id": {
             "type": "string"
@@ -11526,7 +11768,6 @@
         ]
       },
       "SourceType": {
-        "type": "string",
         "enum": [
           "AUDIT",
           "AUDIT_EXTERNAL",
@@ -11534,7 +11775,8 @@
           "EXTERNAL_PARTY",
           "SELF_ASSESSMENT",
           "OTHER"
-        ]
+        ],
+        "type": "string"
       },
       "Source": {
         "properties": {
@@ -11608,6 +11850,7 @@
         "additionalProperties": false
       },
       "StandardIssue": {
+        "title": "StandardIssue",
         "properties": {
           "id": {
             "type": "string"
@@ -11758,6 +12001,7 @@
         "description": "Extract from T those types that are assignable to U"
       },
       "StandardPOAM": {
+        "title": "StandardPOAM",
         "properties": {
           "id": {
             "type": "string"
@@ -12189,6 +12433,7 @@
         "type": "string"
       },
       "Resource": {
+        "title": "Resource",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12251,6 +12496,7 @@
         "additionalProperties": false
       },
       "CloudInfrastructure": {
+        "title": "CloudInfrastructure",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12323,6 +12569,7 @@
         "additionalProperties": false
       },
       "ContainerRepository": {
+        "title": "ContainerRepository",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12401,6 +12648,7 @@
         "additionalProperties": false
       },
       "Database": {
+        "title": "Database",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12491,6 +12739,7 @@
         "additionalProperties": false
       },
       "Device": {
+        "title": "Device",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12576,6 +12825,7 @@
         "additionalProperties": false
       },
       "PaaS": {
+        "title": "PaaS",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12650,6 +12900,7 @@
         "additionalProperties": false
       },
       "Queue": {
+        "title": "Queue",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12734,6 +12985,7 @@
         "additionalProperties": false
       },
       "StorageBucket": {
+        "title": "StorageBucket",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12829,6 +13081,7 @@
         "additionalProperties": false
       },
       "Account": {
+        "title": "Account",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -12941,6 +13194,7 @@
         "additionalProperties": false
       },
       "AwsAccount": {
+        "title": "AwsAccount",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -13053,6 +13307,7 @@
         "additionalProperties": false
       },
       "OrganizationSubunit": {
+        "title": "OrganizationSubunit",
         "properties": {
           "responseType": {
             "$ref": "#/components/schemas/ResourceResponseType"
@@ -13326,6 +13581,7 @@
         "additionalProperties": false
       },
       "ImportIdpGroupSuccess": {
+        "title": "ImportIdpGroupSuccess",
         "properties": {
           "idpGroupId": {
             "type": "string"
@@ -13357,6 +13613,7 @@
         "type": "string"
       },
       "ImportIdpGroupError": {
+        "title": "ImportIdpGroupError",
         "properties": {
           "idpGroupId": {
             "type": "string"
@@ -13534,6 +13791,7 @@
         "additionalProperties": false
       },
       "PendingFrameworkControlsExport": {
+        "title": "PendingFrameworkControlsExport",
         "properties": {
           "exportId": {
             "type": "string",
@@ -13557,6 +13815,7 @@
         "additionalProperties": false
       },
       "CompletedFrameworkControlsExport": {
+        "title": "CompletedFrameworkControlsExport",
         "properties": {
           "exportId": {
             "type": "string",
@@ -14988,6 +15247,7 @@
         "type": "string"
       },
       "DiscoveredVendorUser": {
+        "title": "DiscoveredVendorUser",
         "properties": {
           "id": {
             "type": "string",
@@ -15022,6 +15282,7 @@
         "type": "string"
       },
       "DiscoveredVendorComputer": {
+        "title": "DiscoveredVendorComputer",
         "properties": {
           "id": {
             "type": "string",
@@ -15837,6 +16098,7 @@
         "description": "Meta schema\n\nRecommended values:\n- 'http://json-schema.org/schema#'\n- 'http://json-schema.org/hyper-schema#'\n- 'http://json-schema.org/draft-07/schema#'\n- 'http://json-schema.org/draft-07/hyper-schema#'"
       },
       "JSONSchema7": {
+        "title": "JSONSchema7",
         "properties": {
           "$id": {
             "type": "string"
@@ -16060,6 +16322,7 @@
         "additionalProperties": false
       },
       "JSONSchema7Definition": {
+        "title": "JSONSchema7Definition",
         "anyOf": [
           {
             "$ref": "#/components/schemas/JSONSchema7"
@@ -16071,6 +16334,7 @@
         "description": "JSON Schema v7"
       },
       "JSONSchema7TypeName": {
+        "title": "JSONSchema7TypeName",
         "type": "string",
         "enum": [
           "string",
@@ -16106,6 +16370,7 @@
         "description": "Primitive type"
       },
       "JSONSchema7Object": {
+        "title": "JSONSchema7Object",
         "properties": {},
         "type": "object",
         "additionalProperties": {
@@ -16113,6 +16378,7 @@
         }
       },
       "JSONSchema7Array": {
+        "title": "JSONSchema7Array",
         "properties": {},
         "type": "object",
         "additionalProperties": false
@@ -16619,6 +16885,26 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CustomerTrustAccountRevenueOverrideInput": {
+        "properties": {
+          "fieldMappingId": {
+            "type": "string",
+            "description": "ID of the configured custom currency field"
+          },
+          "value": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Non-negative amount in the configured default currency. Null removes the override."
+          }
+        },
+        "required": [
+          "fieldMappingId",
+          "value"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "CreateCustomerTrustAccountInput": {
         "properties": {
           "name": {
@@ -16638,6 +16924,13 @@
               "$ref": "#/components/schemas/CustomField"
             },
             "type": "array"
+          },
+          "revenueOverrides": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerTrustAccountRevenueOverrideInput"
+            },
+            "type": "array",
+            "description": "Manual revenue overrides for configured currency fields. Omitted fields are unchanged."
           },
           "tagsByCategory": {
             "items": {
@@ -16670,6 +16963,13 @@
             },
             "type": "array",
             "description": "Updated custom field values for the account"
+          },
+          "revenueOverrides": {
+            "items": {
+              "$ref": "#/components/schemas/CustomerTrustAccountRevenueOverrideInput"
+            },
+            "type": "array",
+            "description": "Manual revenue overrides for configured currency fields. Omitted fields are unchanged."
           },
           "tagsByCategory": {
             "items": {
@@ -16778,6 +17078,7 @@
         "type": "string"
       },
       "FrameworkId": {
+        "title": "FrameworkId",
         "enum": [
           "AU_E_8",
           "AWS_FTR",
@@ -17358,6 +17659,7 @@
         "description": "Lifecycle of a suggestion job, from accepted through finished."
       },
       "EvidenceSuggestionJobScopeAll": {
+        "title": "EvidenceSuggestionJobScopeAll",
         "description": "Every in-scope control in the organization.",
         "properties": {
           "type": {
@@ -17375,6 +17677,7 @@
         "additionalProperties": false
       },
       "EvidenceSuggestionJobScopeFramework": {
+        "title": "EvidenceSuggestionJobScopeFramework",
         "description": "The controls mapped to one framework.",
         "properties": {
           "type": {
@@ -17396,6 +17699,7 @@
         "additionalProperties": false
       },
       "EvidenceSuggestionJobScopeControls": {
+        "title": "EvidenceSuggestionJobScopeControls",
         "description": "Exactly the controls named.",
         "properties": {
           "type": {
@@ -17565,6 +17869,7 @@
         "additionalProperties": false
       },
       "CreateEvidenceSuggestionJobInputAll": {
+        "title": "CreateEvidenceSuggestionJobInputAll",
         "description": "Every custom control in the organization that is not ignored. An\norganization whose controls all come from the Vanta library has nothing in\nscope and is rejected.",
         "properties": {
           "type": {
@@ -17586,6 +17891,7 @@
         "additionalProperties": false
       },
       "CreateEvidenceSuggestionJobInputFramework": {
+        "title": "CreateEvidenceSuggestionJobInputFramework",
         "description": "The framework's custom controls that are not ignored.",
         "properties": {
           "type": {
@@ -17612,6 +17918,7 @@
         "additionalProperties": false
       },
       "CreateEvidenceSuggestionJobInputControls": {
+        "title": "CreateEvidenceSuggestionJobInputControls",
         "description": "Exactly the controls named.",
         "properties": {
           "type": {
