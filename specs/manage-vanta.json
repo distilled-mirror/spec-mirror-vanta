@@ -3210,7 +3210,7 @@
           },
           "q": {
             "type": "string",
-            "description": "Search incident alerts."
+            "description": "Case-insensitive search on alert title and affected vendor name."
           },
           "vendorIdMatchesAny": {
             "items": {
@@ -18185,11 +18185,13 @@
               },
               "multipleChoice": {
                 "type": "string",
-                "nullable": true
+                "nullable": true,
+                "deprecated": true
               },
               "explanation": {
                 "type": "string",
-                "nullable": true
+                "nullable": true,
+                "deprecated": true
               }
             },
             "required": [
@@ -18519,6 +18521,597 @@
               "data": {
                 "items": {
                   "$ref": "#/components/schemas/AiProductUseCase"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiAgent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Vanta resource ID used by the agent endpoints."
+          },
+          "providerAgentId": {
+            "type": "string",
+            "description": "Agent identifier assigned by the provider; unique within its source."
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "entryType": {
+            "type": "string",
+            "enum": [
+              "MANAGED_AGENT",
+              "PREBUILT_AGENT",
+              "AGENT"
+            ]
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "firstSeenDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "activityLookbackDays": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Coverage of the provider snapshot, or null when unspecified."
+          },
+          "supportedLookbackDays": {
+            "items": {
+              "type": "number",
+              "enum": [
+                7,
+                30
+              ]
+            },
+            "type": "array"
+          },
+          "activeUserCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Provider-reported snapshot count, independent of windowed usage."
+          },
+          "lastModelUsed": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "providerAgentId",
+          "sourceId",
+          "name",
+          "entryType",
+          "vendor",
+          "ownerEmail",
+          "createdAt",
+          "firstSeenDate",
+          "lastActivityDate",
+          "activityLookbackDays",
+          "supportedLookbackDays",
+          "activeUserCount",
+          "lastModelUsed"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiAgent_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiAgent"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiAgentUsage": {
+        "properties": {
+          "activeUserCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "tokenCost": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "dailyUsers": {
+            "items": {
+              "properties": {
+                "userCount": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "date": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "userCount",
+                "date"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "models": {
+            "items": {
+              "properties": {
+                "percent": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "activityCount": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "model": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "percent",
+                "activityCount",
+                "model"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "toolUsage": {
+            "anyOf": [
+              {
+                "properties": {
+                  "groups": {
+                    "items": {
+                      "properties": {
+                        "toolNames": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "totalCount": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "mcpServerUrl": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "integration": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "toolNames",
+                        "totalCount",
+                        "mcpServerUrl",
+                        "integration"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "groups"
+                ],
+                "type": "object"
+              },
+              {
+                "properties": {
+                  "tools": {
+                    "items": {
+                      "properties": {
+                        "count": {
+                          "type": "number",
+                          "format": "double"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "count",
+                        "name"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "tools"
+                ],
+                "type": "object"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "activeUserCount",
+          "tokenCost",
+          "dailyUsers",
+          "models",
+          "toolUsage"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Record_string.AiAgentActivityDate_": {
+        "properties": {},
+        "additionalProperties": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "type": "object",
+        "description": "Construct a type with a set of properties K of type T"
+      },
+      "AiAgentUserActivity": {
+        "properties": {
+          "accessVia": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "lastActivity": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "models": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Record_string.AiAgentActivityDate_"
+              }
+            ],
+            "nullable": true
+          },
+          "toolsUsed": {
+            "items": {
+              "properties": {
+                "count": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "mcpServerUrl": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "integration": {
+                  "type": "string"
+                },
+                "toolName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "count",
+                "mcpServerUrl",
+                "integration",
+                "toolName"
+              ],
+              "type": "object"
+            },
+            "type": "array",
+            "nullable": true
+          }
+        },
+        "required": [
+          "accessVia",
+          "lastActivity",
+          "models",
+          "toolsUsed"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Record_string.AiAgentUserActivity_": {
+        "properties": {},
+        "additionalProperties": {
+          "$ref": "#/components/schemas/AiAgentUserActivity"
+        },
+        "type": "object",
+        "description": "Construct a type with a set of properties K of type T"
+      },
+      "AiAgentDetails": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Vanta resource ID used by the agent endpoints."
+          },
+          "providerAgentId": {
+            "type": "string",
+            "description": "Agent identifier assigned by the provider; unique within its source."
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "entryType": {
+            "type": "string",
+            "enum": [
+              "MANAGED_AGENT",
+              "PREBUILT_AGENT",
+              "AGENT"
+            ]
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "firstSeenDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "activityLookbackDays": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Coverage of the provider snapshot, or null when unspecified."
+          },
+          "supportedLookbackDays": {
+            "items": {
+              "type": "number",
+              "enum": [
+                7,
+                30
+              ]
+            },
+            "type": "array"
+          },
+          "activeUserCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Provider-reported snapshot count, independent of windowed usage."
+          },
+          "lastModelUsed": {
+            "type": "string",
+            "nullable": true
+          },
+          "usage7Days": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AiAgentUsage"
+              }
+            ],
+            "nullable": true,
+            "description": "Null when the provider snapshot cannot support this window."
+          },
+          "usage30Days": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AiAgentUsage"
+              }
+            ],
+            "nullable": true,
+            "description": "Null when the provider snapshot cannot support this window."
+          },
+          "userActivity": {
+            "$ref": "#/components/schemas/Record_string.AiAgentUserActivity_",
+            "description": "Observed activity keyed by email over the provider snapshot's full coverage."
+          }
+        },
+        "required": [
+          "id",
+          "providerAgentId",
+          "sourceId",
+          "name",
+          "entryType",
+          "vendor",
+          "ownerEmail",
+          "createdAt",
+          "firstSeenDate",
+          "lastActivityDate",
+          "activityLookbackDays",
+          "supportedLookbackDays",
+          "activeUserCount",
+          "lastModelUsed",
+          "usage7Days",
+          "usage30Days",
+          "userActivity"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiAgentUser": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Observation ID combining the Vanta agent resource ID and email, not a personnel ID."
+          },
+          "email": {
+            "type": "string"
+          },
+          "lastActivity": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "lastActivity"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiAgentUser_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiAgentUser"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiAgentUsersQuery": {
+        "properties": {
+          "pageSize": {
+            "$ref": "#/components/schemas/PageSize"
+          },
+          "pageCursor": {
+            "$ref": "#/components/schemas/PageCursor"
+          },
+          "lookbackDays": {
+            "type": "number",
+            "enum": [
+              7,
+              30
+            ],
+            "description": "Usage window in UTC days. Must be supported by the provider snapshot.",
+            "default": 7
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiAgentUseCase": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "organisationalRole": {
+            "type": "string",
+            "enum": [
+              "DEPLOYER",
+              "PROVIDER",
+              null
+            ],
+            "nullable": true
+          },
+          "ownerIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Auth user IDs of the documented use case's owners."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "organisationalRole",
+          "ownerIds",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_AiAgentUseCase_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiAgentUseCase"
                 },
                 "type": "array"
               },
