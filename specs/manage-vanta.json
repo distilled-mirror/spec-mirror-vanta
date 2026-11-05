@@ -6337,6 +6337,7 @@
               "nistAiRmf",
               "nistCSF",
               "nistcsf2",
+              "nydfs500_2023",
               "ofdss",
               "pciDss4",
               "pciSaqA",
@@ -6422,6 +6423,7 @@
               "nistAiRmf",
               "nistCSF",
               "nistcsf2",
+              "nydfs500_2023",
               "ofdss",
               "pciDss4",
               "pciSaqA",
@@ -11774,6 +11776,14 @@
           "INCIDENT",
           "EXTERNAL_PARTY",
           "SELF_ASSESSMENT",
+          "VULNERABILITY_SCANNER",
+          "PENETRATION_TEST",
+          "SECURITY_ASSESSMENT",
+          "BUG_BOUNTY",
+          "THREAT_INTELLIGENCE",
+          "AUTOMATED_CONTROL_TESTING",
+          "MANUAL_ANALYSIS",
+          "SUPPLY_CHAIN_MONITORING",
           "OTHER"
         ],
         "type": "string"
@@ -37575,6 +37585,55 @@
       }
     },
     "/trust-centers/{slugId}/videos": {
+      "get": {
+        "operationId": "ListTrustCenterVideos",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArrayResponse_TrustCenterVideo_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": [
+                        {
+                          "id": "a2f7e1b9d0c3f4e5a6c7b8d9",
+                          "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                          "title": "Product security overview",
+                          "description": "An overview of our security practices"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the videos displayed on a Trust Center, in display order. Send a\nvideo's id back when setting videos to keep that video.",
+        "summary": "List Trust Center videos",
+        "tags": [
+          "Trust Centers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slugId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
       "put": {
         "operationId": "UpsertTrustCenterVideos",
         "responses": {
@@ -37603,7 +37662,7 @@
             }
           }
         },
-        "description": "Configures the videos displayed on a Trust Center. Replaces all\nexisting videos with the provided list.",
+        "description": "Configures the videos displayed on a Trust Center. Replaces all\nexisting videos with the provided list. To keep an existing video, send\nits id from the list endpoint; a video sent without an id is added as a\nnew video with a new id.",
         "summary": "Set Trust Center videos",
         "tags": [
           "Trust Centers"
@@ -38154,6 +38213,395 @@
         ]
       }
     },
+    "/vendor-alert-settings": {
+      "get": {
+        "operationId": "GetVendorAlertSettings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorAlertSettingsResponse"
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieves the alert settings in effect for your organization, one set for each\nalert category, including security incidents. Categories and settings you haven’t\nconfigured use their defaults. Requires continuous monitoring.",
+        "summary": "Get vendor alert settings",
+        "tags": [
+          "Vendor Alert Settings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": []
+      },
+      "patch": {
+        "operationId": "UpdateVendorAlertSettings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorAlertSettingsResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "items": [
+                        {
+                          "category": "Security incidents",
+                          "isEnabled": false,
+                          "riskLevelSetting": "HIGH_CRITICAL",
+                          "severitySetting": "HIGH_CRITICAL"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Changes alert settings for your organization. Categories and fields you leave\nout keep their current values, and no setting can be set to null. The response\nreturns the complete updated settings. If someone else updates the settings\nbetween your read and your save, your update can overwrite theirs. Requires\ncontinuous monitoring.",
+        "summary": "Update vendor alert settings",
+        "tags": [
+          "Vendor Alert Settings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVendorAlertSettingsInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendor-alerts": {
+      "patch": {
+        "operationId": "UpdateVendorAlerts",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateVendorAlertsResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": [
+                        {
+                          "id": "68f620000000000000000001",
+                          "vendorId": "68f620000000000000000002",
+                          "title": "Exposed service detected",
+                          "description": "A service is publicly accessible.",
+                          "severity": "HIGH",
+                          "status": "OPEN",
+                          "category": "Exposed services",
+                          "type": "GENERAL",
+                          "source": "external attack surface scanning",
+                          "creationDate": "2026-10-20T12:00:00.000Z",
+                          "updatedDate": "2026-10-20T12:00:00.000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Applies one status to 1-100 vendor alerts. Duplicate IDs are ignored; each\nalert is returned once, in its first-occurrence order in `alertIds`. If any\nalert isn't found in your organization, the entire request fails without\nchanges. Requires continuous monitoring.",
+        "summary": "Update vendor alerts",
+        "tags": [
+          "Vendor Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVendorAlertsInput"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "ListVendorAlerts",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorAlert_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "68f620000000000000000001",
+                            "vendorId": "68f620000000000000000002",
+                            "title": "Exposed service detected",
+                            "description": "A service is publicly accessible.",
+                            "severity": "HIGH",
+                            "status": "OPEN",
+                            "category": "Exposed services",
+                            "type": "GENERAL",
+                            "source": "external attack surface scanning",
+                            "creationDate": "2026-10-20T12:00:00.000Z",
+                            "updatedDate": "2026-10-20T12:00:00.000Z"
+                          }
+                        ],
+                        "pageInfo": {
+                          "startCursor": null,
+                          "endCursor": null,
+                          "hasNextPage": false,
+                          "hasPreviousPage": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieves vendor alerts in your organization, such as CVEs, leaked\ncredentials, and exposed assets. Doesn't return security incident alerts.\nFilters combine across fields; values within each filter match any value.\n\nRequires vendor read access and continuous monitoring enabled for your\norganization.",
+        "summary": "List vendor alerts",
+        "tags": [
+          "Vendor Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Search alert titles and vendor names.",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Filter to alerts matching any of the provided statuses.",
+            "in": "query",
+            "name": "statusMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorAlertStatus"
+              }
+            },
+            "example": [
+              "OPEN",
+              "ESCALATED"
+            ]
+          },
+          {
+            "description": "Filter to alerts matching any of the provided severities.",
+            "in": "query",
+            "name": "severityMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorAlertSeverity"
+              }
+            },
+            "example": [
+              "HIGH",
+              "CRITICAL"
+            ]
+          },
+          {
+            "description": "Filter to alerts matching any of the provided security categories.",
+            "in": "query",
+            "name": "categoryMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              "Vulnerabilities"
+            ]
+          },
+          {
+            "description": "Filter to alerts matching any of the provided types.",
+            "in": "query",
+            "name": "typeMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorAlertType"
+              }
+            },
+            "example": [
+              "CVE"
+            ]
+          },
+          {
+            "description": "Filter to alerts whose vendors match any of the provided inherent risk levels.",
+            "in": "query",
+            "name": "vendorRiskLevelMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CRITICAL",
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW",
+                  "UNSCORED"
+                ]
+              }
+            },
+            "example": [
+              "HIGH"
+            ]
+          },
+          {
+            "description": "Field to sort results by. Defaults to severity.",
+            "in": "query",
+            "name": "orderBy",
+            "required": false,
+            "schema": {
+              "default": "severity",
+              "type": "string",
+              "enum": [
+                "severity",
+                "status",
+                "creationDate"
+              ]
+            },
+            "example": "creationDate"
+          },
+          {
+            "description": "Direction to sort results in. Defaults to descending.",
+            "in": "query",
+            "name": "orderDirection",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "example": "desc"
+          }
+        ]
+      }
+    },
+    "/vendor-alerts/{alertId}": {
+      "get": {
+        "operationId": "GetVendorAlert",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorAlert"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "68f620000000000000000001",
+                      "vendorId": "68f620000000000000000002",
+                      "title": "Exposed service detected",
+                      "description": "A service is publicly accessible.",
+                      "severity": "HIGH",
+                      "status": "OPEN",
+                      "category": "Exposed services",
+                      "type": "GENERAL",
+                      "source": "external attack surface scanning",
+                      "creationDate": "2026-10-20T12:00:00.000Z",
+                      "updatedDate": "2026-10-20T12:00:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieves a specific vendor alert by ID, such as a CVE, leaked credentials,\nor an exposed asset. Doesn't return security incident alerts. Returns a 404\nerror if the alert isn't found in your organization.\n\nRequires vendor read access and continuous monitoring enabled for your\norganization.",
+        "summary": "Get vendor alert",
+        "tags": [
+          "Vendor Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Unique identifier of the vendor alert to retrieve.",
+            "in": "path",
+            "name": "alertId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "68f620000000000000000001"
+          }
+        ]
+      }
+    },
     "/vendor-assessment-types": {
       "get": {
         "operationId": "ListVendorAssessmentTypes",
@@ -38611,6 +39059,277 @@
             "required": false,
             "schema": {
               "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
+    "/vendor-security-incident-alerts": {
+      "get": {
+        "operationId": "ListVendorSecurityIncidentAlerts",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorSecurityIncidentAlert_"
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns a paginated list of security incident alerts that affect your vendors. Requires continuous monitoring.",
+        "summary": "List vendor security incident alerts",
+        "tags": [
+          "Vendor Security Incident Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Case-insensitive search on alert title and affected vendor name.",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Organization vendor IDs.",
+            "in": "query",
+            "name": "vendorIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 20
+            }
+          },
+          {
+            "description": "Filter by resolution state. Returns alerts matching any of the specified states.",
+            "in": "query",
+            "name": "resolutionStateMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorSecurityIncidentAlertResolutionState"
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Filter by incident confirmation status. Returns alerts matching any of the specified statuses.",
+            "in": "query",
+            "name": "confirmationStatusMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorSecurityIncidentAlertStatus"
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Filter by overall impact severity. Returns alerts matching any of the specified severities.",
+            "in": "query",
+            "name": "impactSeverityMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpactSeverity"
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Matches a DATA_LEAK consequence's severity, independently of overall impact.",
+            "in": "query",
+            "name": "dataLeakSeverityMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorSecurityIncidentAlertImpactSeverity"
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "creationDate",
+              "type": "string",
+              "enum": [
+                "creationDate",
+                "impactSeverity",
+                "resolutionState",
+                "confirmationStatus"
+              ]
+            }
+          },
+          {
+            "description": "Ascending means oldest first, highest impact first (CRITICAL to LOW to UNSPECIFIED),\nOPEN before RESOLVED, or CONFIRMED before SUSPECTED before POTENTIAL.\nDescending reverses each order.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UpdateVendorSecurityIncidentAlerts",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateVendorSecurityIncidentAlertsResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": [
+                        {
+                          "id": "68f620000000000000000010",
+                          "resolutionState": "RESOLVED",
+                          "createdAt": "2026-10-20T12:00:00.000Z",
+                          "updatedAt": "2026-10-20T13:00:00.000Z",
+                          "affectedVendorIds": [
+                            "68f620000000000000000002"
+                          ],
+                          "relatedVendorIds": [],
+                          "status": "CONFIRMED",
+                          "title": "Confirmed unauthorized access at Example Vendor",
+                          "rootCause": "COMPROMISED_CREDENTIALS",
+                          "threatActor": {
+                            "name": "Unknown"
+                          },
+                          "evidence": [],
+                          "impact": {
+                            "severity": "HIGH",
+                            "context": "Customer credentials were exposed.",
+                            "affectedParties": [
+                              "CUSTOMERS"
+                            ],
+                            "dataLeakStatus": "CONFIRMED",
+                            "consequences": [
+                              {
+                                "type": "DATA_LEAK",
+                                "dataCategories": [
+                                  "CREDENTIALS"
+                                ],
+                                "severity": "HIGH"
+                              }
+                            ]
+                          },
+                          "timeline": [
+                            {
+                              "type": "INCIDENT_DETECTION",
+                              "occurredAt": "2026-10-19T12:00:00.000Z"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Resolves or reopens 1–100 security incident alerts in a single request. Set the resolution state to RESOLVED to resolve alerts or OPEN to reopen them. This doesn’t change an alert’s confirmation status. Duplicate IDs are updated once, and the response lists each alert once, in the order it first appears in alertIds. If any alert isn’t found in your organization, the request fails and no alerts change. Requires continuous monitoring.",
+        "summary": "Update vendor security incident alerts",
+        "tags": [
+          "Vendor Security Incident Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVendorSecurityIncidentAlertsInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vendor-security-incident-alerts/{alertId}": {
+      "get": {
+        "operationId": "GetVendorSecurityIncidentAlert",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorSecurityIncidentAlert"
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieves a specific security incident alert that affects one of your vendors, by ID. Requires continuous monitoring.",
+        "summary": "Get vendor security incident alert by ID",
+        "tags": [
+          "Vendor Security Incident Alerts"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "The organization's alert ID, not the canonical incident ID.",
+            "in": "path",
+            "name": "alertId",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ]
@@ -39568,6 +40287,246 @@
             }
           }
         }
+      }
+    },
+    "/vendors/{vendorId}/external-findings": {
+      "get": {
+        "operationId": "ListVendorExternalFindings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorExternalFinding_"
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the security findings continuous monitoring has found on a vendor’s external-facing assets, such as exposed assets and vulnerabilities. When you use pageCursor, keep the filters and sorting the same as in your previous request. Requires continuous monitoring.",
+        "summary": "List vendor external findings",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Unique identifier of the vendor.",
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Search finding titles and descriptions.",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Match any specified severity. Omitted: all except INFO.",
+            "in": "query",
+            "name": "severityMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CRITICAL",
+                  "HIGH",
+                  "MEDIUM",
+                  "LOW",
+                  "INFO"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Match any specified status. Omitted: both statuses.",
+            "in": "query",
+            "name": "statusMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ACTIVE",
+                  "RESOLVED"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Match any specified monitoring category, exactly and case-sensitively. Omitted: all categories.",
+            "in": "query",
+            "name": "categoryMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Application security",
+                  "Exposed application user interfaces",
+                  "Exposed services",
+                  "Exposed & leaked sensitive information",
+                  "End of life & outdated applications",
+                  "Sensitive interfaces exposure",
+                  "Threat intelligence",
+                  "Trust",
+                  "Vulnerabilities",
+                  "Vulnerable misconfigurations"
+                ]
+              },
+              "minItems": 1
+            }
+          },
+          {
+            "description": "Inclusive ISO 8601 first-seen lower bound. Supply both date bounds with start no later than end.",
+            "in": "query",
+            "name": "firstSeenStartDate",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Inclusive ISO 8601 first-seen upper bound. Supply both date bounds with start no later than end.",
+            "in": "query",
+            "name": "firstSeenEndDate",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "firstSeenDate",
+              "type": "string",
+              "enum": [
+                "firstSeenDate",
+                "severity",
+                "title"
+              ]
+            }
+          },
+          {
+            "description": "Ascending means oldest first, highest severity first (CRITICAL to INFO), or title A to Z.\nDescending reverses each order, matching security incident alerts' severity convention.",
+            "in": "query",
+            "name": "direction",
+            "required": false,
+            "schema": {
+              "default": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/vendors/{vendorId}/external-findings/{findingId}": {
+      "get": {
+        "operationId": "GetVendorExternalFinding",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorExternalFinding"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "68f620000000000000000020",
+                      "vendorId": "68f620000000000000000002",
+                      "title": "Exposed service detected",
+                      "description": "A service is publicly accessible.",
+                      "severity": "HIGH",
+                      "severityReason": null,
+                      "status": "ACTIVE",
+                      "category": "Exposed services",
+                      "type": "GENERAL",
+                      "source": null,
+                      "firstSeenDate": "2026-10-19T12:00:00.000Z",
+                      "lastSeenDate": "2026-10-20T12:00:00.000Z",
+                      "appearances": 2,
+                      "remediationGuidance": "Restrict access to the service.",
+                      "riskContext": null,
+                      "cveMetadata": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Retrieves an external monitoring finding for a vendor in your organization.\nRequires continuous monitoring.",
+        "summary": "Get vendor external finding",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Unique identifier of the vendor.",
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Unique identifier of the external finding.",
+            "in": "path",
+            "name": "findingId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/vendors/{vendorId}/findings": {
