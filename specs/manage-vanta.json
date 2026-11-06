@@ -39543,6 +39543,15 @@
             }
           },
           {
+            "description": "Filter vendors by website URL using canonical vendor matching.",
+            "in": "query",
+            "name": "websiteUrl",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "description": "Filter vendors by status (can specify multiple)",
             "in": "query",
             "name": "statusMatchesAny",
