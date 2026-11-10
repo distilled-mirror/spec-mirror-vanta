@@ -10787,6 +10787,117 @@
         "type": "object",
         "additionalProperties": false
       },
+      "CompanyProfile": {
+        "description": "The business details an organization provides so Vanta can tailor its compliance program. Fields that haven't been provided are null; lists that haven't been provided are empty.",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name the organization goes by."
+          },
+          "legalName": {
+            "type": "string",
+            "nullable": true,
+            "description": "The organization's registered legal name."
+          },
+          "mailingAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "websiteUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The organization's primary website."
+          },
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Websites associated with the organization; may include `websiteUrl`."
+          },
+          "USCompany": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the organization is incorporated in the United States."
+          },
+          "emailDomain": {
+            "type": "string",
+            "nullable": true,
+            "description": "The organization's email domain."
+          },
+          "companySize": {
+            "type": "string",
+            "nullable": true,
+            "description": "Employee count range, such as `1-20` or `50001+`."
+          },
+          "operatingRegions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Regions the organization operates in, such as `north-america` or `europe`."
+          },
+          "workplaceTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Employment model: `company-office`, `coworking`, or `home`."
+          },
+          "physicalDataCenters": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the organization has physical data centers."
+          },
+          "boardOfDirectors": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the organization has a board of directors."
+          },
+          "portableDevices": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the organization uses portable devices."
+          },
+          "externalSupport": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Whether the organization provides external support."
+          },
+          "sensitiveDataTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Types of sensitive data the organization handles: `pii`, `phi`, `pci`, or `financial`."
+          }
+        },
+        "required": [
+          "displayName",
+          "legalName",
+          "mailingAddress",
+          "telephone",
+          "websiteUrl",
+          "urls",
+          "USCompany",
+          "emailDomain",
+          "companySize",
+          "operatingRegions",
+          "workplaceTypes",
+          "physicalDataCenters",
+          "boardOfDirectors",
+          "portableDevices",
+          "externalSupport",
+          "sensitiveDataTypes"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "ComputerStatusOutcome": {
         "description": "The possible outcomes of a status check. The outcome can be one of the following:\nFAIL:  The check is failing.\nIN_PROGRESS: The check needs further data from the given computer in order to evaluate. The field(s) needed from a computer to calculate the ComputerStatusOutcome were null.\nNA: The check is not applicable for the given computer.\nPASS: The check is passing.",
         "enum": [
@@ -14483,6 +14594,183 @@
             "$ref": "#/components/schemas/PageCursor"
           }
         },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FourthPartyVendor": {
+        "properties": {
+          "vendorId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "usage": {
+            "properties": {
+              "sources": {
+                "items": {
+                  "properties": {
+                    "ingestionMethod": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ingestionMethod",
+                    "url"
+                  ],
+                  "type": "object"
+                },
+                "type": "array",
+                "description": "Disclosures identifying this fourth party."
+              },
+              "locations": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "category": {
+                "type": "string",
+                "nullable": true
+              },
+              "purpose": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "required": [
+              "sources",
+              "locations",
+              "category",
+              "purpose"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "vendorId",
+          "name",
+          "usage"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_FourthPartyVendor_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/FourthPartyVendor"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FourthParty": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "isMatched": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "locations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "properties": {
+                "ingestionMethod": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ingestionMethod",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": "array",
+            "description": "Disclosures identifying this fourth party."
+          },
+          "dependentVendorCount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url",
+          "isMatched",
+          "category",
+          "locations",
+          "sources",
+          "dependentVendorCount"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_FourthParty_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/FourthParty"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
         "type": "object",
         "additionalProperties": false
       },

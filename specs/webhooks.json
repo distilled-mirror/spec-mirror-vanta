@@ -674,6 +674,112 @@
         }
       }
     },
+    "/v1.information-request.created": {
+      "post": {
+        "operationId": "v1.information-request.created",
+        "tags": [
+          "Information Request"
+        ],
+        "summary": "Information request created",
+        "description": "Fires when an information request is created for an audit accessible to your audit firm. Bulk creation produces one event per request.\n\nThis event is delivered only to [Audit Partner](/reference/audits/overview) accounts and is an early-access feature. Reach out to your Vanta contact to enable it.\n\nThe payload contains only identifiers. Fetch current details with `GET /v1/audits/{auditId}/information-requests/{requestId}`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "informationRequest"
+                ],
+                "properties": {
+                  "informationRequest": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "auditId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The unique identifier of the information request."
+                      },
+                      "auditId": {
+                        "type": "string",
+                        "description": "The unique identifier of the audit the information request belongs to."
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "informationRequest": {
+                  "id": "507f1f77bcf86cd799439011",
+                  "auditId": "5f8d0f3b9d3f2a1b4c5d6e7f"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return any 2xx status within 15 seconds to acknowledge receipt."
+          }
+        }
+      }
+    },
+    "/v1.information-request.deleted": {
+      "post": {
+        "operationId": "v1.information-request.deleted",
+        "tags": [
+          "Information Request"
+        ],
+        "summary": "Information request deleted",
+        "description": "Fires when an information request is deleted from an audit accessible to your audit firm. Bulk deletion produces one event per request.\n\nThis event is delivered only to [Audit Partner](/reference/audits/overview) accounts and is an early-access feature. Reach out to your Vanta contact to enable it.\n\nTreat the request and all its mirrored comments and evidence as deleted in your system. Vanta does not send separate comment or evidence deletion events for this operation.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "informationRequest"
+                ],
+                "properties": {
+                  "informationRequest": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "auditId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The unique identifier of the information request."
+                      },
+                      "auditId": {
+                        "type": "string",
+                        "description": "The unique identifier of the audit the information request belongs to."
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "informationRequest": {
+                  "id": "507f1f77bcf86cd799439011",
+                  "auditId": "5f8d0f3b9d3f2a1b4c5d6e7f"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return any 2xx status within 15 seconds to acknowledge receipt."
+          }
+        }
+      }
+    },
     "/v1.information-request.status-changed": {
       "post": {
         "operationId": "v1.information-request.status-changed",
