@@ -1561,6 +1561,95 @@
         "type": "object",
         "additionalProperties": false
       },
+      "FourthParty": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "isMatched": {
+            "type": "boolean"
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "locations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "sources": {
+            "items": {
+              "properties": {
+                "ingestionMethod": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "ingestionMethod",
+                "url"
+              ],
+              "type": "object"
+            },
+            "type": "array",
+            "description": "Disclosures identifying this fourth party."
+          },
+          "dependentVendorCount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url",
+          "isMatched",
+          "category",
+          "locations",
+          "sources",
+          "dependentVendorCount"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_FourthParty_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/FourthParty"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "PaginatedResponse_Vendor_": {
         "properties": {
           "results": {
@@ -14665,95 +14754,6 @@
               "data": {
                 "items": {
                   "$ref": "#/components/schemas/FourthPartyVendor"
-                },
-                "type": "array"
-              },
-              "pageInfo": {
-                "$ref": "#/components/schemas/PageInfo"
-              }
-            },
-            "required": [
-              "data",
-              "pageInfo"
-            ],
-            "type": "object"
-          }
-        },
-        "required": [
-          "results"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "FourthParty": {
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "isMatched": {
-            "type": "boolean"
-          },
-          "category": {
-            "type": "string",
-            "nullable": true
-          },
-          "locations": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "sources": {
-            "items": {
-              "properties": {
-                "ingestionMethod": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "ingestionMethod",
-                "url"
-              ],
-              "type": "object"
-            },
-            "type": "array",
-            "description": "Disclosures identifying this fourth party."
-          },
-          "dependentVendorCount": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "url",
-          "isMatched",
-          "category",
-          "locations",
-          "sources",
-          "dependentVendorCount"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
-      "PaginatedResponse_FourthParty_": {
-        "properties": {
-          "results": {
-            "properties": {
-              "data": {
-                "items": {
-                  "$ref": "#/components/schemas/FourthParty"
                 },
                 "type": "array"
               },
@@ -39399,6 +39399,156 @@
         }
       }
     },
+    "/vendor-custom-fields": {
+      "get": {
+        "operationId": "ListVendorCustomFieldDefinitions",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorCustomFieldDefinition_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "6696ea0595df50d5cd6ec3b8",
+                            "label": "Business criticality",
+                            "description": "The impact of this vendor on business operations.",
+                            "type": "PICKLIST",
+                            "options": [
+                              {
+                                "id": "6696ea0595df50d5cd6ec3b9",
+                                "label": "Critical"
+                              },
+                              {
+                                "id": "6696ea0595df50d5cd6ec3ba",
+                                "label": "Standard"
+                              }
+                            ]
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "NjY5NmVhMDU5NWRmNTBkNWNkNmVjM2I4",
+                          "endCursor": "NjY5NmVhMDU5NWRmNTBkNWNkNmVjM2I4"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the organization's configured vendor custom fields, including fields\nwithout values on any vendor. Results are ordered by stable field ID.\nUse field labels and option labels when writing vendor customFields values.",
+        "summary": "List vendor custom field definitions",
+        "tags": [
+          "Vendor Custom Fields"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
+    "/vendor-document-types": {
+      "get": {
+        "operationId": "ListVendorDocumentTypes",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorDocumentTypeCatalogEntry_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "SOC2_REPORT",
+                            "name": "SOC 2 report",
+                            "type": "SOC2_REPORT",
+                            "isCustom": false
+                          },
+                          {
+                            "id": "custom-doc-type-123",
+                            "name": "Security whitepaper",
+                            "type": "Security whitepaper",
+                            "isCustom": true
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "U09DMl9SRVBPUlQ=",
+                          "endCursor": "Y3VzdG9tLWRvYy10eXBlLTEyMw=="
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists Vanta-provided and custom document types accepted by the vendor\ndocument upload APIs.\n\nUse the returned `type` value when uploading a vendor document. Use `id`\nto save a mapping to a document type. For custom document types, the `id`\nstays the same if the document type is renamed, while `name` and `type`\nreflect the current name. Refresh this catalog before uploading documents\nif custom document type names may have changed.\n\nResults return Vanta-provided document types first, then custom document\ntypes, with each group sorted by display name and ID. Custom document types\nwith names matching values reserved for Vanta-provided document types are\nexcluded because uploads would otherwise use the Vanta-provided type.",
+        "summary": "List vendor document types",
+        "tags": [
+          "Vendor Document Types"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
     "/vendor-risk-attributes": {
       "get": {
         "operationId": "ListVendorRiskAttributes",
@@ -40466,6 +40616,83 @@
             }
           }
         ]
+      },
+      "post": {
+        "operationId": "StartAssessmentForVendor",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorAssessment"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "a2f7e1b9d0c3f4e5a6c7b8d8",
+                      "vendorId": "6696e9bca247cbdf1c8e5054",
+                      "status": "COMPLETED",
+                      "audience": "EXTERNAL",
+                      "completedByUserId": "6696ea0595df50d5cd6ec3b7",
+                      "startDate": "2024-02-01T00:00:00.000Z",
+                      "dueDate": "2024-03-01T00:00:00.000Z",
+                      "overrideDueDate": "2024-03-15T00:00:00.000Z",
+                      "completionDate": "2024-03-10T00:00:00.000Z",
+                      "createdDate": "2024-01-25T00:00:00.000Z",
+                      "decision": {
+                        "status": "APPROVED",
+                        "lastUpdatedAt": "2024-03-17T00:00:00.000Z",
+                        "comments": "No major concerns, limited sharing of data, low security risk."
+                      },
+                      "assessmentType": {
+                        "id": "6696ea0595df50d5cd6ec3b8",
+                        "name": "Security",
+                        "description": null
+                      },
+                      "owner": {
+                        "id": "6696ea0595df50d5cd6ec3b9",
+                        "type": "USER",
+                        "displayName": "Jane Doe",
+                        "email": "jane.doe@example.com"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Starts an assessment for the specified vendor and assessment type.\nCreates an assessment if needed, or starts an eligible existing assessment.\nAssessments associated with security incidents cannot be started through\nthis endpoint.\n\nRequires both the `vendors:view` and `vendors_data:manage` organization\npermissions: `vendors:view` to read the assessment type and\n`vendors_data:manage` to start the assessment.\n\nReturns 403 Forbidden when the caller lacks either permission.\nReturns 404 Not Found when the vendor or the assessment type does not\nexist in the customer's organization.\nReturns 422 Unprocessable Entity when an eligible assessment cannot be\nstarted, including when it is already in progress.",
+        "summary": "Start assessment",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartVendorAssessmentInput"
+              }
+            }
+          }
+        }
       }
     },
     "/vendors/{vendorId}/assessments/{assessmentId}": {
@@ -40543,6 +40770,103 @@
             }
           }
         ]
+      }
+    },
+    "/vendors/{vendorId}/assessments/{assessmentId}/documents": {
+      "post": {
+        "operationId": "UploadDocumentForAssessment",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorDocument"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "a2f7e1b9d0c3f4e5a6c7b8d8",
+                      "url": "https://example.com",
+                      "title": "PDF SOC2 Report",
+                      "fileName": "soc2.pdf",
+                      "type": "SOC2_REPORT",
+                      "mimeType": "application/pdf",
+                      "description": "The 2023 SOC2 file provided by the vendor",
+                      "uploadedBy": {
+                        "id": "66993da0cf4ba2ad40599ba7",
+                        "type": "USER"
+                      },
+                      "creationDate": "2024-02-01T00:00:00.000Z",
+                      "updatedDate": "2024-02-07T00:00:00.000Z",
+                      "deletionDate": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Add a document to a vendor assessment of any type.",
+        "summary": "Add document to assessment",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "assessmentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Type of the vendor document."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The document's title."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The document's description."
+                  }
+                },
+                "required": [
+                  "file",
+                  "type"
+                ]
+              }
+            }
+          }
+        }
       }
     },
     "/vendors/{vendorId}/documents": {
