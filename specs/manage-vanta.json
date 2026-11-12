@@ -444,6 +444,207 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VulnerabilityExport": {
+        "description": "A summary of one vulnerability export.",
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "description": "Identifies the export. Stable and unique."
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The point in time the data represents."
+          },
+          "totalRowCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Data rows across every report."
+          },
+          "totalFileCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Files across every report."
+          },
+          "totalSizeBytes": {
+            "type": "number",
+            "format": "double",
+            "description": "Total compressed size of all files, in bytes."
+          }
+        },
+        "required": [
+          "exportId",
+          "time",
+          "totalRowCount",
+          "totalFileCount",
+          "totalSizeBytes"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VulnerabilityExport_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VulnerabilityExport"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VulnerabilityExportReportId": {
+        "type": "string",
+        "enum": [
+          "open-vulnerabilities",
+          "vulnerable-assets",
+          "remediation-history-on-time",
+          "remediation-history-sla-missed"
+        ],
+        "description": "Identifies one report of a vulnerability export."
+      },
+      "VulnerabilityExportReportDataQuality": {
+        "description": "Vanta never drops a row from a report. If Vanta cannot resolve a linked\nrecord, it writes the row with the affected columns left blank and counts it\nhere. Each report counts only its own rows, so the two remediation-history\nreports can report different counts.",
+        "properties": {
+          "unresolvedVulnerabilityRows": {
+            "type": "number",
+            "format": "double",
+            "description": "Rows whose linked vulnerability could not be resolved. Its columns are blank."
+          },
+          "unresolvedAssetRows": {
+            "type": "number",
+            "format": "double",
+            "description": "Rows whose linked asset could not be resolved. Its columns are blank."
+          },
+          "rowsWithoutSeverityCounts": {
+            "type": "number",
+            "format": "double",
+            "description": "Asset rows whose severity counts could not be computed. Those columns are\nblank. Always 0 for reports other than vulnerable-assets."
+          }
+        },
+        "required": [
+          "unresolvedVulnerabilityRows",
+          "unresolvedAssetRows",
+          "rowsWithoutSeverityCounts"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VulnerabilityExportReport": {
+        "description": "One report of a vulnerability export.",
+        "properties": {
+          "reportId": {
+            "$ref": "#/components/schemas/VulnerabilityExportReportId",
+            "description": "One of the report identifiers."
+          },
+          "rowCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Data rows across every file of this report."
+          },
+          "fileCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Number of files in this report. Always at least 1."
+          },
+          "sizeBytes": {
+            "type": "number",
+            "format": "double",
+            "description": "Compressed size of this report's files, in bytes."
+          },
+          "columns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The CSV header, in column order. Every file of the report has its own column row."
+          },
+          "dataQuality": {
+            "$ref": "#/components/schemas/VulnerabilityExportReportDataQuality",
+            "description": "Counts of rows that have blank columns."
+          }
+        },
+        "required": [
+          "reportId",
+          "rowCount",
+          "fileCount",
+          "sizeBytes",
+          "columns",
+          "dataQuality"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VulnerabilityExportDetail": {
+        "description": "The details of one vulnerability export. Contains no download URLs or\ncredentials, so it can be stored and used later to check that every file\nwas downloaded.",
+        "properties": {
+          "exportId": {
+            "type": "string",
+            "description": "Identifies the export. Stable and unique."
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The point in time the data represents."
+          },
+          "totalRowCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Data rows across every report."
+          },
+          "totalFileCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Files across every report."
+          },
+          "totalSizeBytes": {
+            "type": "number",
+            "format": "double",
+            "description": "Total compressed size of all files, in bytes."
+          },
+          "reports": {
+            "items": {
+              "$ref": "#/components/schemas/VulnerabilityExportReport"
+            },
+            "type": "array",
+            "description": "Every report in the export, in a stable order."
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Notes on the format and coverage of this export, for example how to join\na report's files and the period that remediation history covers."
+          }
+        },
+        "required": [
+          "exportId",
+          "time",
+          "totalRowCount",
+          "totalFileCount",
+          "totalSizeBytes",
+          "reports",
+          "notes"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VulnerabilityType": {
         "type": "string",
         "enum": [
@@ -18853,6 +19054,445 @@
             "required": [
               "data",
               "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModel": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Canonical catalog ID when recognized, otherwise the observed identifier."
+          },
+          "assetId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Null until the model has a materialized asset for use-case linking."
+          },
+          "name": {
+            "type": "string"
+          },
+          "resolutionSource": {
+            "type": "string",
+            "enum": [
+              "CATALOG_MATCH",
+              "OBSERVATION"
+            ]
+          },
+          "vendor": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendorUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "nullable": true
+          },
+          "agentCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "userCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Null when no attributable people were reported."
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastActivityPrecision": {
+            "type": "string",
+            "enum": [
+              "EXACT",
+              "DAY",
+              null
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "assetId",
+          "name",
+          "resolutionSource",
+          "vendor",
+          "vendorUrl",
+          "releaseDate",
+          "lastUpdated",
+          "agentCount",
+          "userCount",
+          "lastActivityDate",
+          "lastActivityPrecision"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelPage_AiModel_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "totalCount": {
+                "type": "number",
+                "format": "double"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              },
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiModel"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "totalCount",
+              "pageInfo",
+              "data"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelsQuery": {
+        "properties": {
+          "pageSize": {
+            "$ref": "#/components/schemas/PageSize"
+          },
+          "pageCursor": {
+            "$ref": "#/components/schemas/PageCursor"
+          },
+          "searchTerm": {
+            "type": "string",
+            "description": "Case-insensitive match against model ID, name, or vendor."
+          },
+          "vendors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelSpecifications": {
+        "properties": {
+          "inputTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "outputTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "contextWindowTokens": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "knowledgeCutoff": {
+            "type": "string",
+            "nullable": true
+          },
+          "openWeights": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "capabilities": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "source": {
+            "properties": {
+              "vendorUrl": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "vendorUrl",
+              "href",
+              "label"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "inputTypes",
+          "outputTypes",
+          "contextWindowTokens",
+          "knowledgeCutoff",
+          "openWeights",
+          "capabilities",
+          "source"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelDetails": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Canonical catalog ID when recognized, otherwise the observed identifier."
+          },
+          "assetId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Null until the model has a materialized asset for use-case linking."
+          },
+          "name": {
+            "type": "string"
+          },
+          "resolutionSource": {
+            "type": "string",
+            "enum": [
+              "CATALOG_MATCH",
+              "OBSERVATION"
+            ]
+          },
+          "vendor": {
+            "type": "string",
+            "nullable": true
+          },
+          "vendorUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "releaseDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "nullable": true
+          },
+          "agentCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "userCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "Null when no attributable people were reported."
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastActivityPrecision": {
+            "type": "string",
+            "enum": [
+              "EXACT",
+              "DAY",
+              null
+            ],
+            "nullable": true
+          },
+          "specifications": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AiModelSpecifications"
+              }
+            ],
+            "nullable": true,
+            "description": "Null for observed models absent from the catalog."
+          }
+        },
+        "required": [
+          "id",
+          "assetId",
+          "name",
+          "resolutionSource",
+          "vendor",
+          "vendorUrl",
+          "releaseDate",
+          "lastUpdated",
+          "agentCount",
+          "userCount",
+          "lastActivityDate",
+          "lastActivityPrecision",
+          "specifications"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelUser": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Observation ID combining the model ID and email, not a personnel ID."
+          },
+          "email": {
+            "type": "string"
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "lastActivityDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelPage_AiModelUser_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "totalCount": {
+                "type": "number",
+                "format": "double"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              },
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiModelUser"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "totalCount",
+              "pageInfo",
+              "data"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelAgent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Vanta resource ID usable with the AI agent endpoints."
+          },
+          "assetId": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "entryType": {
+            "type": "string",
+            "enum": [
+              "MANAGED_AGENT",
+              "PREBUILT_AGENT",
+              "AGENT"
+            ]
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "observedModels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Model identifiers or labels reported in the agent's usage summaries."
+          },
+          "activeUserCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastActivityDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastActivityDateForModel": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "assetId",
+          "name",
+          "entryType",
+          "vendor",
+          "ownerEmail",
+          "observedModels",
+          "activeUserCount",
+          "lastActivityDate",
+          "lastActivityDateForModel"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AiModelPage_AiModelAgent_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "totalCount": {
+                "type": "number",
+                "format": "double"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              },
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/AiModelAgent"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "totalCount",
+              "pageInfo",
+              "data"
             ],
             "type": "object"
           }
