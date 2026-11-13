@@ -6323,6 +6323,93 @@
         "type": "object",
         "additionalProperties": false
       },
+      "InformationRequestAuditorFileUploader": {
+        "description": "The auditor who uploaded the file.",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "name"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "InformationRequestAuditorFile": {
+        "description": "A file an auditor shared with the customer on an information request.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string",
+            "description": "The filename, falling back to the title or document ID when unavailable."
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "The stored MIME type, or application/octet-stream when unavailable."
+          },
+          "url": {
+            "type": "string",
+            "description": "A temporary download link that expires one hour after it is\nissued. List the files again for a fresh link. Do not use it as a key.\nUse `filename` when saving the download; the URL does not supply a filename."
+          },
+          "uploadedBy": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InformationRequestAuditorFileUploader"
+              }
+            ],
+            "nullable": true,
+            "description": "Null when the uploader's account no longer exists."
+          },
+          "uploadedDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "mimeType",
+          "url",
+          "uploadedBy",
+          "uploadedDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_InformationRequestAuditorFile_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/InformationRequestAuditorFile"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "InformationRequestActivityType": {
         "type": "string",
         "enum": [

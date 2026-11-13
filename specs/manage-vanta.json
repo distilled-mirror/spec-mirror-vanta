@@ -4031,6 +4031,62 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorAssessmentTypeRiskLevelRules": {
+        "properties": {
+          "riskLevel": {
+            "$ref": "#/components/schemas/VendorRiskLevel",
+            "description": "The vendor risk level these rules apply to."
+          },
+          "preferredEvidenceTypes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "Document types requested as evidence from vendors at this risk level. Values match the `type` field returned by the list vendor document types endpoint."
+          },
+          "preferredQuestionnaireIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "IDs of the in-app and spreadsheet questionnaires sent to vendors at this risk level."
+          },
+          "cadence": {
+            "type": "string",
+            "nullable": true,
+            "description": "How often vendors at this risk level are reassessed, as an ISO 8601 duration (e.g. `P12M`). Null when no recurring assessment is required."
+          }
+        },
+        "required": [
+          "riskLevel",
+          "preferredEvidenceTypes",
+          "preferredQuestionnaireIds",
+          "cadence"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentTypeRules": {
+        "properties": {
+          "assessmentTypeId": {
+            "type": "string",
+            "description": "The ID of the assessment type the rules belong to."
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/VendorAssessmentTypeRiskLevelRules"
+            },
+            "type": "array",
+            "description": "The rules for each vendor risk level, ordered from CRITICAL to UNSCORED."
+          }
+        },
+        "required": [
+          "assessmentTypeId",
+          "rules"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VendorAlertSeverity": {
         "type": "string",
         "enum": [
@@ -29564,6 +29620,66 @@
         "parameters": []
       }
     },
+    "/organization/company-profile": {
+      "get": {
+        "operationId": "GetCompanyProfile",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyProfile"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "displayName": "Example",
+                      "legalName": "Example, Inc.",
+                      "mailingAddress": "123 Main St, San Francisco, CA 94105",
+                      "telephone": "+1 415 555 0100",
+                      "websiteUrl": "https://example.com",
+                      "urls": [
+                        "https://app.example.com"
+                      ],
+                      "USCompany": true,
+                      "emailDomain": "example.com",
+                      "companySize": "51-100",
+                      "operatingRegions": [
+                        "north-america",
+                        "europe"
+                      ],
+                      "workplaceTypes": [
+                        "company-office",
+                        "home"
+                      ],
+                      "physicalDataCenters": false,
+                      "boardOfDirectors": true,
+                      "portableDevices": true,
+                      "externalSupport": false,
+                      "sensitiveDataTypes": [
+                        "pii"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Returns the company profile of the organization selected by the\nauthenticated token: the business details Vanta uses to tailor its\ncompliance program, such as legal name, company size, operating regions,\nand the types of sensitive data the organization handles.\nFields that haven't been provided are null, and lists that haven't been\nprovided are empty.\nRequires vanta-api.all:read or vanta-api.all:write. No organization\nselector is accepted.",
+        "summary": "Get company profile",
+        "tags": [
+          "Organization"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": []
+      }
+    },
     "/people": {
       "get": {
         "operationId": "ListPeople",
@@ -31345,6 +31461,132 @@
         ]
       }
     },
+    "/risk-registers": {
+      "get": {
+        "operationId": "ListRiskRegisters",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_RiskRegister_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "5f2c939a52855e725c8d5824",
+                            "name": "Default",
+                            "description": null,
+                            "registerType": "SCOPED",
+                            "creationDate": "2024-03-07T18:46:05.944Z",
+                            "settings": {
+                              "applicableCustomFields": [
+                                "Business unit"
+                              ]
+                            }
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "5f2c939a52855e725c8d5824",
+                          "endCursor": "5f2c939a52855e725c8d5824"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "List the risk registers in this domain.\n\nThe `name` field of each register is the value to use in the\n`riskRegister` field on `POST /risk-scenarios` and\n`PATCH /risk-scenarios/{id}`. In domains with multiple registers,\n`riskRegister` is required on risk-scenario create. Registers with\n`registerType: \"ENTERPRISE\"` are system-managed. Each register's\n`settings.applicableCustomFields` lists the custom field labels that can be\nset on its risk scenarios.",
+        "summary": "List risk registers",
+        "tags": [
+          "Risk Registers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
+    "/risk-registers/{riskRegisterId}": {
+      "get": {
+        "operationId": "GetRiskRegister",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskRegister"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "5f2c939a52855e725c8d5824",
+                      "name": "Default",
+                      "description": null,
+                      "registerType": "SCOPED",
+                      "creationDate": "2024-03-07T18:46:05.944Z",
+                      "settings": {
+                        "applicableCustomFields": [
+                          "Business unit"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Get a risk register by ID.\n\nReturns the same fields as each item in `GET /risk-registers`.",
+        "summary": "Get risk register by ID",
+        "tags": [
+          "Risk Registers"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "riskRegisterId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
     "/risk-scenarios": {
       "get": {
         "operationId": "ListRiskScenario",
@@ -33000,6 +33242,78 @@
             }
           }
         }
+      }
+    },
+    "/risk-settings": {
+      "get": {
+        "operationId": "GetRiskSettings",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskSettings"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "scoreProfile": {
+                        "profileType": "CLASSIC",
+                        "scoreStages": [
+                          {
+                            "stageKey": "CURRENT",
+                            "label": "Residual risk",
+                            "description": null
+                          },
+                          {
+                            "stageKey": "TARGET",
+                            "label": "Target risk",
+                            "description": null
+                          }
+                        ]
+                      },
+                      "categories": [
+                        {
+                          "name": "Access control",
+                          "type": "VANTA_DEFAULT"
+                        },
+                        {
+                          "name": "Supply chain",
+                          "type": "CUSTOM"
+                        }
+                      ],
+                      "customFields": [
+                        {
+                          "label": "Business unit",
+                          "description": null,
+                          "dataType": "PICKLIST",
+                          "picklistOptions": [
+                            "Engineering",
+                            "Finance"
+                          ],
+                          "decimalPlaces": null,
+                          "currency": null
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Get this domain's risk settings: the stages risks are scored at, the\ncategories risk scenarios can belong to, and the custom fields configured\nfor risk scenarios.\n\nUse `GET /risk-registers` to see which custom fields apply to each\nregister.",
+        "summary": "Get risk settings",
+        "tags": [
+          "Risk Settings"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": []
       }
     },
     "/task-requirement-sets": {
@@ -39766,6 +40080,93 @@
         },
         "description": "Gets an assessment type by ID.",
         "summary": "Get assessment type by ID",
+        "tags": [
+          "Vendor Assessment Types"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "assessmentTypeId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/vendor-assessment-types/{assessmentTypeId}/rules": {
+      "get": {
+        "operationId": "GetVendorAssessmentTypeRules",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VendorAssessmentTypeRules"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "assessmentTypeId": "6696ea0595df50d5cd6ec3b8",
+                      "rules": [
+                        {
+                          "riskLevel": "CRITICAL",
+                          "preferredEvidenceTypes": [
+                            "SOC2_REPORT",
+                            "PENETRATION_TEST_REPORT"
+                          ],
+                          "preferredQuestionnaireIds": [
+                            "6696ea0595df50d5cd6ec3c1"
+                          ],
+                          "cadence": "P12M"
+                        },
+                        {
+                          "riskLevel": "HIGH",
+                          "preferredEvidenceTypes": [
+                            "SOC2_REPORT"
+                          ],
+                          "preferredQuestionnaireIds": [
+                            "6696ea0595df50d5cd6ec3c1"
+                          ],
+                          "cadence": "P12M"
+                        },
+                        {
+                          "riskLevel": "MEDIUM",
+                          "preferredEvidenceTypes": [
+                            "SOC2_REPORT"
+                          ],
+                          "preferredQuestionnaireIds": [],
+                          "cadence": "P24M"
+                        },
+                        {
+                          "riskLevel": "LOW",
+                          "preferredEvidenceTypes": [],
+                          "preferredQuestionnaireIds": [],
+                          "cadence": null
+                        },
+                        {
+                          "riskLevel": "UNSCORED",
+                          "preferredEvidenceTypes": [],
+                          "preferredQuestionnaireIds": [],
+                          "cadence": null
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Gets an assessment type's rules for each vendor risk level: the evidence and questionnaires requested from vendors at that level, and how often they are reassessed.",
+        "summary": "Get assessment type rules",
         "tags": [
           "Vendor Assessment Types"
         ],
