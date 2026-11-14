@@ -6410,6 +6410,19 @@
         "type": "object",
         "additionalProperties": false
       },
+      "DeleteInformationRequestAuditorFileInput": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email of the auditor deleting the file. They must be an active user in\nyour audit firm and assigned to the audit."
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "InformationRequestActivityType": {
         "type": "string",
         "enum": [

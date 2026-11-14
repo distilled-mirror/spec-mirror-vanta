@@ -2677,6 +2677,415 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VendorAssessmentQuestionType": {
+        "type": "string",
+        "enum": [
+          "TEXT",
+          "BOOLEAN",
+          "SINGLE_SELECT",
+          "MULTI_SELECT"
+        ]
+      },
+      "VendorAssessmentQuestionTextAnswer": {
+        "title": "VendorAssessmentQuestionTextAnswer",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "TEXT"
+            ],
+            "nullable": false
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionBooleanAnswer": {
+        "title": "VendorAssessmentQuestionBooleanAnswer",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "BOOLEAN"
+            ],
+            "nullable": false
+          },
+          "value": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "The yes/no answer, or null when the answer is N/A."
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionSingleSelectAnswer": {
+        "title": "VendorAssessmentQuestionSingleSelectAnswer",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "SINGLE_SELECT"
+            ],
+            "nullable": false
+          },
+          "value": {
+            "type": "string",
+            "nullable": true,
+            "description": "The selected option, or null when no option is selected."
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionMultiSelectAnswer": {
+        "title": "VendorAssessmentQuestionMultiSelectAnswer",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MULTI_SELECT"
+            ],
+            "nullable": false
+          },
+          "value": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The selected options."
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionAnswer": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionTextAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionBooleanAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionSingleSelectAnswer"
+          },
+          {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionMultiSelectAnswer"
+          }
+        ],
+        "description": "An answer to an assessment question, shaped by the question's type."
+      },
+      "VendorAssessmentQuestionAiSource": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The excerpt of the source document that supports the AI answer."
+          },
+          "chunkId": {
+            "type": "string",
+            "description": "Unique identifier for the excerpt within its source document."
+          },
+          "documentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier for the source document."
+          },
+          "filename": {
+            "type": "string",
+            "nullable": true,
+            "description": "The source document's file name."
+          },
+          "page": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "The page of the source document the excerpt comes from."
+          },
+          "url": {
+            "type": "string",
+            "nullable": true,
+            "description": "The URL of the source, for web sources."
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "The source's title."
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The timestamp of when the source was last updated."
+          }
+        },
+        "required": [
+          "content",
+          "chunkId",
+          "documentId",
+          "filename",
+          "page",
+          "url",
+          "title",
+          "updatedDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionAiAnswer": {
+        "properties": {
+          "value": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The answer Vanta AI suggested, or null when it could not answer."
+          },
+          "rationale": {
+            "type": "string",
+            "nullable": true,
+            "description": "Vanta AI's explanation of its answer."
+          },
+          "isValid": {
+            "type": "boolean",
+            "description": "Whether the AI answer is a valid answer for the question's type."
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/VendorAssessmentQuestionAiSource"
+            },
+            "type": "array",
+            "description": "The document excerpts that support the AI answer."
+          },
+          "flaggedAsFinding": {
+            "type": "boolean",
+            "description": "Whether Vanta AI flagged the answer as a finding. Remains true after the\nflag is dismissed; see `activeFindingText`."
+          },
+          "activeFindingText": {
+            "type": "string",
+            "nullable": true,
+            "description": "Why Vanta AI flagged the answer, or null when there is no active\n(undismissed) flag."
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp of when the AI answer was generated."
+          }
+        },
+        "required": [
+          "value",
+          "rationale",
+          "isValid",
+          "sources",
+          "flaggedAsFinding",
+          "activeFindingText",
+          "createdDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionVendorAnswer": {
+        "properties": {
+          "value": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The vendor's answer, or null when the vendor has not answered."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED"
+            ],
+            "description": "Whether the vendor's answer is a draft or has been submitted."
+          },
+          "endorsesCurrentAiAnswer": {
+            "type": "boolean",
+            "description": "Whether the vendor accepted the current Vanta AI answer as its own."
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The timestamp of when the vendor's answer was last updated."
+          }
+        },
+        "required": [
+          "value",
+          "state",
+          "endorsesCurrentAiAnswer",
+          "updatedDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestionUserAnswer": {
+        "properties": {
+          "value": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The answer a user in your organization entered, or null when it was cleared."
+          },
+          "originType": {
+            "type": "string",
+            "enum": [
+              "AI",
+              "VENDOR",
+              null
+            ],
+            "nullable": true,
+            "description": "Which answer the user's answer was copied from, or null when entered directly."
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp of when the user's answer was last updated."
+          }
+        },
+        "required": [
+          "value",
+          "originType",
+          "updatedDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VendorAssessmentQuestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the question."
+          },
+          "questionnaireId": {
+            "type": "string",
+            "description": "Unique identifier for the questionnaire the question belongs to."
+          },
+          "question": {
+            "type": "string",
+            "description": "The question text."
+          },
+          "questionType": {
+            "$ref": "#/components/schemas/VendorAssessmentQuestionType",
+            "description": "The kind of answer the question takes."
+          },
+          "aiAnswer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionAiAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The answer suggested by Vanta AI, if any."
+          },
+          "vendorAnswer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionVendorAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The vendor's answer, if any."
+          },
+          "userAnswer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionUserAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The answer entered by a user in your organization, if any."
+          },
+          "selectedSource": {
+            "type": "string",
+            "enum": [
+              "VENDOR",
+              "VANTA_USER",
+              "VANTA_AI",
+              null
+            ],
+            "nullable": true,
+            "description": "Which answer is selected as the answer of record."
+          },
+          "selectedAnswer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VendorAssessmentQuestionAnswer"
+              }
+            ],
+            "nullable": true,
+            "description": "The answer of record. It can differ from the current source answers,\ne.g. when it is a snapshot taken at review."
+          }
+        },
+        "required": [
+          "id",
+          "questionnaireId",
+          "question",
+          "questionType",
+          "aiAnswer",
+          "vendorAnswer",
+          "userAnswer",
+          "selectedSource",
+          "selectedAnswer"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VendorAssessmentQuestion_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VendorAssessmentQuestion"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "StartVendorAssessmentInput": {
         "properties": {
           "assessmentTypeId": {
@@ -39539,6 +39948,84 @@
         ]
       }
     },
+    "/users/deactivate": {
+      "post": {
+        "operationId": "DeactivateUsers",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": [
+                        {
+                          "id": "69c55d93ca5e7c5217d4c993",
+                          "status": "SUCCESS"
+                        },
+                        {
+                          "id": "OTHER_USER_ID",
+                          "status": "ERROR",
+                          "message": "Invalid Input"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Deactivate a list of users that were added to Vanta manually. Deactivated users can no longer sign in to Vanta.\nUsers provisioned by your identity provider, for example through SCIM, cannot be deactivated here; remove them through your identity provider instead.\nThe last active admin in the organization cannot be deactivated.\nEach user is processed independently, so a user that cannot be deactivated does not stop the others in the request.",
+        "summary": "Deactivate users",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "updates": {
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "ID of the user to deactivate"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array",
+                    "description": "List of the users to deactivate.",
+                    "minItems": 1,
+                    "maxItems": 100
+                  }
+                },
+                "required": [
+                  "updates"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
     "/users/{userId}": {
       "get": {
         "operationId": "GetUser",
@@ -41908,6 +42395,155 @@
             }
           }
         }
+      }
+    },
+    "/vendors/{vendorId}/assessments/{assessmentId}/questions": {
+      "get": {
+        "operationId": "ListAssessmentQuestions",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VendorAssessmentQuestion_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "6696eb2e95df50d5cd6ec3c1",
+                            "questionnaireId": "6696eb1a95df50d5cd6ec3c0",
+                            "question": "Do you encrypt customer data at rest?",
+                            "questionType": "BOOLEAN",
+                            "aiAnswer": {
+                              "value": {
+                                "type": "BOOLEAN",
+                                "value": true
+                              },
+                              "rationale": "The SOC 2 report states that customer data is encrypted at rest with AES-256.",
+                              "isValid": true,
+                              "sources": [
+                                {
+                                  "content": "All customer data is encrypted at rest using AES-256.",
+                                  "chunkId": "chunk-12",
+                                  "documentId": "6696eb4f95df50d5cd6ec3c2",
+                                  "filename": "soc2-type2-report.pdf",
+                                  "page": 14,
+                                  "url": null,
+                                  "title": "SOC 2 Type II Report",
+                                  "updatedDate": "2024-02-01T00:00:00.000Z"
+                                }
+                              ],
+                              "flaggedAsFinding": false,
+                              "activeFindingText": null,
+                              "createdDate": "2024-02-02T00:00:00.000Z"
+                            },
+                            "vendorAnswer": {
+                              "value": {
+                                "type": "BOOLEAN",
+                                "value": true
+                              },
+                              "state": "SUBMITTED",
+                              "endorsesCurrentAiAnswer": true,
+                              "updatedDate": "2024-02-05T00:00:00.000Z"
+                            },
+                            "userAnswer": null,
+                            "selectedSource": "VENDOR",
+                            "selectedAnswer": {
+                              "type": "BOOLEAN",
+                              "value": true
+                            }
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": "NjY5NmViMmU5NWRmNTBkNWNkNmVjM2Mx",
+                          "endCursor": "NjY5NmViMmU5NWRmNTBkNWNkNmVjM2Mx"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the questions in an assessment's questionnaire with their Vanta AI,\nvendor, and user answers. Returns an empty list when the assessment has\nno questionnaire.",
+        "summary": "List assessment questions with answers",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "assessmentId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "description": "Only return questions whose Vanta AI answer has an active finding flag",
+            "in": "query",
+            "name": "onlyFlagged",
+            "required": false,
+            "schema": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "Only return questions whose text contains this phrase (case-insensitive), up to 50 words",
+            "in": "query",
+            "name": "searchQuery",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only return the question with this ID",
+            "in": "query",
+            "name": "questionId",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     },
     "/vendors/{vendorId}/documents": {
