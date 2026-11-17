@@ -645,6 +645,85 @@
         "type": "object",
         "additionalProperties": false
       },
+      "VulnerabilityExportFile": {
+        "description": "One file of a vulnerability export, with a short-lived download URL.",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "Identifies the file within its export. Stable and opaque."
+          },
+          "reportId": {
+            "$ref": "#/components/schemas/VulnerabilityExportReportId",
+            "description": "The report this file belongs to."
+          },
+          "partNumber": {
+            "type": "number",
+            "format": "double",
+            "description": "The file's position within its report, starting at 1 and running without\ngaps up to the report's fileCount."
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The intended local filename, unique within the export."
+          },
+          "rowCount": {
+            "type": "number",
+            "format": "double",
+            "description": "Data rows in this file, excluding the header row. Can be 0."
+          },
+          "sizeBytes": {
+            "type": "number",
+            "format": "double",
+            "description": "Size of the file as stored, meaning the compressed gzip bytes."
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Hex-encoded SHA-256 of the compressed gzip bytes. Use it to verify each download."
+          },
+          "downloadUrl": {
+            "type": "string",
+            "description": "Presigned HTTPS URL for the file. Valid for at most 15 minutes, and possibly\nless. Treat it as opaque and as a secret. The response body is the stored\ngzip bytes, sent as `application/gzip` with no `Content-Encoding`, so a\ndownload matches `sizeBytes` and `sha256` without changes."
+          }
+        },
+        "required": [
+          "fileId",
+          "reportId",
+          "partNumber",
+          "fileName",
+          "rowCount",
+          "sizeBytes",
+          "sha256",
+          "downloadUrl"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VulnerabilityExportFile_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VulnerabilityExportFile"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "VulnerabilityType": {
         "type": "string",
         "enum": [

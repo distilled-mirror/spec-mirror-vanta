@@ -6423,6 +6423,99 @@
         "type": "object",
         "additionalProperties": false
       },
+      "AuditorFileUploadFormFields": {
+        "description": "Multipart form fields for one upload. Copy every returned name and value\nunchanged into the multipart POST, then append the file as the final part.\nField names may vary between uploads.",
+        "properties": {},
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "AuditorFileUploadGrant": {
+        "properties": {
+          "uploadId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "Submit a multipart POST to this URL with every returned field and the file last."
+          },
+          "fields": {
+            "$ref": "#/components/schemas/AuditorFileUploadFormFields"
+          },
+          "maxSizeBytes": {
+            "type": "number",
+            "format": "double",
+            "description": "Inclusive byte limit for the file."
+          },
+          "transferExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Start the multipart POST to `url` before this time; the signed storage-upload form expires then."
+          },
+          "finalizationExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Finish finalization before this time to attach the file. The upload session expires then, even if the file is already in storage."
+          }
+        },
+        "required": [
+          "uploadId",
+          "url",
+          "fields",
+          "maxSizeBytes",
+          "transferExpiresAt",
+          "finalizationExpiresAt"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "InitiateAuditorFileUploadInput": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Active auditor in the calling firm who has access to the audit."
+          },
+          "filename": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The file's declared MIME type. Accepted values:\n- `application/json`\n- `application/pdf`\n- `application/postscript`\n- `application/vnd.openxmlformats-officedocument.wordprocessingml.document`\n- `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`\n- `application/x-zip-compressed`\n- `application/zip`\n- `image/jpeg`\n- `image/png`\n- `image/webp`\n- `text/csv`\n- `text/plain`\n\nMatching ignores case and MIME parameters, so `TEXT/CSV` and\n`text/csv; charset=utf-8` are also accepted."
+          }
+        },
+        "required": [
+          "email",
+          "filename",
+          "contentType"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UploadedAuditorFile": {
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "FinalizeAuditorFileUploadInput": {
+        "properties": {
+          "uploadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uploadId"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "InformationRequestActivityType": {
         "type": "string",
         "enum": [
