@@ -6424,7 +6424,7 @@
         "additionalProperties": false
       },
       "AuditorFileUploadFormFields": {
-        "description": "Multipart form fields for one upload. Copy every returned name and value\nunchanged into the multipart POST, then append the file as the final part.\nField names may vary between uploads.",
+        "description": "Form fields to send with the file to `url`. Copy every returned name and\nvalue unchanged into a multipart/form-data POST, then append the file under\n`file` as the final part. These are form fields, not HTTP headers. Field\nnames may vary between uploads; do not hard-code the example fields.",
         "properties": {},
         "type": "object",
         "additionalProperties": {
@@ -6434,11 +6434,12 @@
       "AuditorFileUploadGrant": {
         "properties": {
           "uploadId": {
-            "type": "string"
+            "type": "string",
+            "description": "Opaque identifier for this upload. Pass it unchanged to finalize; it is not the attached file's ID."
           },
           "url": {
             "type": "string",
-            "description": "Submit a multipart POST to this URL with every returned field and the file last."
+            "description": "Temporary URL for the file-transfer request. POST every returned `fields`\nentry and the file to this URL, without a Vanta Authorization header.\nThis is not a download link."
           },
           "fields": {
             "$ref": "#/components/schemas/AuditorFileUploadFormFields"
@@ -6446,17 +6447,17 @@
           "maxSizeBytes": {
             "type": "number",
             "format": "double",
-            "description": "Inclusive byte limit for the file."
+            "description": "Maximum file size in bytes, inclusive. The limit is 50MB."
           },
           "transferExpiresAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Start the multipart POST to `url` before this time; the signed storage-upload form expires then."
+            "description": "UTC expiration timestamp for `url` and `fields`. Start the file-transfer POST well before this time."
           },
           "finalizationExpiresAt": {
             "type": "string",
             "format": "date-time",
-            "description": "Finish finalization before this time to attach the file. The upload session expires then, even if the file is already in storage."
+            "description": "UTC deadline to complete finalization and attach the file, even if the file transfer has already succeeded."
           }
         },
         "required": [
@@ -6470,18 +6471,31 @@
         "type": "object",
         "additionalProperties": false
       },
+      "OutboundError": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "InitiateAuditorFileUploadInput": {
         "properties": {
           "email": {
             "type": "string",
-            "description": "Active auditor in the calling firm who has access to the audit."
+            "description": "Email of the auditor to credit as the uploader. They must be an active user\nin your audit firm with access to the audit, including when you finalize."
           },
           "filename": {
-            "type": "string"
+            "type": "string",
+            "description": "Filename to display on the attachment. Must be 1–255 characters after trimming surrounding whitespace."
           },
           "contentType": {
             "type": "string",
-            "description": "The file's declared MIME type. Accepted values:\n- `application/json`\n- `application/pdf`\n- `application/postscript`\n- `application/vnd.openxmlformats-officedocument.wordprocessingml.document`\n- `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`\n- `application/x-zip-compressed`\n- `application/zip`\n- `image/jpeg`\n- `image/png`\n- `image/webp`\n- `text/csv`\n- `text/plain`\n\nMatching ignores case and MIME parameters, so `TEXT/CSV` and\n`text/csv; charset=utf-8` are also accepted."
+            "description": "The file's declared MIME type. Accepted values:\n- `application/json`\n- `application/pdf`\n- `application/postscript`\n- `application/vnd.openxmlformats-officedocument.wordprocessingml.document`\n- `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`\n- `application/x-zip-compressed`\n- `application/zip`\n- `image/jpeg`\n- `image/png`\n- `image/webp`\n- `text/csv`\n- `text/plain`\n\nMatching ignores case and MIME parameters, so `TEXT/CSV` and\n`text/csv; charset=utf-8` are also accepted. Unsupported file types return\n`422` during finalization."
           }
         },
         "required": [
@@ -6495,7 +6509,8 @@
       "UploadedAuditorFile": {
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "ID of the attached auditor file. Match it to `id` in the auditor-files list, or use it as `auditorFileId` when deleting the file."
           }
         },
         "required": [
@@ -6507,7 +6522,8 @@
       "FinalizeAuditorFileUploadInput": {
         "properties": {
           "uploadId": {
-            "type": "string"
+            "type": "string",
+            "description": "The `uploadId` returned by the start-upload operation for this application, audit and information request."
           }
         },
         "required": [
@@ -11149,6 +11165,386 @@
             }
           }
         ]
+      }
+    },
+    "/audits/{auditId}/information-requests/{requestId}/auditor-files": {
+      "get": {
+        "operationId": "ListInformationRequestAuditorFiles",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_InformationRequestAuditorFile_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "6890e473dce1da5d8406f5f1",
+                            "filename": "access-review-sample.xlsx",
+                            "mimeType": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            "url": "https://example.com/presigned-url",
+                            "uploadedBy": {
+                              "email": "auditor@auditfirm.com",
+                              "name": "Ada Auditor"
+                            },
+                            "uploadedDate": "2026-11-03T12:00:00.000Z"
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": null,
+                          "endCursor": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the files auditors shared with the customer on an information\nrequest, newest upload first, with ties ordered by ID so pages are stable.\nDeleted files are not returned; list again to see the current set.\n\nEach `url` is a download link that expires one hour after it is issued.\nList the files again to get fresh download URLs. Do not use `url` as a key.\n\nRate limit: 50 requests / minute.",
+        "summary": "List auditor files for an information request",
+        "tags": [
+          "Audits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "auditId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Maximum number of files to return per page.",
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "description": "Pagination cursor from a previous response. Provide to fetch the next page of files.",
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          }
+        ]
+      }
+    },
+    "/audits/{auditId}/information-requests/{requestId}/auditor-files/uploads": {
+      "post": {
+        "operationId": "InitiateInformationRequestAuditorFileUpload",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditorFileUploadGrant"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "uploadId": "7630c3ba-51c3-4410-84d1-3b79d6a8eb1d",
+                      "url": "https://uploads.example.com/",
+                      "fields": {
+                        "key": "example-upload-key",
+                        "Content-Type": "text/csv",
+                        "Policy": "example-base64-policy",
+                        "X-Amz-Signature": "example-signature"
+                      },
+                      "maxSizeBytes": 52428800,
+                      "transferExpiresAt": "2026-11-03T12:01:00.000Z",
+                      "finalizationExpiresAt": "2026-11-03T12:10:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or path parameters; correct the input"
+          },
+          "401": {
+            "description": "Missing or expired Vanta access token"
+          },
+          "403": {
+            "description": "The application or named auditor lacks access"
+          },
+          "404": {
+            "description": "The audit or information request was not found"
+          },
+          "409": {
+            "description": "The audit is completed; reopen it before uploading",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unsupported contentType, audit not yet available, or upload could not start before its transfer deadline",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate or unfinished-upload limit reached; back off before starting another upload"
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Starts an upload of a file an auditor provides for the customer, such as\ninstructions or a template, on an information request. This does not upload\ncustomer evidence. Use this three-step flow:\n\n1. Call this endpoint with `email`, `filename` and `contentType` to receive\n\n   an `uploadId`, a temporary `url` and form `fields`.\n2. POST the file to `url` as `multipart/form-data` before `transferExpiresAt`.\n\n   Copy every returned field name and value unchanged, then append the file\n   under `file` as the final part. Do not hard-code the field names or send\n   your Vanta bearer token to this URL. Let your HTTP client set the\n   multipart Content-Type header and boundary. Wait for a 2xx response;\n   the response body may be empty.\n3. POST `{ \"uploadId\": \"<returned uploadId>\" }` to\n\n   `/v1/audits/{auditId}/information-requests/{requestId}/auditor-files/uploads/finalize`\n   and complete finalization before `finalizationExpiresAt`.\n\nThe file is attached only after finalization succeeds. Each upload accepts\none file up to 50MB, inclusive. The auditor identified\nby `email` is credited as the uploader and must be an active user in your\nfirm with access to the audit. A completed audit returns 409.\n\nEach application is limited to 10 unfinished auditor file uploads per\ncustomer, across all audits and requests. Uploads count toward this limit\nuntil they are finalized, fail, or expire. Starting another upload at this\nlimit returns 429, even if the earlier file transfers have succeeded.\nRepeating this start operation creates a new upload; it does not recover\nan earlier upload whose response was lost.\n\nRate limit: 10 requests / minute.",
+        "summary": "Start an auditor file upload",
+        "tags": [
+          "Audits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "auditId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateAuditorFileUploadInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audits/{auditId}/information-requests/{requestId}/auditor-files/uploads/finalize": {
+      "post": {
+        "operationId": "FinalizeInformationRequestAuditorFileUpload",
+        "responses": {
+          "201": {
+            "description": "Auditor file attached",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadedAuditorFile"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "id": "65fc81a3359c8508c9af880f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or path parameters; correct the input"
+          },
+          "401": {
+            "description": "Missing or expired Vanta access token"
+          },
+          "403": {
+            "description": "The application or original auditor no longer has access"
+          },
+          "404": {
+            "description": "The audit, information request or upload was not found for this application and destination"
+          },
+          "409": {
+            "description": "The audit is completed; stop this upload attempt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The file exceeds 50MB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Upload expired, file missing or unsupported, or audit not yet available; correct the problem before starting a new upload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate or finalization limit reached; retry the same uploadId with backoff before finalizationExpiresAt"
+          },
+          "500": {
+            "description": "Unexpected server error; retry the same uploadId with backoff before finalizationExpiresAt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Completes an auditor file upload by validating the file and attaching it\nto the information request. First start an upload with\n`POST /v1/audits/{auditId}/information-requests/{requestId}/auditor-files/uploads`,\nthen transfer the file to the returned `url` and wait for its 2xx response.\nCalling finalize before the file arrives ends that upload; start a new one.\n\nSend `{ \"uploadId\": \"<returned uploadId>\" }` using the same application,\naudit and information request that started the upload. Vanta uses the\nauditor identified by `email` at the start; that auditor must still be an\nactive user in your firm with audit access. Unsupported file types return\n`422` during finalization.\n\nA 201 response contains the attached file's `id`, which differs from\n`uploadId`. Use `GET /v1/audits/{auditId}/information-requests/{requestId}/auditor-files`\nto find that ID and obtain a temporary download URL.\n\nRetry the same upload ID with backoff after a lost response, a 5xx or a 429.\nStop retrying at `finalizationExpiresAt`. A 409 means the audit is\ncompleted; stop this attempt. For 404, 413 or 422, stop this attempt and\ncorrect the input or start a new upload.\n\nA 429 can mean too many requests, another finalization of this upload is\nstill running, or too many files are being finalized for this application\nand customer.\nAfter a failed attempt, you may need to wait up to 60 seconds before\nretrying. Expired uploads, missing files and unsupported files return 422;\nfiles over 50MB return 413. Retrying a finalization\nthat already succeeded returns the original auditor file ID, even if the\nfile was later deleted; it does not attach the file again. Current access\nis still required.\n\nRate limit: 10 requests / minute.",
+        "summary": "Complete an auditor file upload and attach the file",
+        "tags": [
+          "Audits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "auditId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FinalizeAuditorFileUploadInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/audits/{auditId}/information-requests/{requestId}/auditor-files/{auditorFileId}": {
+      "delete": {
+        "operationId": "DeleteInformationRequestAuditorFile",
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "description": "Deletes an auditor file from an information request. Any auditor assigned\nto the audit may delete any auditor's file, not only their own. Identify\nthe deleting auditor by `email`: they must be an active user in your audit\nfirm and assigned to the audit, otherwise this returns 403.\n\nA completed audit returns 409; reopen the audit before deleting files.\nApproving the request does not lock its files. An unknown or already\ndeleted file returns 404.\n\nLists no longer return the file or new download URLs for it. Download URLs\nissued before the delete stay valid until they expire, at most one hour.\n\nRate limit: 50 requests / minute.",
+        "summary": "Delete an auditor file from an information request",
+        "tags": [
+          "Audits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "auditId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "auditorFileId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteInformationRequestAuditorFileInput"
+              }
+            }
+          }
+        }
       }
     },
     "/audits/{auditId}/information-requests/{requestId}/comments": {

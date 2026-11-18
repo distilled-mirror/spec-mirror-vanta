@@ -25,6 +25,10 @@
       "description": "Vendor risk management events."
     },
     {
+      "name": "Audit",
+      "description": "Audit lifecycle events."
+    },
+    {
       "name": "Information Request",
       "description": "Audit information request (IRL) events."
     },
@@ -662,6 +666,53 @@
                     "lastUpdatedAt": "2025-10-10T00:00:00.000Z",
                     "comments": "No weaknesses or flagged findings identified in the review."
                   }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Return any 2xx status within 15 seconds to acknowledge receipt."
+          }
+        }
+      }
+    },
+    "/v1.audit.deleted": {
+      "post": {
+        "operationId": "v1.audit.deleted",
+        "tags": [
+          "Audit"
+        ],
+        "summary": "Audit deleted",
+        "description": "Fires when an audit accessible to your audit firm is deleted.\n\nThis event is delivered only to [Audit Partner](/reference/audits/overview) accounts and is an early-access feature. Reach out to your Vanta contact to enable it.\n\nRemove the audit and all its mirrored resources from your system using the audit ID in this event. Deleting an audit does not produce separate deletion events for its information requests, evidence, or comments.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "audit"
+                ],
+                "properties": {
+                  "audit": {
+                    "type": "object",
+                    "required": [
+                      "id"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The unique identifier of the deleted audit."
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "audit": {
+                  "id": "5f8d0f3b9d3f2a1b4c5d6e7f"
                 }
               }
             }
