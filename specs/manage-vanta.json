@@ -20357,8 +20357,7 @@
           },
           "toolCallCount": {
             "type": "number",
-            "format": "double",
-            "description": "Invocations over the last 30 UTC days, including today."
+            "format": "double"
           },
           "lastActivityDate": {
             "type": "string",
