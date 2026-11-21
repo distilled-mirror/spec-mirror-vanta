@@ -9185,6 +9185,141 @@
         "type": "object",
         "additionalProperties": false
       },
+      "RiskTaskStatus": {
+        "type": "string",
+        "enum": [
+          "OPEN",
+          "IN_PROGRESS",
+          "CLOSED"
+        ]
+      },
+      "RiskTaskExternalTicket": {
+        "properties": {
+          "integrationId": {
+            "type": "string",
+            "description": "The ID of the task tracker integration the ticket is in, such as `jira`."
+          },
+          "url": {
+            "type": "string",
+            "description": "The ticket's URL in the task tracker."
+          }
+        },
+        "required": [
+          "integrationId",
+          "url"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "RiskTask": {
+        "description": "A task in a risk scenario's treatment plan.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "The task's name. For a task tracked in a task tracker, the ticket's\ntitle. Otherwise the same as `description`, or empty when the task\nhas no description."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "What the task is, as entered in Vanta. `null` when the task has no\ndescription."
+          },
+          "status": {
+            "$ref": "#/components/schemas/RiskTaskStatus",
+            "description": "`CLOSED` means the task is done. A task tracked in a task tracker is\n`CLOSED` when its ticket is closed, and `OPEN` otherwise."
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the task is due. `null` when the task has no due date."
+          },
+          "completionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the task was completed. `null` for a task that isn't done, and for a\ntask tracked in a task tracker."
+          },
+          "owner": {
+            "type": "string",
+            "nullable": true,
+            "description": "The email of the person who owns the task. `null` when no active person\nowns it, and for a task tracked in a task tracker."
+          },
+          "riskScenarioIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "The `riskId` of each risk scenario the task is linked to, including\narchived ones."
+          },
+          "externalTicket": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RiskTaskExternalTicket"
+              }
+            ],
+            "nullable": true,
+            "description": "The task tracker ticket the task is tracked in. `null` for a task tracked\nonly in Vanta."
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "status",
+          "dueDate",
+          "completionDate",
+          "owner",
+          "riskScenarioIds",
+          "externalTicket",
+          "note",
+          "creationDate",
+          "modificationDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_RiskTask_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/RiskTask"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "RiskScoreProfileType": {
         "type": "string",
         "enum": [
@@ -13189,6 +13324,18 @@
           }
         ]
       },
+      "OutboundError": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "PaginatedResponse_Issue_": {
         "properties": {
           "results": {
@@ -16023,18 +16170,6 @@
         "type": "object",
         "additionalProperties": false
       },
-      "OutboundError": {
-        "properties": {
-          "message": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
-        ],
-        "type": "object",
-        "additionalProperties": false
-      },
       "DocumentEvaluation": {
         "properties": {
           "summary": {
@@ -16670,8 +16805,8 @@
       "QuestionnaireStatus": {
         "type": "string",
         "enum": [
-          "APPROVED",
           "IN_PROGRESS",
+          "APPROVED",
           "IN_REVIEW",
           "READY_FOR_REVIEW",
           "WAITING_ON_ANSWERS",
@@ -23228,7 +23363,7 @@
             }
           }
         },
-        "description": "List questionnaires with filtering and pagination.",
+        "description": "List questionnaires with filtering and pagination.\n\nCallers with organization-level access to questionnaires see every\nquestionnaire. Other callers see only the questionnaires they can view,\nfor example ones they own, approve, or own a response on. Filters narrow\nthat set further. A caller with access to no questionnaires gets a 403;\none whose viewable questionnaires are all deleted or filtered out gets\nan empty page.",
         "summary": "List questionnaires",
         "tags": [
           "Customer Trust"
@@ -28743,9 +28878,19 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "The organization does not have Issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
           }
         },
-        "description": "List issues on a domain (paginated).\nReturns a paginated list of issues that the authenticated app has\npermission to view, optionally filtered and sorted.",
+        "description": "List issues on a domain (paginated).\nReturns a paginated list of issues that the authenticated app has\npermission to view, optionally filtered and sorted.\nReturns 403 when the organization does not have Issues.",
         "summary": "List issues",
         "tags": [
           "Issues"
@@ -28827,7 +28972,7 @@
             ]
           },
           {
-            "description": "Filter to issues matching any of the provided sources.",
+            "description": "Filter to issues matching any of the provided sources. Some values never apply to a given organization; requesting them returns 400.",
             "in": "query",
             "name": "sourceMatchesAny",
             "required": false,
@@ -28843,7 +28988,7 @@
             ]
           },
           {
-            "description": "Filter to issues matching any of the provided types.",
+            "description": "Filter to issues matching any of the provided types. Some values never apply to a given organization; requesting them returns 400.",
             "in": "query",
             "name": "typeMatchesAny",
             "required": false,
@@ -29015,7 +29160,7 @@
             "example": "2023-12-31T23:59:59Z"
           },
           {
-            "description": "Filter to issues sourced from any of the provided audit IDs.",
+            "description": "Filter to issues sourced from any of the provided audit IDs. Returns 400 when audits don't apply to the organization.",
             "in": "query",
             "name": "auditIdMatchesAny",
             "required": false,
@@ -29123,9 +29268,19 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "The organization does not have Issues",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutboundError"
+                }
+              }
+            }
           }
         },
-        "description": "Get the details of an issue by its ID.",
+        "description": "Get the details of an issue by its ID.\nReturns 403 when the organization does not have Issues.",
         "summary": "Get issue by ID",
         "tags": [
           "Issues"
