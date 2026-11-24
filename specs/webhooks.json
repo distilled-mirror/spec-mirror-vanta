@@ -732,7 +732,7 @@
           "Information Request"
         ],
         "summary": "Information request created",
-        "description": "Fires when an information request is created for an audit accessible to your audit firm. Bulk creation produces one event per request.\n\nThis event is delivered only to [Audit Partner](/reference/audits/overview) accounts and is an early-access feature. Reach out to your Vanta contact to enable it.\n\nThe payload contains only identifiers. Fetch current details with `GET /v1/audits/{auditId}/information-requests/{requestId}`.",
+        "description": "Fires when an information request is created for an audit accessible to your audit firm. Bulk creation produces one event per request.\n\nThis event is delivered only to [Audit Partner](/reference/audits/overview) accounts.\n\nThe payload contains only identifiers. Fetch current details with `GET /v1/audits/{auditId}/information-requests/{requestId}`.",
         "requestBody": {
           "required": true,
           "content": {

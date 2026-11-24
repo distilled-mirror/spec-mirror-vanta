@@ -7255,6 +7255,7 @@
               "iso27017",
               "iso27017_2026",
               "iso27018",
+              "iso27018_2025",
               "iso27701",
               "iso27701_2025",
               "iso42001",
@@ -7341,6 +7342,7 @@
               "iso27017",
               "iso27017_2026",
               "iso27018",
+              "iso27018_2025",
               "iso27701",
               "iso27701_2025",
               "iso42001",
@@ -9316,6 +9318,31 @@
         },
         "required": [
           "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CompleteRiskTaskInput": {
+        "properties": {
+          "completionDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the task was completed. Defaults to the current time. It can't be in\nthe future."
+          }
+        },
+        "type": "object",
+        "additionalProperties": false
+      },
+      "UpdateRiskTaskInput": {
+        "properties": {
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the task is due."
+          }
+        },
+        "required": [
+          "dueDate"
         ],
         "type": "object",
         "additionalProperties": false
@@ -12184,6 +12211,11 @@
             "type": "string",
             "nullable": true
           },
+          "externalUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Durable Trust Center link, including for private resources. Null when unavailable.\nThis link does not grant access or publish the resource.\nThe resource may be inaccessible until added to the Trust Center with appropriate visibility and permissions."
+          },
           "url": {
             "type": "string"
           },
@@ -12245,6 +12277,7 @@
           "type",
           "title",
           "description",
+          "externalUrl",
           "url",
           "customerVisibility",
           "includeSubPages",
@@ -12422,6 +12455,11 @@
             "type": "string",
             "nullable": true
           },
+          "externalUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "Durable Trust Center link, including for private resources. Null when unavailable.\nThis link does not grant access or publish the resource.\nThe resource may be inaccessible until added to the Trust Center with appropriate visibility and permissions."
+          },
           "fileUrl": {
             "type": "string",
             "description": "Presigned S3 URL for the underlying document. Expires after 1 hour due\nto AWS IAM Role limitations on presigned URL lifetimes. Re-fetch the\nresource to obtain a fresh URL once this one expires."
@@ -12489,6 +12527,7 @@
           "type",
           "title",
           "description",
+          "externalUrl",
           "fileUrl",
           "customerVisibility",
           "downloadPermission",
@@ -29778,6 +29817,7 @@
                             "type": "FILE",
                             "title": "SOC 2 Type II Report",
                             "description": "Annual SOC 2 Type II report covering 2024.",
+                            "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                             "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                             "customerVisibility": "REQUEST_ACCESS",
                             "downloadPermission": "VIEW_AND_DOWNLOAD",
@@ -29804,6 +29844,7 @@
                             "type": "URL",
                             "title": "Vanta Security Overview",
                             "description": "Public-facing overview of Vanta's security posture.",
+                            "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                             "url": "https://www.vanta.com/security",
                             "customerVisibility": "PUBLIC",
                             "includeSubPages": true,
@@ -29952,6 +29993,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
@@ -30067,6 +30109,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
@@ -30150,6 +30193,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
@@ -30237,6 +30281,7 @@
                       "type": "URL",
                       "title": "Vanta Security Overview",
                       "description": "Public-facing overview of Vanta's security posture.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "url": "https://www.vanta.com/security",
                       "customerVisibility": "PUBLIC",
                       "includeSubPages": true,
@@ -30320,6 +30365,7 @@
                       "type": "URL",
                       "title": "Vanta Security Overview",
                       "description": "Public-facing overview of Vanta's security posture.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "url": "https://www.vanta.com/security",
                       "customerVisibility": "PUBLIC",
                       "includeSubPages": true,
@@ -30403,6 +30449,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
@@ -30498,6 +30545,7 @@
                       "type": "FILE",
                       "title": "SOC 2 Type II Report",
                       "description": "Annual SOC 2 Type II report covering 2024.",
+                      "externalUrl": "https://trust.example.com/resources?s=resource-slug&name=security-report",
                       "fileUrl": "https://files.example.s3.amazonaws.com/507f1f77bcf86cd799439021?X-Amz-Expires=3600&X-Amz-Signature=...",
                       "customerVisibility": "REQUEST_ACCESS",
                       "downloadPermission": "VIEW_AND_DOWNLOAD",
