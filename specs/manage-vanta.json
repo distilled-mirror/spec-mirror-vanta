@@ -26110,6 +26110,230 @@
         ]
       }
     },
+    "/fourth-parties": {
+      "get": {
+        "operationId": "ListFourthParties",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_FourthParty_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "YXdzLmFtYXpvbi5jb20",
+                            "name": "Amazon Web Services",
+                            "url": "aws.amazon.com",
+                            "isMatched": true,
+                            "category": "Cloud hosting",
+                            "locations": [
+                              "US"
+                            ],
+                            "sources": [
+                              {
+                                "url": "https://vendor.example/subprocessors",
+                                "ingestionMethod": "ADMIN"
+                              }
+                            ],
+                            "dependentVendorCount": 12
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": null,
+                          "endCursor": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists fourth parties ordered by dependent vendor count, highest first. Risk filters recalculate counts using matching dependents; the used-by filter selects rows without further narrowing counts.\nRequires vendor and fourth-party read access, with fourth parties enabled for your organization. Otherwise returns 403.\nFourth parties and counts include all active and procurement vendors in your organization. Results aren't limited by per-vendor access.",
+        "summary": "List fourth parties",
+        "tags": [
+          "Fourth Parties"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "description": "Select fourth parties used by any of these vendors after risk filtering, preserving the remaining counts.",
+            "in": "query",
+            "name": "usedByVendorIdMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "description": "Keep dependents matching any residual risk level.",
+            "in": "query",
+            "name": "residualRiskLevelMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorRiskLevel"
+              }
+            }
+          },
+          {
+            "description": "Keep dependents matching any inherent risk level; combines with residual risk using AND.",
+            "in": "query",
+            "name": "inherentRiskLevelMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorRiskLevel"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          }
+        ]
+      }
+    },
+    "/fourth-parties/{fourthPartyId}/vendors": {
+      "get": {
+        "operationId": "ListFourthPartyVendors",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_FourthPartyVendor_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "vendorId": "657000000000000000000000",
+                            "name": "Example vendor",
+                            "usage": {
+                              "purpose": "Cloud hosting",
+                              "category": "Infrastructure",
+                              "locations": [
+                                "US"
+                              ],
+                              "sources": [
+                                {
+                                  "url": "https://vendor.example/subprocessors",
+                                  "ingestionMethod": "ADMIN"
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": null,
+                          "endCursor": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists the vendors that depend on a fourth party, ordered by vendor name, optionally filtered by inherent and residual risk with AND semantics.\nRequires vendor and fourth-party read access, with fourth parties enabled for your organization. Otherwise returns 403.\nIncludes every active and procurement vendor in your organization that depends on the fourth party. Results aren't limited by per-vendor access.",
+        "summary": "List fourth party vendors",
+        "tags": [
+          "Fourth Parties"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "fourthPartyId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Keep dependents matching any residual risk level.",
+            "in": "query",
+            "name": "residualRiskLevelMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorRiskLevel"
+              }
+            }
+          },
+          {
+            "description": "Keep dependents matching any inherent risk level; combines with residual risk using AND.",
+            "in": "query",
+            "name": "inherentRiskLevelMatchesAny",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VendorRiskLevel"
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          }
+        ]
+      }
+    },
     "/frameworks": {
       "get": {
         "operationId": "ListFrameworks",
@@ -44107,6 +44331,92 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/vendors/{vendorId}/fourth-parties": {
+      "get": {
+        "operationId": "ListVendorFourthParties",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_FourthParty_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "id": "YXdzLmFtYXpvbi5jb20",
+                            "name": "Amazon Web Services",
+                            "url": "aws.amazon.com",
+                            "isMatched": true,
+                            "category": "Cloud hosting",
+                            "locations": [
+                              "US"
+                            ],
+                            "sources": [
+                              {
+                                "url": "https://vendor.example/subprocessors",
+                                "ingestionMethod": "ADMIN"
+                              }
+                            ],
+                            "dependentVendorCount": 12
+                          }
+                        ],
+                        "pageInfo": {
+                          "hasNextPage": false,
+                          "hasPreviousPage": false,
+                          "startCursor": null,
+                          "endCursor": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists a vendor's fourth parties with full portfolio dependent counts.\nRequires vendor and fourth-party read access, with fourth parties enabled for your organization. Otherwise returns 403.\nFourth parties and counts include all active and procurement vendors in your organization. Results aren't limited by per-vendor access.",
+        "summary": "List vendor fourth parties",
+        "tags": [
+          "Vendors"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "vendorId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
             }
           }
         ]
