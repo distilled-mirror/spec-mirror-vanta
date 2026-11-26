@@ -6161,7 +6161,8 @@
               "$ref": "#/components/schemas/VantaTestSnapshotRawTestDataRow"
             },
             "type": "array",
-            "description": "Raw test data captured at snapshot time."
+            "description": "Always empty. Read captured records from `GET /v1/audits/{auditId}/information-requests/{requestId}/evidence/{evidenceId}/test-snapshot/raw-data`. This field will be removed on 2027-01-25.",
+            "deprecated": true
           },
           "outOfScopeResources": {
             "$ref": "#/components/schemas/VantaTestSnapshotOutOfScopeResources",
@@ -6183,6 +6184,62 @@
           "integrations",
           "slaRemediation",
           "rawTestData"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VantaTestSnapshotRawTestDataPageRow": {
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifier of the underlying resource the row was captured from. Null for\nunstructured snapshots, which do not partition by resource."
+          },
+          "resourceType": {
+            "type": "string",
+            "nullable": true,
+            "description": "Specific resource kind for the row (e.g. `AwsIamUser`). Null for\nunstructured snapshots."
+          },
+          "rawJson": {
+            "description": "Raw JSON payload as emitted by the test runner and captured at\nsnapshot time. For structured snapshots, the shape varies by\n`resourceType`. For unstructured snapshots, this contains one\ncaptured record; `resourceId` and `resourceType` are both `null`.\n\nNull when `dataTooLarge` is true because the source data was too\nlarge to capture. The row remains in the page as a placeholder,\nwith no JSON payload available."
+          },
+          "dataTooLarge": {
+            "type": "boolean",
+            "description": "True when the record was too large to capture and has no stored JSON."
+          }
+        },
+        "required": [
+          "resourceId",
+          "resourceType",
+          "rawJson",
+          "dataTooLarge"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "PaginatedResponse_VantaTestSnapshotRawTestDataPageRow_": {
+        "properties": {
+          "results": {
+            "properties": {
+              "data": {
+                "items": {
+                  "$ref": "#/components/schemas/VantaTestSnapshotRawTestDataPageRow"
+                },
+                "type": "array"
+              },
+              "pageInfo": {
+                "$ref": "#/components/schemas/PageInfo"
+              }
+            },
+            "required": [
+              "data",
+              "pageInfo"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "results"
         ],
         "type": "object",
         "additionalProperties": false
@@ -12139,16 +12196,7 @@
                           "unit": "DAYS"
                         }
                       },
-                      "rawTestData": [
-                        {
-                          "resourceId": "6890e473dce1da5d8406f700",
-                          "resourceType": "OktaUser",
-                          "rawJson": {
-                            "id": "6890e473dce1da5d8406f700",
-                            "status": "ACTIVE"
-                          }
-                        }
-                      ],
+                      "rawTestData": [],
                       "outOfScopeResources": {
                         "testLevel": [
                           {
@@ -12182,7 +12230,7 @@
             }
           }
         },
-        "description": "Retrieves the rich detail for a single VANTA_TEST_SNAPSHOT evidence row\nattached to an information request. The response includes test-level\nmetadata (description, integrations, SLA), the raw test data captured\nat snapshot time, and the resources that were excluded from the test\n(out-of-scope resources).\n\nFor structured snapshots, the `rawTestData` array contains one row per\nresource the test ran against; each row carries `resourceId`,\n`resourceType`, and the raw JSON for that resource.\n\nFor unstructured snapshots, the `rawTestData` array contains a single\nrow with `resourceId` and `resourceType` set to `null` and `rawJson`\ncontaining the entire test-run JSON blob.\n\nThe `outOfScopeResources` field lists resources excluded at the test\nlevel (customer-disabled) and the framework level (segment\nconfiguration). Empty exclusion groups are filtered out.\n\nThe `apiRequests` array contains the HTTP requests captured during API\nintrospection tests. Empty when the test does not perform API\nintrospection.\n\nRate limit: 10 requests / minute.",
+        "description": "Retrieves the rich detail for a single VANTA_TEST_SNAPSHOT evidence row\nattached to an information request. The response includes test-level\nmetadata (description, integrations, SLA) and out-of-scope resources.\n\nTo retrieve captured raw test data, call\n`GET /v1/audits/{auditId}/information-requests/{requestId}/evidence/{evidenceId}/test-snapshot/raw-data`.\n\nThe `outOfScopeResources` field lists resources excluded at the test\nlevel (customer-disabled) and the framework level (segment\nconfiguration). Empty exclusion groups are filtered out.\n\nThe `apiRequests` array contains the HTTP requests captured during API\nintrospection tests. Empty when the test does not perform API\nintrospection.\n\nRate limit: 50 requests / minute.",
         "summary": "Get test snapshot detail for an evidence row",
         "tags": [
           "Audits"
@@ -12215,6 +12263,100 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/audits/{auditId}/information-requests/{requestId}/evidence/{evidenceId}/test-snapshot/raw-data": {
+      "get": {
+        "operationId": "ListInformationRequestTestSnapshotRawData",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponse_VantaTestSnapshotRawTestDataPageRow_"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "results": {
+                        "data": [
+                          {
+                            "resourceId": "6890e473dce1da5d8406f700",
+                            "resourceType": "OktaUser",
+                            "rawJson": {
+                              "id": "6890e473dce1da5d8406f700",
+                              "status": "ACTIVE"
+                            },
+                            "dataTooLarge": false
+                          }
+                        ],
+                        "pageInfo": {
+                          "startCursor": "eyJzbmFwc2hvdElkIjoiNjg5MGU0NzNkY2UxZGE1ZDg0MDZmNzAzIiwiaW5kZXgiOjB9",
+                          "endCursor": "eyJzbmFwc2hvdElkIjoiNjg5MGU0NzNkY2UxZGE1ZDg0MDZmNzAzIiwiaW5kZXgiOjB9",
+                          "hasNextPage": true,
+                          "hasPreviousPage": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Lists raw test data captured in a test snapshot, in capture order.\nStructured entries contain the primary resource ID, type, and captured\nJSON. Unstructured entries contain one captured JSON record, with null\nresource ID and type.\n\nPass `results.pageInfo.endCursor` as `pageCursor` to continue until\n`results.pageInfo.hasNextPage` is false.\n\nDeleted evidence returns 404.\n\nRate limit: 50 requests / minute.",
+        "summary": "List raw test data for a test snapshot",
+        "tags": [
+          "Audits"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "auditId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evidenceId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageSize"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pageCursor",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/PageCursor"
             }
           }
         ]

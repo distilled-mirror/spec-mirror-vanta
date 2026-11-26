@@ -3179,6 +3179,118 @@
         "type": "object",
         "additionalProperties": false
       },
+      "ScheduleVendorAssessmentStatus": {
+        "description": "Outcome of scheduling a vendor assessment due date:\n- SCHEDULED: The due date was set on the vendor's next not-yet-started assessment.\n- UNCHANGED: The requested due date was already set on the assessment.\n- SKIPPED: The update was not applied; see `reason` for why.\n- FAILED: Vanta could not confirm the due date was saved.",
+        "enum": [
+          "SCHEDULED",
+          "UNCHANGED",
+          "SKIPPED",
+          "FAILED"
+        ],
+        "type": "string"
+      },
+      "ScheduleVendorAssessmentResult": {
+        "properties": {
+          "vendorId": {
+            "type": "string",
+            "description": "Unique identifier of the vendor from the request, lowercased."
+          },
+          "assessmentTypeId": {
+            "type": "string",
+            "description": "Unique identifier of the assessment type from the request, lowercased."
+          },
+          "status": {
+            "$ref": "#/components/schemas/ScheduleVendorAssessmentStatus",
+            "description": "Outcome for this update."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Machine-readable code explaining the outcome. Additional reason codes may\nbe added in the future. Current values:\n- `SCHEDULED`: The due date was set on the vendor's next not-yet-started assessment.\n- `ALREADY_SCHEDULED`: The assessment already had the requested due date set.\n- `DUE_DATE_ALREADY_SET`: A different due date is already set on the assessment.\n- `NOT_FOUND`: No vendor with the requested ID exists in your organization.\n- `VENDOR_ARCHIVED`: The vendor is archived.\n- `TYPE_NOT_AVAILABLE`: The assessment type does not exist in your organization, is archived, or is the Vendor Incident type and cannot be scheduled.\n- `REVIEW_NOT_REQUIRED`: The assessment type's risk rule marks this review as not required for the vendor's current risk level.\n- `NO_UNSTARTED_ASSESSMENT`: No upcoming not-yet-started assessment of that type exists for the vendor, for example because one is already in progress.\n- `WRITE_FAILED`: Vanta could not confirm that the due date was saved; check the assessment's current due date before retrying."
+          },
+          "assessmentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the matched assessment, or null when no matching\nunstarted assessment was found."
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "The assessment's stored due date in ISO 8601 format when `status` is\n`SCHEDULED` or `UNCHANGED`, or null otherwise."
+          }
+        },
+        "required": [
+          "vendorId",
+          "assessmentTypeId",
+          "status",
+          "reason",
+          "assessmentId",
+          "dueDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ScheduleVendorAssessmentsResponse": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ScheduleVendorAssessmentResult"
+            },
+            "type": "array",
+            "description": "Results for each requested update, in request order."
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ScheduleVendorAssessmentUpdateInput": {
+        "properties": {
+          "vendorId": {
+            "type": "string",
+            "description": "Unique identifier of the vendor.",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "assessmentTypeId": {
+            "type": "string",
+            "description": "Unique identifier of the assessment type to schedule.",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Calendar date the assessment is due, in YYYY-MM-DD format.",
+            "example": "2027-03-01",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "required": [
+          "vendorId",
+          "assessmentTypeId",
+          "dueDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ScheduleVendorAssessmentsInput": {
+        "properties": {
+          "updates": {
+            "items": {
+              "$ref": "#/components/schemas/ScheduleVendorAssessmentUpdateInput"
+            },
+            "type": "array",
+            "description": "List of vendor assessment due dates to schedule. Each vendor and assessment\ntype pair may appear at most once per request.",
+            "minItems": 1,
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "updates"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
       "FindingRiskStatus": {
         "description": "The status of the finding:\n- ACCEPT: The finding and its risk has been accepted and no follow up is required.\n- REMEDIATE: The finding needs to be remediated in some way.\n- NONE: The finding is not related to an observed risk that needs to be accepted or remediated.",
         "enum": [
@@ -13635,6 +13747,7 @@
       "ResourceResponseType": {
         "enum": [
           "Account",
+          "Artifact",
           "AutoScalingGroup",
           "ClusterDeployment",
           "ComputeInstance",
@@ -13712,6 +13825,193 @@
           "inScope",
           "description",
           "creationDate"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ResourceResponseType.Artifact": {
+        "enum": [
+          "Artifact"
+        ],
+        "type": "string"
+      },
+      "Artifact": {
+        "title": "Artifact",
+        "properties": {
+          "responseType": {
+            "$ref": "#/components/schemas/ResourceResponseType.Artifact"
+          },
+          "resourceKind": {
+            "type": "string",
+            "description": "The identifier for the resource type, unique within the scope of an Integration."
+          },
+          "resourceId": {
+            "type": "string",
+            "description": "The unique identifier for the Resource."
+          },
+          "connectionId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The unique identifier for the Connection used to ingest the Resource if it exists."
+          },
+          "displayName": {
+            "type": "string",
+            "description": "The Resource's display name."
+          },
+          "owner": {
+            "type": "string",
+            "nullable": true,
+            "description": "The unique identifier for the owner of the resource in Vanta."
+          },
+          "inScope": {
+            "type": "boolean",
+            "description": "Whether the resource is in scope for audits."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "The description of the resource in Vanta."
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When Vanta first ingested the Resource."
+          },
+          "deletedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When the resource was deleted/removed from the integration, if applicable.\nThis field is only present when the resource has been deleted."
+          },
+          "packageType": {
+            "type": "string",
+            "description": "The package format, such as Maven or npm."
+          },
+          "repository": {
+            "type": "string",
+            "description": "The repository key in JFrog."
+          },
+          "repositoryClass": {
+            "type": "string",
+            "description": "The JFrog repository class. Currently `LOCAL` or `FEDERATED`."
+          },
+          "path": {
+            "type": "string",
+            "nullable": true,
+            "description": "The directory path within the repository. A dot denotes the root."
+          },
+          "sizeBytes": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "The file size in bytes."
+          },
+          "sha256": {
+            "type": "string",
+            "nullable": true,
+            "description": "The file's SHA-256 checksum."
+          },
+          "sha1": {
+            "type": "string",
+            "nullable": true,
+            "description": "The SHA-1 checksum calculated by JFrog."
+          },
+          "sha1Original": {
+            "type": "string",
+            "nullable": true,
+            "description": "The original SHA-1 checksum supplied on upload, when available."
+          },
+          "md5": {
+            "type": "string",
+            "nullable": true,
+            "description": "The MD5 checksum calculated by JFrog."
+          },
+          "md5Original": {
+            "type": "string",
+            "nullable": true,
+            "description": "The original MD5 checksum supplied on upload, when available."
+          },
+          "fileCreationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When JFrog created the file."
+          },
+          "uploadDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When JFrog recorded the file upload."
+          },
+          "lastModifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When JFrog last modified the file."
+          },
+          "createdBy": {
+            "type": "string",
+            "nullable": true,
+            "description": "The JFrog user who uploaded the file."
+          },
+          "modifiedBy": {
+            "type": "string",
+            "nullable": true,
+            "description": "The JFrog user who last modified the file."
+          },
+          "downloadCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "The download count recorded by JFrog."
+          },
+          "remoteDownloadCount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true,
+            "description": "The remote download count recorded by JFrog."
+          },
+          "lastDownloadDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "When JFrog last recorded a download of the file."
+          },
+          "lastDownloadedBy": {
+            "type": "string",
+            "nullable": true,
+            "description": "The JFrog user who last downloaded the file."
+          }
+        },
+        "required": [
+          "responseType",
+          "resourceKind",
+          "resourceId",
+          "connectionId",
+          "displayName",
+          "owner",
+          "inScope",
+          "description",
+          "creationDate",
+          "packageType",
+          "repository",
+          "repositoryClass",
+          "path",
+          "sizeBytes",
+          "sha256",
+          "sha1",
+          "sha1Original",
+          "md5",
+          "md5Original",
+          "fileCreationDate",
+          "uploadDate",
+          "lastModifiedDate",
+          "createdBy",
+          "modifiedBy",
+          "downloadCount",
+          "remoteDownloadCount",
+          "lastDownloadDate",
+          "lastDownloadedBy"
         ],
         "type": "object",
         "additionalProperties": false
@@ -13849,6 +14149,16 @@
             "type": "boolean",
             "nullable": true,
             "description": "Whether autoscans have been enabled"
+          },
+          "packageType": {
+            "type": "string",
+            "nullable": true,
+            "description": "The JFrog package format. Currently `DOCKER`, `OCI`, or `HELMOCI`. Null for other providers."
+          },
+          "repositoryClass": {
+            "type": "string",
+            "nullable": true,
+            "description": "The JFrog repository class. Currently `LOCAL` or `FEDERATED`. Null for other providers."
           }
         },
         "required": [
@@ -13863,7 +14173,9 @@
           "creationDate",
           "account",
           "region",
-          "isAutoscanEnabled"
+          "isAutoscanEnabled",
+          "packageType",
+          "repositoryClass"
         ],
         "type": "object",
         "additionalProperties": false
@@ -14600,6 +14912,9 @@
         "anyOf": [
           {
             "$ref": "#/components/schemas/Resource"
+          },
+          {
+            "$ref": "#/components/schemas/Artifact"
           },
           {
             "$ref": "#/components/schemas/CloudInfrastructure"
@@ -29024,7 +29339,41 @@
                       "creationDate": "2024-03-27T00:56:20.483Z",
                       "account": "aws-account",
                       "region": "us-east-1",
-                      "isAutoscanEnabled": true
+                      "isAutoscanEnabled": true,
+                      "packageType": null,
+                      "repositoryClass": null
+                    }
+                  },
+                  "Example 10": {
+                    "value": {
+                      "responseType": "Artifact",
+                      "resourceKind": "JFrogArtifact",
+                      "resourceId": "661303e12990509c5874a7b9",
+                      "connectionId": "661303e12990509c5874a7b6",
+                      "displayName": "example-1.0.0.jar",
+                      "owner": null,
+                      "inScope": true,
+                      "description": null,
+                      "creationDate": "2024-03-27T00:56:20.483Z",
+                      "packageType": "maven",
+                      "repository": "maven-local",
+                      "repositoryClass": "LOCAL",
+                      "path": "com/example/1.0.0",
+                      "sizeBytes": 4096,
+                      "sha256": null,
+                      "sha1": null,
+                      "sha1Original": null,
+                      "md5": null,
+                      "md5Original": null,
+                      "fileCreationDate": "2024-03-26T15:30:00.000Z",
+                      "uploadDate": null,
+                      "lastModifiedDate": null,
+                      "createdBy": "release-bot",
+                      "modifiedBy": null,
+                      "downloadCount": 0,
+                      "remoteDownloadCount": 0,
+                      "lastDownloadDate": null,
+                      "lastDownloadedBy": null
                     }
                   }
                 }
