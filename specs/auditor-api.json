@@ -3436,7 +3436,7 @@
             "type": "number",
             "format": "double",
             "nullable": true,
-            "description": "Inherent risk score, or null if not scored. Defaults to the likelihood * impact product; when the organization scores risks by factors, this is the rolled-up factor score rounded to two decimals.",
+            "description": "Inherent risk score, or null if not scored. The score combines the ratings of the dimensions that the risk is scored on, such as likelihood and impact, rounded to two decimals.",
             "example": 20
           },
           "treatment": {
